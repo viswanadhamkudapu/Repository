@@ -85,7 +85,7 @@
                 "description": "The base URL for RDmi info",
                 "artifactsBaseUrl": ""
             },
-            "defaultValue": "https://raw.githubusercontent.com/sreenathakk/testrepository/master/testaddhosts/"
+            "defaultValue": "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/RdmiAddHosts/"
         }
     },
     "variables": {
