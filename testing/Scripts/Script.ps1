@@ -11,6 +11,9 @@
     [string] $Password,
 
     [Parameter(Mandatory = $True)]
+    [string] $FileURI,
+
+    [Parameter(Mandatory = $True)]
     [string] $resourceGroupName
  
 )
@@ -27,7 +30,7 @@ function Disable-ieESC {
 Disable-ieESC
 
 
-Invoke-WebRequest -Uri $fileURI -OutFile "C:\PSModules.zip"
+Invoke-WebRequest -Uri $FileURI -OutFile "C:\PSModules.zip"
 New-Item -Path "C:\PSModules" -ItemType directory -Force -ErrorAction SilentlyContinue
 Expand-Archive "C:\PSModules.zip" -DestinationPath "C:\PSModules" -ErrorAction SilentlyContinue
 Set-Location "C:\PSModules"

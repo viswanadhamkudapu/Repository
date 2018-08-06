@@ -160,7 +160,7 @@
                             "fileUris": [
                                 "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/testing/Scripts/Script.ps1"
                             ],
-                            "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File Script.ps1', ' -SubscriptionId \"', variables('vmsubscriptionId'), '\"',' ',' -Username \"', parameters('HosterAdminName'), '\"',' ', ' -password \"', parameters('HosterAdminPassword'), '\"',' ',' -ResourceGroupName \"', variables('resourcegroupname'), '\"',' ', ' -fileURI \"', variables('FileUri'), '\"')]"
+                            "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File Script.ps1', ' -SubscriptionId \"', variables('vmsubscriptionId'), '\"',' ',' -Username \"', parameters('HosterAdminName'), '\"',' ', ' -password \"', parameters('HosterAdminPassword'), '\"',' ',' -ResourceGroupName \"', variables('resourcegroupname'), '\"',' ', ' -FileUri \"', variables('FileUri'), '\"')]"
                         }
                     },
                     "dependsOn": [
