@@ -243,7 +243,7 @@
                     "fileUris": [
                         "[variables('scriptURI')]"
                     ],
-                    "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File Script.ps1', '-registrationToken \"', parameters('registrationToken'), '\"',' ',' -localAdminUsername \"', parameters('adminUsername'), '\"',' ', ' -localAdminpassword \"', parameters('adminPassword'), '\"',' ', ' -Fileuri \"', variables('deployAgentURI'), '\"')]"
+                    "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File Script.ps1', ' -registrationToken \"', parameters('registrationToken'), '\"',' ',' -localAdminUsername \"', parameters('adminUsername'), '\"',' ', ' -localAdminpassword \"', parameters('adminPassword'), '\"',' ', ' -Fileuri \"', variables('deployAgentURI'), '\"')]"
                 }
             }
         }
