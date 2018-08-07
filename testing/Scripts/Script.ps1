@@ -35,9 +35,9 @@ New-Item -Path "C:\PSModules" -ItemType directory -Force -ErrorAction SilentlyCo
 Expand-Archive "C:\PSModules.zip" -DestinationPath "C:\PSModules" -ErrorAction SilentlyContinue
 Set-Location "C:\PSModules"
 
-Start-Job -ScriptBlock{
+Invoke-Command -ComputerName localhost -ScriptBlock{
 param($SubscriptionId,$Username,$Password,$resourceGroupName)
 
 PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& 'C:\PSModules\RemoveRG.ps1' -SubscriptionId $SubscriptionId -Username $Username -Password $Password -resourceGroupName $resourceGroupName"
 
-} -ArgumentList($SubscriptionId,$Username,$Password,$resourceGroupName)
+} -ArgumentList($SubscriptionId,$Username,$Password,$resourceGroupName) -AsJob
