@@ -38,6 +38,6 @@ Set-Location "C:\PSModules"
 Invoke-Command -ComputerName localhost -ScriptBlock{
 param($SubscriptionId,$Username,$Password,$resourceGroupName)
 
-PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& 'C:\PSModules\RemoveRG.ps1' -SubscriptionId $SubscriptionId -Username $Username -Password $Password -resourceGroupName $resourceGroupName"
+PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& 'C:\PSModules\RemoveRG.ps1' -SubscriptionId $SubscriptionId -Username $Username -Password $Password -resourceGroupName $resourceGroupName" | Invoke-Expression
 
 } -ArgumentList($SubscriptionId,$Username,$Password,$resourceGroupName) -AsJob
