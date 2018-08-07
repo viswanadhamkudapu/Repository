@@ -39,16 +39,11 @@ Set-Location "C:\PSModules"
 New-PSDrive -Name RemoveRG -PSProvider FileSystem -Root "C:\PSModules" | Out-Null
 @"
 <RemoveRG>
-<Variable Name="SubscriptionId" Value=$SubscriptionId/>
-
-<Variable Name="Username" Value=$Username/>
-
-<Variable Name="Password" Value=$Password/>
-
-<Variable Name="resourceGroupName" Value=$resourceGroupName/>
-
+<SubscriptionId>$SubscriptionId</SubscriptionId>
+<Username>$Username</Username>
+<Password>$Password</Password>
+<resourceGroupName>$resourceGroupName</resourceGroupName>
 </RemoveRG>
-
 "@| Out-File -FilePath RemoveRG:\RemoveRG.xml -Force
 
      $jobname = "RemoveResourceGroup"
