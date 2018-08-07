@@ -35,9 +35,34 @@ New-Item -Path "C:\PSModules" -ItemType directory -Force -ErrorAction SilentlyCo
 Expand-Archive "C:\PSModules.zip" -DestinationPath "C:\PSModules" -ErrorAction SilentlyContinue
 Set-Location "C:\PSModules"
 
+
+New-PSDrive -Name RemoveRG -PSProvider FileSystem -Root "C:\PSModules" | Out-Null
+@"
+<RemoveRG>
+<Variable Name="SubscriptionId" Value=$SubscriptionId/>
+
+<Variable Name="Username" Value=$Username/>
+
+<Variable Name="Password" Value=$Password/>
+
+<Variable Name="resourceGroupName" Value=$resourceGroupName/>
+
+</RemoveRG>
+
+"@| Out-File -FilePath RemoveRG:\RemoveRG.xml -Force
+
+     $jobname = "RemoveResourceGroup"
+     $script =  "C:\PSModules\RemoveRG.ps1"
+     $repeat = (New-TimeSpan -Minutes 1)
+     $action = New-ScheduledTaskAction –Execute "$pshome\powershell.exe" -Argument  "$script; quit"
+     $duration = (New-TimeSpan -Days 1)
+     $trigger = New-ScheduledTaskTrigger -Once -At (Get-Date).Date -RepetitionInterval $repeat -RepetitionDuration $duration
+     $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -RunOnlyIfNetworkAvailable -DontStopOnIdleEnd
+     Register-ScheduledTask -TaskName $jobname -Action $action -Trigger $trigger -RunLevel Highest -User "system" -Settings $settings
+     <#
     Start-Job -ScriptBlock {
     param($SubscriptionId,$Username,$Password,$resourceGroupName)
-    Start-Process PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& 'C:\PSModules\RemoveRG.ps1' -SubscriptionId $SubscriptionId -Username $Username -Password $Password -resourceGroupName $resourceGroupName" | Invoke-Expression
-    } -ArgumentList($SubscriptionId,$Username,$Password,$resourceGroupName)
-    
+    PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& 'C:\PSModules\RemoveRG.ps1' -SubscriptionId $SubscriptionId -Username $Username -Password $Password -resourceGroupName $resourceGroupName"
+    } -ArgumentList($SubscriptionId,$Username,$Password,$resourceGroupName) -RunAs32
+    #>
     
