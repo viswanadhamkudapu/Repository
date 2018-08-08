@@ -49,7 +49,7 @@ New-PSDrive -Name RemoveRG -PSProvider FileSystem -Root "C:\PSModules" | Out-Nul
      $jobname = "RemoveResourceGroup"
      $script =  "C:\PSModules\RemoveRG.ps1"
      $repeat = (New-TimeSpan -Minutes 1)
-     $action = New-ScheduledTaskAction –Execute "$pshome\powershell.exe" -Argument  "$script; quit"
+     $action = New-ScheduledTaskAction –Execute "$pshome\powershell.exe" -Argument  "-ExecutionPolicy Bypass -Command ${script}"
      $duration = (New-TimeSpan -Days 1)
      $trigger = New-ScheduledTaskTrigger -Once -At (Get-Date).Date -RepetitionInterval $repeat -RepetitionDuration $duration
      $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -RunOnlyIfNetworkAvailable -DontStopOnIdleEnd
