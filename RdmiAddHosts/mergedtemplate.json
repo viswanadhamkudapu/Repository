@@ -72,6 +72,17 @@
                 "description": "The size of the RDSH VMs"
             }
         },
+        "useManagedDisks": {
+            "type":"string",
+            "allowedValues": [
+                "Managed",
+                "Unmanaged"
+            ],
+            "metadata": {
+                "description": "Enable this feature to have Azure automatically manage the availability of disks to provide data redundancy and fault tolerance, without creating and managing storage accounts on your own. Manage disks may not be avaliable in all regions."
+            },
+            "defaultValue": "Managed"
+        },
         "registrationToken": {
             "type": "string",
             "metadata": {
@@ -144,58 +155,6 @@
                 ]
             }
         },
-        {
-        "con"
-        "apiVersion": "2015-06-15",
-        "type": "Microsoft.Compute/virtualMachines",
-        "name": "[concat('rdsh-', copyindex())]",
-        "location": "[resourceGroup().location]",
-        "copy": {
-          "name": "rdsh-vm-loop",
-          "count": "[parameters('numberOfRdshInstances')]"
-        },
-        "dependsOn": [
-          "[resourceId('Microsoft.Compute/availabilitySets', 'rdsh-availabilityset')]",
-          "[concat('Microsoft.Network/networkInterfaces/', 'rdsh-', copyindex(), '-nic')]"
-        ],
-        "properties": {
-          "hardwareProfile": {
-            "vmSize": "[parameters('rdshVmSize')]"
-          },
-          "availabilitySet": {
-            "id": "[resourceId('Microsoft.Compute/availabilitySets', 'rdsh-availabilityset')]"
-          },
-          "osProfile": {
-            "computerName": "[concat('rdsh-', copyIndex())]",
-            "adminUsername": "[parameters('adminUsername')]",
-            "adminPassword": "[parameters('adminPassword')]"
-          },
-          "storageProfile": {
-            "imageReference": {
-              "publisher": "[variables('imagePublisher')]",
-              "offer": "[variables('imageOffer')]",
-              "sku": "[parameters('imageSKU')]",
-              "version": "latest"
-            },
-            "osDisk": {
-              "name": "osdisk",
-              "vhd": {
-                "uri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName')),providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).primaryEndpoints.blob,variables('uniqueStorageAccountContainerName'),'/','rdsh-',copyindex(),'-os-disk.vhd')]"
-  
-              },
-              "caching": "ReadWrite",
-              "createOption": "FromImage"
-            }
-          },
-          "networkProfile": {
-            "networkInterfaces": [
-              {
-                "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('rdsh-', copyindex(), '-nic'))]"
-              }
-            ]
-          }
-        }
-      }
         {
             "apiVersion": "2017-03-30",
             "type": "Microsoft.Compute/virtualMachines",
