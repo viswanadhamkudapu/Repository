@@ -396,3 +396,4 @@ Register-ScheduledTask -TaskName $jobname -Action $action -Trigger $trigger -Run
 catch [Exception]
 {
     Write-Output $_.Exception.Messag
+}
