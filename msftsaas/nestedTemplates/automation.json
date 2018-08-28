@@ -109,23 +109,25 @@
                 "value": "[concat('\"',variables('baseURL'),'/Modules.zip','\"')]"
             }
         ],
-        "azureCredentials": "AzureCredentials"
+        "azureCredentials": "AzureCredentials",
+        "AROToolkitVersion": "1.0.0.0"
     },
     "resources": [
-    {
-      "name": "[parameters('automationAccountName')]",
-      "type": "Microsoft.Automation/automationAccounts",
-      "apiVersion": "2015-10-31",
-      "location": "[parameters('automationRegion')]",
-      "dependsOn": [],
-      "tags": {},
-      "properties": {
-        "comment": "Resource defined structure",
-        "sku": {
-          "name": "Free"
+      {
+        "apiVersion": "2015-10-31",
+        "location": "[parameters('automationRegion')]",
+        "name": "[parameters('automationAccountName')]",
+        "type": "Microsoft.Automation/automationAccounts",
+        "tags": {
+          "AROToolkitVersion": "[variables('AROToolkitVersion')]"
+        },
+        "comments": "Automation account",
+        "properties": {
+          "sku": {
+            "name": "Free"
+          }
         }
-      }
-    },
+      },
         {
             "name": "[concat(parameters('automationAccountName'), '/', variables('automationVariables')[copyIndex()].name)]",
             "type": "Microsoft.Automation/automationAccounts/variables",
@@ -158,63 +160,67 @@
             }
         },
         {
-            "name": "testRunbook",
+            "name": "[concat(parameters('automationAccountName'), '/', variables('runbooks')[copyIndex()].name)]",
             "type": "Microsoft.Automation/automationAccounts/runbooks",
             "apiVersion": "2015-10-31",
             "location": "[parameters('automationRegion')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]"
+              "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]"
             ],
             "tags": {
-                 },
+              "version": "[variables('runbooks')[copyIndex()].version]"
+            },
+            "copy": {
+              "name": "runbooksLoop",
+              "count": "[length(variables('runbooks'))]"
+            },
             "properties": {
-                "runbookType": "[variables('runbooks')[copyIndex()].type]",
-                "logProgress": "false",
-                "logVerbose": "false",
-                "description": "[variables('runbooks')[copyIndex()].description]",
-                "publishContentLink": {
-                    "uri": "[variables('runbooks')[copyIndex()].scriptUri]"
-                }
+              "runbookType": "[variables('runbooks')[copyIndex()].type]",
+              "logProgress": "false",
+              "logVerbose": "false",
+              "description": "[variables('runbooks')[copyIndex()].description]",
+              "publishContentLink": {
+                "uri": "[variables('runbooks')[copyIndex()].scriptUri]",
+                "version": "[variables('runbooks')[copyIndex()].version]"
+              }
             }
-        },
-        {
-            "name": "saasdeploy",
+          },
+          {
+            "name": "[concat(parameters('automationAccountName'), '/', 'startBootstrap')]",
             "type": "Microsoft.Automation/automationAccounts/schedules",
             "apiVersion": "2015-10-31",
             "tags": {},
             "properties": {
-                "description": "Starts the bootstrap runbooks",
-                "expiryTime": "9999-12-31T17:59:00-06:00",
-                "isEnabled": true,
-                "interval": null,
-                "frequency": "OneTime"
+              "description": "Starts the bootstrap runbooks",
+              "expiryTime": "9999-12-31T17:59:00-06:00",
+              "isEnabled": true,
+              "interval": null,
+              "frequency": "OneTime"
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]",
-                "[variables('runbooks')[0].name]"
+              "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]",
+              "[variables('runbooks')[0].name]"
             ]
-        },
-        {
+          },
+          {
             "name": "[concat(parameters('automationAccountName'), '/', parameters('newGuid'))]",
             "type": "Microsoft.Automation/automationAccounts/jobSchedules",
             "apiVersion": "2015-10-31",
             "location": "[parameters('automationRegion')]",
             "tags": {},
             "properties": {
-                "schedule": {
-                    "name": "saasdeploy"
-                },
-                "runbook": {
-                    "name": "testRunbook"
-                }
+              "schedule": {
+                "name": "startBootstrap"
+              },
+              "runbook": {
+                "name": "testRunbook"
+              }
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]",
-                "[concat('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'),  '/runbooks/', 'testRunbook')]",
-                "[concat('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'), '/schedules/', 'saasdeploy')]"
-
+              "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]",
+              "startBootstrap"
             ]
-        }
-    ],
-    "outputs": {}
-}
+          }
+        ],
+        "outputs": {}
+      }
