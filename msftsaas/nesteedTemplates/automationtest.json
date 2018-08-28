@@ -1,0 +1,220 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "automationAccountName": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+              "description": "Assign a name for the Automation account"
+            }
+          },
+          "automationRegion": {
+            "type": "string",
+            "defaultValue": "East US 2",
+            "metadata": {
+              "description": "Specify the region for your Automation account"
+            }
+          },
+          "newGuid": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+              "description": "Assign a name for the ASR Recovery Vault"
+            }
+          },
+        "ApplicationID": {
+            "type": "string",
+            "metadata": {
+                "description": "Application ID / Client ID of the infrastructure.  Ex: 574ee204-xx91-4ac5-xx7a-5a6a4e2784e9"
+            }
+        },
+        "RDBrokerURL": {
+            "type": "string",
+            "metadata": {
+                "description": "RDBroker URL of the infrastructure.   Ex: https://rdbroker-uiyyft4gnswme.azurewebsites.net"
+            }
+        },
+        "ResourceURL": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource URL of the infrastructure.  Ex: https://ContosoVM.onmicrosoft.com/RDInframsftrdmisaasf658465e2b4948fe85e"
+            }
+        },
+        "AzureLoginID": {
+            "type": "string",
+            "metadata": {
+                "description": "Your Azure Login ID"
+            }
+        },
+        "AzureLoginPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Your Azure Login AzureLoginPassword"
+            }
+        }
+    },
+    "variables": {
+        "baseURL": "https://github.com/viswanadhamkudapu/Repository/tree/master/msftsaas/scripts/",
+        "runbooks": [
+            {
+                "name": "testRunbook",
+                "version": "1.0.0.0",
+                "description": "Configurates Azure Automation account for anything we can't handle in ARM",
+                "type": "PowerShell",
+                "Id": "",
+                "scriptUri": "https://github.com/viswanadhamkudapu/Repository/blob/master/msftsaas/scripts/testautomation.ps1"
+            }
+        ],
+        "automationVariables": [
+            {
+                "name": "AutomationAccountName",
+                "description": "Azure Automation Account Name",
+                "value": "[concat('\"',parameters('automationAccountName'),'\"')]"
+            },
+            {
+                "name": "Username",
+                "value": "[concat('\"',parameters('AzureLoginID'),'\"')]"
+            },
+            {
+                "name": "password",
+                "value": "[concat('\"',parameters('AzureLoginPassword'),'\"')]"
+            },
+            {
+                "name": "subsriptionid",
+                "value": "[concat('\"',subscription().id,'\"')]"
+            },
+            {
+                "name": "resourceGroupName",
+                "value": "[concat('\"',resourceGroup().name,'\"')]"
+            },
+            {
+                "name": "Location",
+                "value": "[concat('\"',resourceGroup().location,'\"')]"
+            },
+            {
+                "name": "ApplicationID",
+                "value": "[concat('\"',parameters('ApplicationID'),'\"')]"
+            },
+            {
+                "name": "RDBrokerURL",
+                "value": "[concat('\"',parameters('RDBrokerURL'),'\"')]"
+            },
+            {
+                "name": "ResourceURL",
+                "value": "[concat('\"',parameters('ResourceURL'),'\"')]"
+            },
+            {
+                "name": "fileURI",
+                "value": "[concat('\"',variables('baseURL'),'/Modules.zip','\"')]"
+            }
+        ],
+        "azureCredentials": "AzureCredentials"
+    },
+    "resources": [
+    {
+      "name": "[parameters('automationAccountName')]",
+      "type": "Microsoft.Automation/automationAccounts",
+      "apiVersion": "2015-10-31",
+      "location": "[parameters('automationRegion')]",
+      "dependsOn": [],
+      "tags": {},
+      "properties": {
+        "comment": "Resource defined structure",
+        "sku": {
+          "name": "Free"
+        }
+      }
+    },
+        {
+            "name": "[concat(parameters('automationAccountName'), '/', variables('automationVariables')[copyIndex()].name)]",
+            "type": "Microsoft.Automation/automationAccounts/variables",
+            "apiVersion": "2015-10-31",
+            "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]"
+            ],
+            "tags": {},
+            "copy": {
+                "name": "variableLoop",
+                "count": "[length(variables('automationVariables'))]"
+            },
+            "properties": {
+                "description": "[variables('automationVariables')[copyIndex()].description]",
+                "value": "[variables('automationVariables')[copyIndex()].value]"
+            }
+        },
+        {
+            "name": "[concat(parameters('automationAccountName'), '/', variables('azureCredentials'))]",
+            "type": "Microsoft.Automation/automationAccounts/credentials",
+            "apiVersion": "2015-10-31",
+            "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]"
+            ],
+            "tags": {},
+            "properties": {
+                "description": "Azure Subscription Credentials",
+                "password": "[parameters('AzureLoginPassword')]",
+                "userName": "[parameters('AzureLoginID')]"
+            }
+        },
+        {
+            "name": "testRunbook",
+            "type": "Microsoft.Automation/automationAccounts/runbooks",
+            "apiVersion": "2015-10-31",
+            "location": "[parameters('automationRegion')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]"
+            ],
+            "tags": {
+                 },
+            "properties": {
+                "runbookType": "[variables('runbooks')[copyIndex()].type]",
+                "logProgress": "false",
+                "logVerbose": "false",
+                "description": "[variables('runbooks')[copyIndex()].description]",
+                "publishContentLink": {
+                    "uri": "[variables('runbooks')[copyIndex()].scriptUri]"
+                }
+            }
+        },
+        {
+            "name": "saasdeploy",
+            "type": "Microsoft.Automation/automationAccounts/schedules",
+            "apiVersion": "2015-10-31",
+            "tags": {},
+            "properties": {
+                "description": "Starts the bootstrap runbooks",
+                "expiryTime": "9999-12-31T17:59:00-06:00",
+                "isEnabled": true,
+                "interval": null,
+                "frequency": "OneTime"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]",
+                "[variables('runbooks')[0].name]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('automationAccountName'), '/', parameters('newGuid'))]",
+            "type": "Microsoft.Automation/automationAccounts/jobSchedules",
+            "apiVersion": "2015-10-31",
+            "location": "[parameters('automationRegion')]",
+            "tags": {},
+            "properties": {
+                "schedule": {
+                    "name": "saasdeploy"
+                },
+                "runbook": {
+                    "name": "testRunbook"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]",
+                "[concat('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'),  '/runbooks/', 'testRunbook')]",
+                "[concat('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'), '/schedules/', 'saasdeploy')]"
+
+            ]
+        }
+    ],
+    "outputs": {}
+}
