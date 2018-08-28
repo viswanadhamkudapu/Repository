@@ -180,7 +180,7 @@
                 "logVerbose": "false",
                 "description": "[variables('runbooks')[copyIndex()].description]",
                 "publishContentLink": {
-                    "uri": "[variables('runbooks')[copyIndex()].scriptUri]",
+                    "uri": "https://github.com/viswanadhamkudapu/Repository/blob/master/msftsaas/scripts/testautomation.ps1",
                     "version": "[variables('runbooks')[copyIndex()].version]"
                 }
             }
