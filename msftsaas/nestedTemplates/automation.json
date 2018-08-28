@@ -60,7 +60,6 @@
             {
                 "name": "test_runbook",
                 "version": "1.0.0.0",
-                "description": "Configurates Azure Automation account for anything we can't handle in ARM",
                 "type": "PowerShell",
                 "Id": "",
                 "scriptUri": "https://github.com/viswanadhamkudapu/Repository/blob/master/msftsaas/scripts/testautomation.ps1"
@@ -69,7 +68,6 @@
         "automationVariables": [
             {
                 "name": "AutomationAccountName",
-                "description": "Azure Automation Account Name",
                 "value": "[concat('\"',parameters('automationAccountName'),'\"')]"
             },
             {
@@ -177,7 +175,6 @@
                 "runbookType": "[variables('runbooks')[copyIndex()].type]",
                 "logProgress": "false",
                 "logVerbose": "false",
-                "description": "[variables('runbooks')[copyIndex()].description]",
                 "publishContentLink": {
                     "uri": "https://github.com/viswanadhamkudapu/Repository/blob/master/msftsaas/scripts/testautomation.ps1",
                     "version": "[variables('runbooks')[copyIndex()].version]"
