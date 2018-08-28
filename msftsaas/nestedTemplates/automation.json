@@ -141,7 +141,6 @@
                 "count": "[length(variables('automationVariables'))]"
             },
             "properties": {
-                "description": "[variables('automationVariables')[copyIndex()].description]",
                 "value": "[variables('automationVariables')[copyIndex()].value]"
             }
         },
