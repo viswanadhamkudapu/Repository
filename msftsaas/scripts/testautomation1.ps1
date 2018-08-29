@@ -189,7 +189,7 @@ try
                 $add=$ADapplication.ReplyUrls.Add("$Redirecturl2"+"$Redirecturl1")
                 $ReplyUrls=$ADapplication.ReplyUrls
                 Set-AzureRmADApplication -ApplicationId $ApplicationID -ReplyUrl $ReplyUrls #>
-
+                $ApiAppSettings
                 Set-AzureRmWebApp -AppSettings $ApiAppSettings -Name $ApiApp -ResourceGroupName $ResourceGroupName
             }
             catch [Exception]
