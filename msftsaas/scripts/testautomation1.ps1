@@ -314,4 +314,4 @@ catch [Exception]
     #Write-Output $_.Exception.Message
 }
  }
-Remove-AzureRmAutomationAccount -ResourceGroupName 'testrgact' -Name 'testrgact01' -Force
+#Remove-AzureRmAutomationAccount -ResourceGroupName $ResourceGroupName -Name 'Test-Account' -Force
