@@ -1,27 +1,17 @@
-﻿workflow Testsaasbook
-{
-    #The name of the Automation Credential Asset this runbook will use to authenticate to Azure.
-    $CredentialAssetName = 'DefaultAzureCredential'
-
-    #Get the credential with the above name from the Automation Asset store
-    $Cred = Get-AutomationPSCredential -Name $CredentialAssetName
-    if(!$Cred) {
-        Throw "Could not find an Automation Credential Asset named '${CredentialAssetName}'. Make sure you have created one in this Automation Account."
-    }
-
-    #Connect to your Azure Account
-    $Account = Add-AzureRMAccount -Credential $Cred
-    if(!$Account) {
-        Throw "Could not authenticate to Azure using the credential asset '${CredentialAssetName}'. Make sure the user name and password are correct."
-    }
-    
-$subsriptionid = Get-AutomationVariable -Name 'subsriptionid'
+﻿$subsriptionid = Get-AutomationVariable -Name 'subsriptionid'
+$subsriptionid
 $ResourceGroupName = Get-AutomationVariable -Name 'ResourceGroupName'
+$ResourceGroupName
 $Location = Get-AutomationVariable -Name 'Location'
+$Location
 $ApplicationID = Get-AutomationVariable -Name 'ApplicationID'
+$ApplicationID
 $RDBrokerURL = Get-AutomationVariable -Name 'RDBrokerURL'
+$RDBrokerURL
 $ResourceURL = Get-AutomationVariable -Name 'ResourceURL'
+$ResourceURL
 $fileURI = Get-AutomationVariable -Name 'fileURI'
+$fileURI
 
 
 Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/msftsaas/scripts//Modules.zip' -OutFile 'C:\Modules.zip'
@@ -32,6 +22,12 @@ Import-Module AzureRM.Websites
 Import-Module Azure
 Import-Module AzureRM.Automation
 
+
+    #The name of the Automation Credential Asset this runbook will use to authenticate to Azure.
+    $CredentialAssetName = 'DefaultAzureCredential'
+
+    #Get the credential with the above name from the Automation Asset store
+    $Cred = Get-AutomationPSCredential -Name $CredentialAssetName
 Add-AzureRmAccount -Environment 'AzureCloud' -Credential $Cred
 Select-AzureRmSubscription -SubscriptionId $subsriptionid
     <#$ServicePrincipalConnectionName = "AzureRunAsConnection"
@@ -62,12 +58,12 @@ try
     Invoke-WebRequest -Uri $fileURI -OutFile "C:\msft-rdmi-saas-offering.zip"
     New-Item -Path "C:\msft-rdmi-saas-offering" -ItemType directory -Force -ErrorAction SilentlyContinue
     Expand-Archive "C:\msft-rdmi-saas-offering.zip" -DestinationPath "C:\msft-rdmi-saas-offering" -ErrorAction SilentlyContinue
-    
+    Test-Path -Path $CodeBitPath
     ## RESOURCE GROUP ##
         Add-AzureRmAccount -Environment "AzureCloud" -Credential $Cred
         Select-AzureRmSubscription -SubscriptionId $subsriptionid
         
-        try
+        try 
         {
             ## APPSERVICE PLAN ##
                
@@ -313,5 +309,4 @@ catch [Exception]
 {
     #Write-Output $_.Exception.Message
 }
- }
 #Remove-AzureRmAutomationAccount -ResourceGroupName $ResourceGroupName -Name 'Test-Account' -Force
