@@ -1,14 +1,4 @@
-﻿
-$subsriptionid = Get-AutomationVariable -Name 'subsriptionid'
-$ResourceGroupName = Get-AutomationVariable -Name 'ResourceGroupName'
-$Location = Get-AutomationVariable -Name 'Location'
-$ApplicationID = Get-AutomationVariable -Name 'ApplicationID'
-$RDBrokerURL = Get-AutomationVariable -Name 'RDBrokerURL'
-$ResourceURL = Get-AutomationVariable -Name 'ResourceURL'
-$fileURI = Get-AutomationVariable -Name 'fileURI'
-
-
-workflow Testsaasbook
+﻿workflow Testsaasbook
 {
     #The name of the Automation Credential Asset this runbook will use to authenticate to Azure.
     $CredentialAssetName = 'DefaultAzureCredential'
@@ -25,6 +15,14 @@ workflow Testsaasbook
         Throw "Could not authenticate to Azure using the credential asset '${CredentialAssetName}'. Make sure the user name and password are correct."
     }
     
+$subsriptionid = Get-AutomationVariable -Name 'subsriptionid'
+$ResourceGroupName = Get-AutomationVariable -Name 'ResourceGroupName'
+$Location = Get-AutomationVariable -Name 'Location'
+$ApplicationID = Get-AutomationVariable -Name 'ApplicationID'
+$RDBrokerURL = Get-AutomationVariable -Name 'RDBrokerURL'
+$ResourceURL = Get-AutomationVariable -Name 'ResourceURL'
+$fileURI = Get-AutomationVariable -Name 'fileURI'
+
 
 Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/msftsaas/scripts//Modules.zip' -OutFile 'C:\Modules.zip'
 Expand-Archive 'C:\Modules.zip' -DestinationPath 'C:\Modules\Global' -ErrorAction SilentlyContinue
