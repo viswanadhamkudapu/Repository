@@ -93,7 +93,8 @@
         "imagePublisher": "MicrosoftWindowsServer",
         "imageOffer": "WindowsServer",
         "subnet-id": "[concat(resourceId(parameters('adVnetNameResourceGroup'),'Microsoft.Network/virtualNetworks',parameters('adVnetName')),'/subnets/',parameters('adSubnetName'))]",
-        "dnsLabelPrefix": "[concat(take(toLower(resourcegroup().name),4))]",
+        "uniqueBase": "[toLower(uniqueString(parameters('rdshNamePrefix'), resourceGroup().name, deployment().name))]",
+        "dnsLabelPrefix": "[concat(take(toLower(variables('uniqueBase')),4))]",
         "deployAgentURI": "[concat(parameters('baseUrl'),'/Scripts/DeployAgent.zip')]",
         "scriptURI": "[concat(parameters('baseUrl'),'/Scripts/Script.ps1')]"
         
