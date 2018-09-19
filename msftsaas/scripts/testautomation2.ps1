@@ -280,7 +280,7 @@ Remove-AzureRmAutomationAccount -Name "Test-account" -ResourceGroupName `$Resour
     Select-AzureRmSubscription -SubscriptionId $subsriptionid
 
 
-    $runbookName='remmovebook'
+    $runbookName='removeaccount'
     $automationAccountName="Test-Account"
     #Create a Run Book
     $AAcctRunbook=New-AzureRmAutomationRunbook -Name $runbookName -Type PowerShell -ResourceGroupName $ResourceGroupName -AutomationAccountName $automationAccountName
