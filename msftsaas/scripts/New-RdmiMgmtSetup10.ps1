@@ -152,7 +152,7 @@ try
                 # Get Url of Web-App 
                 $GetWebApp = Get-AzureRmWebApp -Name $WebApp -ResourceGroupName $ResourceGroupName
                 $WebUrl = $GetWebApp.DefaultHostName 
-
+                $requiredAccessName=$ResourceURL.Split("/")[3]
                 $redirectURL="https://"+"$WebUrl"+"/"
   
                 #generate unique ID based on subscription ID
@@ -164,11 +164,10 @@ try
                 
                 Connect-AzureAD -Credential $Cred
                 $clientAdApp = New-AzureADApplication -DisplayName $rdmiSaaS_clientapp_display_name -ReplyUrls $redirectURL -PublicClient $true -AvailableToOtherTenants $true -Verbose -ErrorAction Stop
-                $resourceAppId = Get-AzureADServicePrincipal -SearchString $requiredAccess
+                $resourceAppId = Get-AzureADServicePrincipal -SearchString $requiredAccessName
                 $clientappreq = New-Object -TypeName "Microsoft.Open.AzureAD.Model.RequiredResourceAccess"
                 $clientappreq.ResourceAppId = $resourceAppId.AppId
-
-
+                
                 foreach($permission in $resourceAppId.Oauth2Permissions){
                     $clientappreq1.ResourceAccess += New-Object -TypeName "Microsoft.Open.AzureAD.Model.ResourceAccess" -ArgumentList $permission.Id,"Scope"
                 }
