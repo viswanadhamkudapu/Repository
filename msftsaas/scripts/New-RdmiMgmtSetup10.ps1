@@ -1,7 +1,7 @@
 ﻿$subsriptionid = Get-AutomationVariable -Name 'subsriptionid'
 $ResourceGroupName = Get-AutomationVariable -Name 'ResourceGroupName'
 $Location = Get-AutomationVariable -Name 'Location'
-$ApplicationID = Get-AutomationVariable -Name 'ApplicationID'
+#$ApplicationID = Get-AutomationVariable -Name 'ApplicationID'
 $RDBrokerURL = Get-AutomationVariable -Name 'RDBrokerURL'
 $ResourceURL = Get-AutomationVariable -Name 'ResourceURL'
 $fileURI = Get-AutomationVariable -Name 'fileURI'
