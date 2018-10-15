@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<helpItems xmlns="http://msh" schema="maml">
+
+<command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+<command:details><command:name>New-AzureADMSInvitation</command:name>
+<command:verb>New</command:verb>
+<command:noun>AzureADMSInvitation</command:noun>
+<maml:description><maml:para>This cmdlet is used to invite a new external user to your directory
+</maml:para>
+</maml:description>
+</command:details>
+<maml:description><maml:para>This cmdlet is used to invite a new external user to your directory.
+</maml:para>
+</maml:description>
+<command:syntax><command:syntaxItem><maml:name>New-AzureADMSInvitation</maml:name>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none"><maml:name>InvitedUserDisplayName</maml:name>
+<maml:Description><maml:para>The display name of the user as it will appear in your directory
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+<dev:type><maml:name>String</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>None</dev:defaultValue>
+</command:parameter>
+<command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none"><maml:name>InvitedUserEmailAddress</maml:name>
+<maml:Description><maml:para>The Email address to which the invitation is sent
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+<dev:type><maml:name>String</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>None</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none"><maml:name>InvitedUserMessageInfo</maml:name>
+<maml:Description><maml:para>Addition information to specify how the invitation message is sent
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">InvitedUserMessageInfo</command:parameterValue>
+<dev:type><maml:name>InvitedUserMessageInfo</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>None</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none"><maml:name>InvitedUserType</maml:name>
+<maml:Description><maml:para>The userType of the user being invited. By default, this is Guest. You can invite as Member if you're are company administrator.
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+<dev:type><maml:name>String</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>None</dev:defaultValue>
+</command:parameter>
+<command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none"><maml:name>InviteRedirectUrl</maml:name>
+<maml:Description><maml:para>The URL to which the invited user is forwarded after accepting the invitation
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+<dev:type><maml:name>String</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>None</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none"><maml:name>SendInvitationMessage</maml:name>
+<maml:Description><maml:para>A Boolean parameter that indicates whether or not an invitation message will be sent to the invited user.
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">Boolean</command:parameterValue>
+<dev:type><maml:name>Boolean</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>None</dev:defaultValue>
+</command:parameter>
+</command:syntaxItem>
+</command:syntax>
+<command:parameters><command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none"><maml:name>InvitedUserDisplayName</maml:name>
+<maml:Description><maml:para>The display name of the user as it will appear in your directory
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+<dev:type><maml:name>String</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>None</dev:defaultValue>
+</command:parameter>
+<command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none"><maml:name>InvitedUserEmailAddress</maml:name>
+<maml:Description><maml:para>The Email address to which the invitation is sent
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+<dev:type><maml:name>String</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>None</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none"><maml:name>InvitedUserMessageInfo</maml:name>
+<maml:Description><maml:para>Addition information to specify how the invitation message is sent
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">InvitedUserMessageInfo</command:parameterValue>
+<dev:type><maml:name>InvitedUserMessageInfo</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>None</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none"><maml:name>InvitedUserType</maml:name>
+<maml:Description><maml:para>The userType of the user being invited. By default, this is Guest. You can invite as Member if you're are company administrator.
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+<dev:type><maml:name>String</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>None</dev:defaultValue>
+</command:parameter>
+<command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none"><maml:name>InviteRedirectUrl</maml:name>
+<maml:Description><maml:para>The URL to which the invited user is forwarded after accepting the invitation
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+<dev:type><maml:name>String</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>None</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none"><maml:name>SendInvitationMessage</maml:name>
+<maml:Description><maml:para>A Boolean parameter that indicates whether or not an invitation message will be sent to the invited user.
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">Boolean</command:parameterValue>
+<dev:type><maml:name>Boolean</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>None</dev:defaultValue>
+</command:parameter>
+</command:parameters>
+<command:inputTypes><command:inputType><dev:type><maml:name>None</maml:name>
+</dev:type>
+<maml:description><maml:para>
+</maml:para>
+</maml:description>
+</command:inputType>
+</command:inputTypes>
+<command:returnValues><command:returnValue><dev:type><maml:name>System.Object</maml:name>
+</dev:type>
+<maml:description><maml:para>
+</maml:para>
+</maml:description>
+</command:returnValue>
+</command:returnValues>
+<maml:alertSet><maml:alert><maml:para>
+</maml:para>
+</maml:alert>
+</maml:alertSet>
+<command:examples><command:example><maml:title>Invite a new external user to your directory</maml:title>
+<dev:code>New-AzureADMSInvitation -InvitedUserEmailAddress someexternaluser@externaldomain.com -SendInvitationMessage $True -InviteRedirectUrl "http://myapps.onmicrosoft.com"</dev:code>
+<dev:remarks><maml:para>Using the cmdlet in this example, an email is sent to the user who's email address is in the -InvitedUserEmailAddress parameter. When the user accepts the invitation, they are forwarded to the url as specified in the -InviteRedirectUrl parameter
+</maml:para>
+</dev:remarks>
+</command:example>
+</command:examples>
+<command:relatedLinks></command:relatedLinks>
+</command:command>
+</helpItems>
