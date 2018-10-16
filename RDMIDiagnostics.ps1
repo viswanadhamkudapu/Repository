@@ -23,10 +23,10 @@ Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope Process -Force -Confirm:$f
     Get-ExecutionPolicy -List
  try
    {
-    Invoke-WebRequest -Uri $fileURI -OutFile "C:\RDMIMonitoring.zip"
-    New-Item -Path "C:\RDMIMonitoring" -ItemType Directory -Force -ErrorAction SilentlyContinue
-    Expand-Archive "C:\RDMIMonitoring.zip" -DestinationPath "C:\RDMIMonitoring" -ErrorAction SilentlyContinue
-    Copy-Item -Path "C:\RDMIMonitoring\AzureModules\*"  -Destination 'C:\Modules\Global' -Force -Recurse
+    Invoke-WebRequest -Uri $fileURI -OutFile "C:\RDMIMonitoring-$hostpoolName.zip"
+    New-Item -Path "C:\RDMIMonitoring-$hostpoolName" -ItemType Directory -Force -ErrorAction SilentlyContinue
+    Expand-Archive "C:\RDMIMonitoring-$hostpoolName.zip" -DestinationPath "C:\RDMIMonitoring-$hostpoolName" -ErrorAction SilentlyContinue
+    Copy-Item -Path "C:\RDMIMonitoring-$hostpoolName\AzureModules\*"  -Destination 'C:\Modules\Global' -Force -Recurse
 
     Import-Module AzureRM.Profile
     Import-Module AzureRM.Compute
@@ -34,7 +34,7 @@ Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope Process -Force -Confirm:$f
     Import-module AzureAD
     Import-module AzureRM.Resources
     #XMl Configuration File Path
-    $XMLPath = "C:\RDMIMonitoring\SQLSettings.xml"
+    $XMLPath = "C:\RDMIMonitoring-$hostpoolName\SQLSettings.xml"
 
     ##### Load XML Configuration values as variables #########
     Write-Verbose "loading values from SQLSettings.xml"
@@ -67,7 +67,7 @@ Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope Process -Force -Confirm:$f
         [string]$ApplicaionId = $Dataset.Tables.ARMAppID
         [string]$appScreat = $Dataset.Tables.ARMClientSecret
  
-        Set-Location 'C:\RDMIMonitoring\PowershellModules'
+        Set-Location "C:\RDMIMonitoring-$hostpoolName\PowershellModules"
         Import-Module .\Microsoft.RDInfra.RDPowershell.dll
     
         $Securepass=ConvertTo-SecureString -String $appScreat -AsPlainText -Force
@@ -135,7 +135,7 @@ Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope Process -Force -Confirm:$f
             [void]$da.fill($ds)
             
             $connection.Close()
-            write-output "loaded data successfully"
+            write-output "Inserted data into database table successfully"
     }
     catch
     {
