@@ -17,8 +17,9 @@ $fileURI = "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/maste
 # Idle sessions and active sessions are unable to get through powershell in this codebit, at present inserting Null values
 #$ActiveSessions = 0
 #$IdleSessions = 0
-
-$SessionCountDateTime = [DateTime]::UtcNow | get-date -Format "yyyy-MM-ddTHH:mm"
+$UtcTime = (get-date).ToString("yyyy/MM/ddTHH:mm");
+$SessionCountDateTime = [datetime]::ParseExact($UtcTime, "yyyy/MM/ddTHH:mm", $null)
+#$SessionCountDateTime = [DateTime]::UtcNow | get-date -Format "yyyy-MM-ddTHH:mm"
 
 Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope Process -Force -Confirm:$false
     Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force -Confirm:$false
@@ -116,13 +117,7 @@ Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope Process -Force -Confirm:$f
             }
 
             }
-            $QueryTimeout = 120
-            <#
-            $date = "{0:d}" -f (get-date)
-            $time = "{0:HH:mm}" -f (get-date)
-            $SessionCountDateTime = $date+" "+$time
-            #>
-            
+            $QueryTimeout = 120                   
             $noOfSessionsCount = ($noOfSessions | Measure-Object -Sum).sum
             $noOfAllocatedHostCount = ($noOfAllocated | Measure-Object -sum).sum
             $noOfDeallocatedHostCount = ($noOfDeallocated | Measure-Object -sum).Sum
@@ -143,4 +138,3 @@ Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope Process -Force -Confirm:$f
     {
         Write-Output $_.Exception.Message
     }
-    
