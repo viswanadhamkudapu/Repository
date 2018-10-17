@@ -15,8 +15,10 @@
 $fileURI = "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/RDMIMonitoring.zip"
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 # Idle sessions and active sessions are unable to get through powershell in this codebit, at present inserting Null values
-$ActiveSessions = 0
-$IdleSessions = 0
+#$ActiveSessions = 0
+#$IdleSessions = 0
+
+$SessionCountDateTime = [DateTime]::UtcNow | get-date -Format "yyyy-MM-ddTHH:mm"
 
 Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope Process -Force -Confirm:$false
     Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force -Confirm:$false
@@ -120,7 +122,7 @@ Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope Process -Force -Confirm:$f
             $time = "{0:HH:mm}" -f (get-date)
             $SessionCountDateTime = $date+" "+$time
             #>
-            $SessionCountDateTime = [DateTime]::UtcNow | get-date -Format "yyyy-MM-ddTHH:mm:ssZ"
+            
             $noOfSessionsCount = ($noOfSessions | Measure-Object -Sum).sum
             $noOfAllocatedHostCount = ($noOfAllocated | Measure-Object -sum).sum
             $noOfDeallocatedHostCount = ($noOfDeallocated | Measure-Object -sum).Sum
