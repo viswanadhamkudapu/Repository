@@ -8,7 +8,7 @@ $CurrentAzureSubscriptionName,
 $HostpoolName
 )
 
-
+$fileURI = "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/RDMIMonitoring.zip"
 
     Invoke-WebRequest -Uri $fileURI -OutFile "C:\RDMIMonitoring-$HostpoolName.zip"
     New-Item -Path "C:\RDMIMonitoring-$HostpoolName" -ItemType Directory -Force -ErrorAction SilentlyContinue
