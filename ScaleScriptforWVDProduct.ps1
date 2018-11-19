@@ -11,8 +11,8 @@ $AADApplicationId,
 [Parameter(Mandatory = $True)]
 $AADServicePrincipalSecret,
 
-[Parameter(Mandatory = $True)]
-$SubscriptionID,
+#[Parameter(Mandatory = $True)]
+#$SubscriptionID,
 
 [Parameter(Mandatory = $True)]
 $HostpoolName
