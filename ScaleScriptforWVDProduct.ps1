@@ -96,11 +96,10 @@ $appcreds = New-Object System.Management.Automation.PSCredential ($AADApplicatio
 #select the current Azure Subscription specified in the config
 #Select-AzureRmSubscription -SubscriptionId $SubscriptionID
 
-$CurrentDateTime = 0           
 #Construct Begin time and End time for the Peak period
 #$CurrentDateTime = Get-Date
-$CurrentDateUTCTime = Get-Date
-$CurrentDateTime=$CurrentDateUTCTime.ToUniversalTime()
+$CurrentDateTime = Get-Date
+$CurrentDateTime=$CurrentDateTime.ToUniversalTime()
 write-output "Starting RDMI Tenant Hosts Scale Optimization: Current Date Time is: $CurrentDateTime" "Info"
 
 $TimeDifferenceInHours = $TimeDifference.Split(":")[0]
