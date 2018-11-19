@@ -94,7 +94,7 @@ $appcreds = New-Object System.Management.Automation.PSCredential ($AADApplicatio
  Connect-AzureRmAccount -ServicePrincipal -Credential $appcreds -TenantId $AADTenantId
 
 #select the current Azure Subscription specified in the config
-Select-AzureRmSubscription -SubscriptionId $SubscriptionID
+#Select-AzureRmSubscription -SubscriptionId $SubscriptionID
 
 $CurrentDateTime = 0           
 #Construct Begin time and End time for the Peak period
