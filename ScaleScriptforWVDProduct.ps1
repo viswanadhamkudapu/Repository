@@ -232,7 +232,7 @@ if ($CurrentDateTime -ge $BeginPeakDateTime -and $CurrentDateTime -le $EndPeakDa
                     #check if the azure VM is running or not
 							
                     if ($roleInstance.PowerState -ne "VM running") {
-                        $getShsinfo = Get-RdsSessionHost -TenantName $tenantname -HostPoolName $hostPoolName
+                        $getShsinfo = Get-RdsSessionHost -TenantName $tenantname -HostPoolName $hostPoolName -Name $sessionHost
                                 
                         if ($getShsinfo.AllowNewSession -eq $false) {
                             Set-RdsSessionHost -TenantName $tenantName -HostPoolName $hostPoolName -Name $sessionHost -AllowNewSession $true
@@ -278,7 +278,7 @@ if ($CurrentDateTime -ge $BeginPeakDateTime -and $CurrentDateTime -le $EndPeakDa
                             break
                         }
                     }
-                    Break # break out of the inner foreach loop once a match is found and checked
+                    #Break # break out of the inner foreach loop once a match is found and checked
                 }
             }
         }
