@@ -1,0 +1,812 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+  <ViewDefinitions>
+    <View>
+      <Name>AdministrativeUnit</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.AzureAD.Model.AdministrativeUnit</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ObjectId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>DisplayName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Description</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>Application</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.AzureAD.Model.Application</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ObjectId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>AppId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>DisplayName</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>AppRoleAssignment</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.AzureAD.Model.AppRoleAssignment</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ObjectId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>ResourceDisplayName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>PrincipalDisplayName</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>Contact</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.AzureAD.Model.Contact</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ObjectId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Mail</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>DisplayName</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>Contract</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.AzureAD.Model.Contract</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ObjectId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>DefaultDomainName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>DisplayName</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>Device</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.AzureAD.Model.Device</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ObjectId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>DeviceId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>DisplayName</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>DirectoryObject</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.AzureAD.Model.DirectoryObject</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ObjectId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>ObjectType</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>DirectoryRole</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.AzureAD.Model.DirectoryRole</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ObjectId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>DisplayName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Description</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>DirectoryRoleTemplate</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.AzureAD.Model.DirectoryRoleTemplate</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ObjectId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>DisplayName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Description</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>ExtensionProperty</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.AzureAD.Model.ExtensionProperty</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ObjectId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Name</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>TargetObjects</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>Domain</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.AzureAD.Model.Domain</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>Name</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>AvailabilityStatus</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>AuthenticationType</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>DomainDnsRecord</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.AzureAD.Model.DomainDnsRecord</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>DnsRecordId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Label</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>SupportedService</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Ttl</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>Group</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.AzureAD.Model.Group</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ObjectId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>DisplayName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Description</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>OAuth2PermissionGrant</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.AzureAD.Model.OAuth2PermissionGrant</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ObjectId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>ResourceId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Scope</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>PrincipalId</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>Policy</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.MSGraph.Model.Policy</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ObjectId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>DisplayName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Type</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Definition</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>PSAzureContext</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.Azure.AD.CommonLibrary.PSAzureContext</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader>
+            <Label>AccountType</Label>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>Account</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Environment</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>TenantId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>TenantDomain</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>$_.Account.Type</ScriptBlock>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>ScopedRoleMembership</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.AzureAD.Model.ScopedRoleMembership</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>AdministrativeUnitObjectId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>RoleObjectId</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>ServicePrincipal</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.AzureAD.Model.ServicePrincipal</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ObjectId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>AppId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>DisplayName</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>SubscribedSku</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.AzureAD.Model.SubscribedSku</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ObjectId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>SkuPartNumber</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>PrepaidUnits</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>ConsumedUnits</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>TenantDetail</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.AzureAD.Model.TenantDetail</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader>
+            <Label>VerifiedDomain</Label>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ObjectId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>DisplayName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>$_.VerifiedDomains | Where-Object {$_._Default -eq $true}  | Select -ExpandProperty Name</ScriptBlock>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>User</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.Open.AzureAD.Model.User</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+          <TableColumnHeader />
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ObjectId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>DisplayName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>UserPrincipalName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>UserType</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+  </ViewDefinitions>
+</Configuration>
+<!-- SIG # Begin signature block -->
+<!-- MIIkFwYJKoZIhvcNAQcCoIIkCDCCJAQCAQExDzANBglghkgBZQMEAgEFADB5Bgor -->
+<!-- BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG -->
+<!-- KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAZjZmRxfGOaJe6 -->
+<!-- 1pHC9vu/wyBQHTFKOrTpnj92m7jjXKCCDY8wggYNMIID9aADAgECAhMzAAAAok4x -->
+<!-- GjmBzcLRAAAAAACiMA0GCSqGSIb3DQEBCwUAMH4xCzAJBgNVBAYTAlVTMRMwEQYD -->
+<!-- VQQIEwpXYXNoaW5ndG9uMRAwDgYDVQQHEwdSZWRtb25kMR4wHAYDVQQKExVNaWNy -->
+<!-- b3NvZnQgQ29ycG9yYXRpb24xKDAmBgNVBAMTH01pY3Jvc29mdCBDb2RlIFNpZ25p -->
+<!-- bmcgUENBIDIwMTEwHhcNMTcwNTA0MTgxODQwWhcNMTgwODAyMTgxODQwWjB0MQsw -->
+<!-- CQYDVQQGEwJVUzETMBEGA1UECBMKV2FzaGluZ3RvbjEQMA4GA1UEBxMHUmVkbW9u -->
+<!-- ZDEeMBwGA1UEChMVTWljcm9zb2Z0IENvcnBvcmF0aW9uMR4wHAYDVQQDExVNaWNy -->
+<!-- b3NvZnQgQ29ycG9yYXRpb24wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIB -->
+<!-- AQDF23bhgK/Y3/JtFMfiYwlD3cTeFsHlQWq+z+Y88Q/wTbDkHOu2YX99jQUMgg5B -->
+<!-- sriQLkD2JpX2K359i1OT07+jCE6/zxWg8N43TDwAWDLU6Dv/RE7qRsFisKN+PIvP -->
+<!-- KbhPDiZA9tgpeX8OZBrti3hbYM8DQF6lc0+/u9XzTSUsmoz4b+vbVktX9i352Gj0 -->
+<!-- yPiQCOSGDOpFP2YiL5Ep4q7I79qUoJScmjea/cSvcM0B4OaT1z7EgVMiE/H7a27B -->
+<!-- qazrIJSkSLREBWz+ebLPqDMpW4YNfjcMzIdUv3yvwDmMD9yoFdXlcXOGSJs0kL3d -->
+<!-- GIo0Pg8odzwvUXZfm4Wzh8kbAgMBAAGjggGMMIIBiDArBgNVHSUEJDAiBgorBgEE -->
+<!-- AYI3TBMBBgorBgEEAYI3TAgBBggrBgEFBQcDAzAdBgNVHQ4EFgQUF3SKESoLLIAn -->
+<!-- CiQze2Ch6sPOaSowUgYDVR0RBEswSaRHMEUxDTALBgNVBAsTBE1PUFIxNDAyBgNV -->
+<!-- BAUTKzIzMzExMCs5ZTEzM2M0YS01N2U2LTQ5OTYtODI0Mi01Yzk2NjQ4NzU0YTEw -->
+<!-- HwYDVR0jBBgwFoAUSG5k5VAF04KqFzc3IrVtqMp1ApUwVAYDVR0fBE0wSzBJoEeg -->
+<!-- RYZDaHR0cDovL3d3dy5taWNyb3NvZnQuY29tL3BraW9wcy9jcmwvTWljQ29kU2ln -->
+<!-- UENBMjAxMV8yMDExLTA3LTA4LmNybDBhBggrBgEFBQcBAQRVMFMwUQYIKwYBBQUH -->
+<!-- MAKGRWh0dHA6Ly93d3cubWljcm9zb2Z0LmNvbS9wa2lvcHMvY2VydHMvTWljQ29k -->
+<!-- U2lnUENBMjAxMV8yMDExLTA3LTA4LmNydDAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3 -->
+<!-- DQEBCwUAA4ICAQBAYyp8Yn2r+3bQ08L9MZygBzAsG8+3OXFouvWzZEvwuDoY6jgn -->
+<!-- Xirni8GiEG55zSV18oFYyU8CxoIQPd3taPo//3Z6r7RefkbJ7d0QqGarBxN8qS/I -->
+<!-- hP/wn+R+B3kOuzPw/sjSVnt1kj7teTGFuNL7OCYYWakucDQKhIr2E3X22VkAGH47 -->
+<!-- mTT8Hx8bGaWk2ziq4sYjW85+J6CTQhlVTaAKRhIMw/HyXqpKYB1xo9w10/B0m48+ -->
+<!-- qDdoPNmD3isbuqClCXgCQZaK/pIekdAQb1fYH0m5PPXARvMpfNPmq+nJ7J8gIfHW -->
+<!-- nHSa2a0XYiteqIBF9mkI8fp7h/M4pNAXKkEnBc0zYzIqziEOvO0/BJKd/Dq5DQYl -->
+<!-- 7+B0uOIQ1oWydCA5uR4ssuis06cxUG7ZZZd6TRS3cjQhUgRjBW430Hr6BFrYpprq -->
+<!-- sX3ozX/k4Qow7R9qLd268jMG+EqZufK7Td6tnwco0dKed66ok6UJtfF0pZEm+H0V -->
+<!-- 24eYcTQL9Afb7NIS6zfCj1gmZxXUfQLVX5CSOu9f3lN2QaChdwLT4KILOQx5DHbx -->
+<!-- 5iEP9/ci0kzQ4wvHU4nbotumIDn3fx4+q7p2BOmb7RfKbfNy/FAnk35yZyBWuYpj -->
+<!-- qy5/yQSGkHIgzkzkWV2JGqpTRUeeyMIMUe97rujd8JKM8dLSX/8ZLmZDMjCCB3ow -->
+<!-- ggVioAMCAQICCmEOkNIAAAAAAAMwDQYJKoZIhvcNAQELBQAwgYgxCzAJBgNVBAYT -->
+<!-- AlVTMRMwEQYDVQQIEwpXYXNoaW5ndG9uMRAwDgYDVQQHEwdSZWRtb25kMR4wHAYD -->
+<!-- VQQKExVNaWNyb3NvZnQgQ29ycG9yYXRpb24xMjAwBgNVBAMTKU1pY3Jvc29mdCBS -->
+<!-- b290IENlcnRpZmljYXRlIEF1dGhvcml0eSAyMDExMB4XDTExMDcwODIwNTkwOVoX -->
+<!-- DTI2MDcwODIxMDkwOVowfjELMAkGA1UEBhMCVVMxEzARBgNVBAgTCldhc2hpbmd0 -->
+<!-- b24xEDAOBgNVBAcTB1JlZG1vbmQxHjAcBgNVBAoTFU1pY3Jvc29mdCBDb3Jwb3Jh -->
+<!-- dGlvbjEoMCYGA1UEAxMfTWljcm9zb2Z0IENvZGUgU2lnbmluZyBQQ0EgMjAxMTCC -->
+<!-- AiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAKvw+nIQHC6t2G6qghBNNLry -->
+<!-- tlghn0IbKmvpWlCquAY4GgRJun/DDB7dN2vGEtgL8DjCmQawyDnVARQxQtOJDXlk -->
+<!-- h36UYCRsr55JnOloXtLfm1OyCizDr9mpK656Ca/XllnKYBoF6WZ26DJSJhIv56sI -->
+<!-- UM+zRLdd2MQuA3WraPPLbfM6XKEW9Ea64DhkrG5kNXimoGMPLdNAk/jj3gcN1Vx5 -->
+<!-- pUkp5w2+oBN3vpQ97/vjK1oQH01WKKJ6cuASOrdJXtjt7UORg9l7snuGG9k+sYxd -->
+<!-- 6IlPhBryoS9Z5JA7La4zWMW3Pv4y07MDPbGyr5I4ftKdgCz1TlaRITUlwzluZH9T -->
+<!-- upwPrRkjhMv0ugOGjfdf8NBSv4yUh7zAIXQlXxgotswnKDglmDlKNs98sZKuHCOn -->
+<!-- qWbsYR9q4ShJnV+I4iVd0yFLPlLEtVc/JAPw0XpbL9Uj43BdD1FGd7P4AOG8rAKC -->
+<!-- X9vAFbO9G9RVS+c5oQ/pI0m8GLhEfEXkwcNyeuBy5yTfv0aZxe/CHFfbg43sTUkw -->
+<!-- p6uO3+xbn6/83bBm4sGXgXvt1u1L50kppxMopqd9Z4DmimJ4X7IvhNdXnFy/dygo -->
+<!-- 8e1twyiPLI9AN0/B4YVEicQJTMXUpUMvdJX3bvh4IFgsE11glZo+TzOE2rCIF96e -->
+<!-- TvSWsLxGoGyY0uDWiIwLAgMBAAGjggHtMIIB6TAQBgkrBgEEAYI3FQEEAwIBADAd -->
+<!-- BgNVHQ4EFgQUSG5k5VAF04KqFzc3IrVtqMp1ApUwGQYJKwYBBAGCNxQCBAweCgBT -->
+<!-- AHUAYgBDAEEwCwYDVR0PBAQDAgGGMA8GA1UdEwEB/wQFMAMBAf8wHwYDVR0jBBgw -->
+<!-- FoAUci06AjGQQ7kUBU7h6qfHMdEjiTQwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDov -->
+<!-- L2NybC5taWNyb3NvZnQuY29tL3BraS9jcmwvcHJvZHVjdHMvTWljUm9vQ2VyQXV0 -->
+<!-- MjAxMV8yMDExXzAzXzIyLmNybDBeBggrBgEFBQcBAQRSMFAwTgYIKwYBBQUHMAKG -->
+<!-- Qmh0dHA6Ly93d3cubWljcm9zb2Z0LmNvbS9wa2kvY2VydHMvTWljUm9vQ2VyQXV0 -->
+<!-- MjAxMV8yMDExXzAzXzIyLmNydDCBnwYDVR0gBIGXMIGUMIGRBgkrBgEEAYI3LgMw -->
+<!-- gYMwPwYIKwYBBQUHAgEWM2h0dHA6Ly93d3cubWljcm9zb2Z0LmNvbS9wa2lvcHMv -->
+<!-- ZG9jcy9wcmltYXJ5Y3BzLmh0bTBABggrBgEFBQcCAjA0HjIgHQBMAGUAZwBhAGwA -->
+<!-- XwBwAG8AbABpAGMAeQBfAHMAdABhAHQAZQBtAGUAbgB0AC4gHTANBgkqhkiG9w0B -->
+<!-- AQsFAAOCAgEAZ/KGpZjgVHkaLtPYdGcimwuWEeFjkplCln3SeQyQwWVfLiw++MNy -->
+<!-- 0W2D/r4/6ArKO79HqaPzadtjvyI1pZddZYSQfYtGUFXYDJJ80hpLHPM8QotS0LD9 -->
+<!-- a+M+By4pm+Y9G6XUtR13lDni6WTJRD14eiPzE32mkHSDjfTLJgJGKsKKELukqQUM -->
+<!-- m+1o+mgulaAqPyprWEljHwlpblqYluSD9MCP80Yr3vw70L01724lruWvJ+3Q3fMO -->
+<!-- r5kol5hNDj0L8giJ1h/DMhji8MUtzluetEk5CsYKwsatruWy2dsViFFFWDgycSca -->
+<!-- f7H0J/jeLDogaZiyWYlobm+nt3TDQAUGpgEqKD6CPxNNZgvAs0314Y9/HG8VfUWn -->
+<!-- duVAKmWjw11SYobDHWM2l4bf2vP48hahmifhzaWX0O5dY0HjWwechz4GdwbRBrF1 -->
+<!-- HxS+YWG18NzGGwS+30HHDiju3mUv7Jf2oVyW2ADWoUa9WfOXpQlLSBCZgB/QACnF -->
+<!-- sZulP0V3HjXG0qKin3p6IvpIlR+r+0cjgPWe+L9rt0uX4ut1eBrs6jeZeRhL/9az -->
+<!-- I2h15q/6/IvrC4DqaTuv/DDtBEyO3991bWORPdGdVk5Pv4BXIqF4ETIheu9BCrE/ -->
+<!-- +6jMpF3BoYibV3FWTkhFwELJm3ZbCoBIa/15n8G9bW1qyVJzEw16UM0xghXeMIIV -->
+<!-- 2gIBATCBlTB+MQswCQYDVQQGEwJVUzETMBEGA1UECBMKV2FzaGluZ3RvbjEQMA4G -->
+<!-- A1UEBxMHUmVkbW9uZDEeMBwGA1UEChMVTWljcm9zb2Z0IENvcnBvcmF0aW9uMSgw -->
+<!-- JgYDVQQDEx9NaWNyb3NvZnQgQ29kZSBTaWduaW5nIFBDQSAyMDExAhMzAAAAok4x -->
+<!-- GjmBzcLRAAAAAACiMA0GCWCGSAFlAwQCAQUAoIHMMBkGCSqGSIb3DQEJAzEMBgor -->
+<!-- BgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgorBgEEAYI3AgEVMC8GCSqGSIb3 -->
+<!-- DQEJBDEiBCCkBvBGzu6eloGgHO2g8xprNn08zH4pSIdxnqrdbsG55TBgBgorBgEE -->
+<!-- AYI3AgEMMVIwUKAsgCoAQQB6AHUAcgBlAEEARAAuAEYAbwByAG0AYQB0AC4AcABz -->
+<!-- ADEAeABtAGyhIIAeaHR0cDovL3d3dy5NaWNyb3NvZnRPbmxpbmUuY29tMA0GCSqG -->
+<!-- SIb3DQEBAQUABIIBAE/hT1Tbgj9BHHhQFHVOzo1V/pAmAeWKqsiaCN3jDN4q7seX -->
+<!-- ylQyCTfb+71es15FaufsjHba3nYp7rjyIn+kcWpzhd3EoA2KA+wuD1RaY4aRYL6R -->
+<!-- ILt/xg3uVhK23ydxJ6cUrdmbQy49FPpsUFZX9BSXfWrWJYhYrfZ1ANYOdJI92k9Q -->
+<!-- bAyK3qowLzCNFPbbzJBCOgEN36zicwLF7swaewkmRmw+AOhoUWmFP6Qj9wgIlRoZ -->
+<!-- k7mx7H5xXspZqdhz94gyKtp5S2aUxmWIa3mUc33IJW0ncb4EX/qEKvlgtzhAZTAT -->
+<!-- YY/osNDmm6wzxHI+Wi3HI8BssYumAryGPjM9x8OhghNKMIITRgYKKwYBBAGCNwMD -->
+<!-- ATGCEzYwghMyBgkqhkiG9w0BBwKgghMjMIITHwIBAzEPMA0GCWCGSAFlAwQCAQUA -->
+<!-- MIIBPQYLKoZIhvcNAQkQAQSgggEsBIIBKDCCASQCAQEGCisGAQQBhFkKAwEwMTAN -->
+<!-- BglghkgBZQMEAgEFAAQg4rcYuqU5gap5P0VibC2hTkAVydIoL/hBG20iMi7odp8C -->
+<!-- BllUTwpkJxgTMjAxNzA3MTAxODAwMTEuNTg3WjAHAgEBgAIB9KCBuaSBtjCBszEL -->
+<!-- MAkGA1UEBhMCVVMxEzARBgNVBAgTCldhc2hpbmd0b24xEDAOBgNVBAcTB1JlZG1v -->
+<!-- bmQxHjAcBgNVBAoTFU1pY3Jvc29mdCBDb3Jwb3JhdGlvbjENMAsGA1UECxMETU9Q -->
+<!-- UjEnMCUGA1UECxMebkNpcGhlciBEU0UgRVNOOjMxQzUtMzBCQS03QzkxMSUwIwYD -->
+<!-- VQQDExxNaWNyb3NvZnQgVGltZS1TdGFtcCBTZXJ2aWNloIIOzTCCBnEwggRZoAMC -->
+<!-- AQICCmEJgSoAAAAAAAIwDQYJKoZIhvcNAQELBQAwgYgxCzAJBgNVBAYTAlVTMRMw -->
+<!-- EQYDVQQIEwpXYXNoaW5ndG9uMRAwDgYDVQQHEwdSZWRtb25kMR4wHAYDVQQKExVN -->
+<!-- aWNyb3NvZnQgQ29ycG9yYXRpb24xMjAwBgNVBAMTKU1pY3Jvc29mdCBSb290IENl -->
+<!-- cnRpZmljYXRlIEF1dGhvcml0eSAyMDEwMB4XDTEwMDcwMTIxMzY1NVoXDTI1MDcw -->
+<!-- MTIxNDY1NVowfDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCldhc2hpbmd0b24xEDAO -->
+<!-- BgNVBAcTB1JlZG1vbmQxHjAcBgNVBAoTFU1pY3Jvc29mdCBDb3Jwb3JhdGlvbjEm -->
+<!-- MCQGA1UEAxMdTWljcm9zb2Z0IFRpbWUtU3RhbXAgUENBIDIwMTAwggEiMA0GCSqG -->
+<!-- SIb3DQEBAQUAA4IBDwAwggEKAoIBAQCpHQ28dxGKOiDs/BOX9fp/aZRrdFQQ1aUK -->
+<!-- AIKF++18aEssX8XD5WHCdrc+Zitb8BVTJwQxH0EbGpUdzgkTjnxhMFmxMEQP8WCI -->
+<!-- hFRDDNdNuDgIs0Ldk6zWczBXJoKjRQ3Q6vVHgc2/JGAyWGBG8lhHhjKEHnRhZ5Ff -->
+<!-- gVSxz5NMksHEpl3RYRNuKMYa+YaAu99h/EbBJx0kZxJyGiGKr0tkiVBisV39dx89 -->
+<!-- 8Fd1rL2KQk1AUdEPnAY+Z3/1ZsADlkR+79BL/W7lmsqxqPJ6Kgox8NpOBpG2iAg1 -->
+<!-- 6HgcsOmZzTznL0S6p/TcZL2kAcEgCZN4zfy8wMlEXV4WnAEFTyJNAgMBAAGjggHm -->
+<!-- MIIB4jAQBgkrBgEEAYI3FQEEAwIBADAdBgNVHQ4EFgQU1WM6XIoxkPNDe3xGG8Uz -->
+<!-- aFqFbVUwGQYJKwYBBAGCNxQCBAweCgBTAHUAYgBDAEEwCwYDVR0PBAQDAgGGMA8G -->
+<!-- A1UdEwEB/wQFMAMBAf8wHwYDVR0jBBgwFoAU1fZWy4/oolxiaNE9lJBb186aGMQw -->
+<!-- VgYDVR0fBE8wTTBLoEmgR4ZFaHR0cDovL2NybC5taWNyb3NvZnQuY29tL3BraS9j -->
+<!-- cmwvcHJvZHVjdHMvTWljUm9vQ2VyQXV0XzIwMTAtMDYtMjMuY3JsMFoGCCsGAQUF -->
+<!-- BwEBBE4wTDBKBggrBgEFBQcwAoY+aHR0cDovL3d3dy5taWNyb3NvZnQuY29tL3Br -->
+<!-- aS9jZXJ0cy9NaWNSb29DZXJBdXRfMjAxMC0wNi0yMy5jcnQwgaAGA1UdIAEB/wSB -->
+<!-- lTCBkjCBjwYJKwYBBAGCNy4DMIGBMD0GCCsGAQUFBwIBFjFodHRwOi8vd3d3Lm1p -->
+<!-- Y3Jvc29mdC5jb20vUEtJL2RvY3MvQ1BTL2RlZmF1bHQuaHRtMEAGCCsGAQUFBwIC -->
+<!-- MDQeMiAdAEwAZQBnAGEAbABfAFAAbwBsAGkAYwB5AF8AUwB0AGEAdABlAG0AZQBu -->
+<!-- AHQALiAdMA0GCSqGSIb3DQEBCwUAA4ICAQAH5ohRDeLG4Jg/gXEDPZ2joSFvs+um -->
+<!-- zPUxvs8F4qn++ldtGTCzwsVmyWrf9efweL3HqJ4l4/m87WtUVwgrUYJEEvu5U4zM -->
+<!-- 9GASinbMQEBBm9xcF/9c+V4XNZgkVkt070IQyK+/f8Z/8jd9Wj8c8pl5SpFSAK84 -->
+<!-- Dxf1L3mBZdmptWvkx872ynoAb0swRCQiPM/tA6WWj1kpvLb9BOFwnzJKJ/1Vry/+ -->
+<!-- tuWOM7tiX5rbV0Dp8c6ZZpCM/2pif93FSguRJuI57BlKcWOdeyFtw5yjojz6f32W -->
+<!-- apB4pm3S4Zz5Hfw42JT0xqUKloakvZ4argRCg7i1gJsiOCC1JeVk7Pf0v35jWSUP -->
+<!-- ei45V3aicaoGig+JFrphpxHLmtgOR5qAxdDNp9DvfYPw4TtxCd9ddJgiCGHasFAe -->
+<!-- b73x4QDf5zEHpJM692VHeOj4qEir995yfmFrb3epgcunCaw5u+zGy9iCtHLNHfS4 -->
+<!-- hQEegPsbiSpUObJb2sgNVZl6h3M7COaYLeqN4DMuEin1wC9UJyH3yKxO2ii4sanb -->
+<!-- lrKnQqLJzxlBTeCG+SqaoxFmMNO7dDJL32N79ZmKLxvHIa9Zta7cRDyXUHHXodLF -->
+<!-- VeNp3lfB0d4wwP3M5k37Db9dT+mdHhk4L7zPWAUu7w2gUDXa7wknHNWzfjUeCLra -->
+<!-- NtvTX4/edIhJEjCCBNowggPCoAMCAQICEzMAAACgGph4PmbYqtcAAAAAAKAwDQYJ -->
+<!-- KoZIhvcNAQELBQAwfDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCldhc2hpbmd0b24x -->
+<!-- EDAOBgNVBAcTB1JlZG1vbmQxHjAcBgNVBAoTFU1pY3Jvc29mdCBDb3Jwb3JhdGlv -->
+<!-- bjEmMCQGA1UEAxMdTWljcm9zb2Z0IFRpbWUtU3RhbXAgUENBIDIwMTAwHhcNMTYw -->
+<!-- OTA3MTc1NjQ4WhcNMTgwOTA3MTc1NjQ4WjCBszELMAkGA1UEBhMCVVMxEzARBgNV -->
+<!-- BAgTCldhc2hpbmd0b24xEDAOBgNVBAcTB1JlZG1vbmQxHjAcBgNVBAoTFU1pY3Jv -->
+<!-- c29mdCBDb3Jwb3JhdGlvbjENMAsGA1UECxMETU9QUjEnMCUGA1UECxMebkNpcGhl -->
+<!-- ciBEU0UgRVNOOjMxQzUtMzBCQS03QzkxMSUwIwYDVQQDExxNaWNyb3NvZnQgVGlt -->
+<!-- ZS1TdGFtcCBTZXJ2aWNlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA -->
+<!-- 52wU4jDRZ9KtBK622yI96CopNe6hQakbU8w8PfgtvRENeMUEEQVrWEOU5GMkHWUj -->
+<!-- 6cUz05BrFQ7RcEnqs+QiapTlbWMS5s9o1H1oNneIeM1ZtkbGvMhKOX/0a4QxOnGr -->
+<!-- 9Ajeaxy3JO4fi1+H6HphTDlmr06jco1DDXWcuw5AqgsT5SzQdaXICnaH8d0V6T7o -->
+<!-- vybN4WpSGAKTd/0PEV6J8bYIXqNTJVK+lWVDAPS9O6o6tEtsBFJpKi2fzjh/Hjc/ -->
+<!-- OoeQsR5jHlah2GDLv9jRWkR8cIoeU/onqawxpmsKnXysMJejJraEpcSl8bx1yMmM -->
+<!-- 8BgRQeXPz9gYP00zBCOcGwIDAQABo4IBGzCCARcwHQYDVR0OBBYEFMiwxPehFQIO -->
+<!-- YhdwOn5SNpFalHYBMB8GA1UdIwQYMBaAFNVjOlyKMZDzQ3t8RhvFM2hahW1VMFYG -->
+<!-- A1UdHwRPME0wS6BJoEeGRWh0dHA6Ly9jcmwubWljcm9zb2Z0LmNvbS9wa2kvY3Js -->
+<!-- L3Byb2R1Y3RzL01pY1RpbVN0YVBDQV8yMDEwLTA3LTAxLmNybDBaBggrBgEFBQcB -->
+<!-- AQROMEwwSgYIKwYBBQUHMAKGPmh0dHA6Ly93d3cubWljcm9zb2Z0LmNvbS9wa2kv -->
+<!-- Y2VydHMvTWljVGltU3RhUENBXzIwMTAtMDctMDEuY3J0MAwGA1UdEwEB/wQCMAAw -->
+<!-- EwYDVR0lBAwwCgYIKwYBBQUHAwgwDQYJKoZIhvcNAQELBQADggEBABAJeQeXD5Mu -->
+<!-- cL1J1jbwVDnyQPaPP9IJdRzzWudobl061TgqE2sirzCtFR9B1MxTRbn4v+coz1Bf -->
+<!-- KzXm6h77818Q9ievvSB50lpsvkMITije+mTemKXeWyZNw2lJJztKPLCgwEyTfUad -->
+<!-- JoI8vC6Bfca1gjILJald4Grg2+Lhe6oiYssFtwY9bkW+8sGZfrAL0CyuggARt6sn -->
+<!-- q64iDIQJM9B1ATsKsMuqIi/kBE2nrpD1ZHT4zFZsYS6+IVefhBdcu3KRrXngpCDr -->
+<!-- LgH0H9L/KQyb2vgm4striVBVomm15MBYaaQoLn0AZfK9ScP6vzPGmUc+G2aJzVZq -->
+<!-- qzvrZ7V9UlKhggN2MIICXgIBATCB46GBuaSBtjCBszELMAkGA1UEBhMCVVMxEzAR -->
+<!-- BgNVBAgTCldhc2hpbmd0b24xEDAOBgNVBAcTB1JlZG1vbmQxHjAcBgNVBAoTFU1p -->
+<!-- Y3Jvc29mdCBDb3Jwb3JhdGlvbjENMAsGA1UECxMETU9QUjEnMCUGA1UECxMebkNp -->
+<!-- cGhlciBEU0UgRVNOOjMxQzUtMzBCQS03QzkxMSUwIwYDVQQDExxNaWNyb3NvZnQg -->
+<!-- VGltZS1TdGFtcCBTZXJ2aWNloiUKAQEwCQYFKw4DAhoFAAMVAIQVUWUii4Xre1VA -->
+<!-- 0VgDHA3Fcm/AoIHCMIG/pIG8MIG5MQswCQYDVQQGEwJVUzETMBEGA1UECBMKV2Fz -->
+<!-- aGluZ3RvbjEQMA4GA1UEBxMHUmVkbW9uZDEeMBwGA1UEChMVTWljcm9zb2Z0IENv -->
+<!-- cnBvcmF0aW9uMQ0wCwYDVQQLEwRNT1BSMScwJQYDVQQLEx5uQ2lwaGVyIE5UUyBF -->
+<!-- U046NTdGNi1DMUUwLTU1NEMxKzApBgNVBAMTIk1pY3Jvc29mdCBUaW1lIFNvdXJj -->
+<!-- ZSBNYXN0ZXIgQ2xvY2swDQYJKoZIhvcNAQEFBQACBQDdDjItMCIYDzIwMTcwNzEw -->
+<!-- MTcwNDQ1WhgPMjAxNzA3MTExNzA0NDVaMHQwOgYKKwYBBAGEWQoEATEsMCowCgIF -->
+<!-- AN0OMi0CAQAwBwIBAAICE2swBwIBAAICGYAwCgIFAN0Pg60CAQAwNgYKKwYBBAGE -->
+<!-- WQoEAjEoMCYwDAYKKwYBBAGEWQoDAaAKMAgCAQACAxbjYKEKMAgCAQACAwehIDAN -->
+<!-- BgkqhkiG9w0BAQUFAAOCAQEABIliT9AQOLpZhRmCh9z1n+7QTeOOV8AYhUDqFDH/ -->
+<!-- gkiVQFAXxfLl9BkgWuEBakbQj0sOlBGEcVa3+uXUWt7vfe6/8JDLREZSCb3Ec2ow -->
+<!-- cosf4RpjfoPZ87LMzC5YYKKrCKX36NyuZb73WWkeZ05V97mjioaxyTWBoyr2jrF7 -->
+<!-- rDMyoYvfg1F7L0A2okwqsdT+jiUjnOMbZjZj2KLHMhYwYqt8TVhtCgz91A7zyk9X -->
+<!-- ipOKdnVkUS77KBTvYqcChO7DfxVr6aQdkMTF/b6eCmJi1CbN20t2hGWqZA54DPni -->
+<!-- zAYHAkgCjmT/RBMPQQ8gxnazgmSwQ//jVuSQHSGZX1MbVzGCAvUwggLxAgEBMIGT -->
+<!-- MHwxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpXYXNoaW5ndG9uMRAwDgYDVQQHEwdS -->
+<!-- ZWRtb25kMR4wHAYDVQQKExVNaWNyb3NvZnQgQ29ycG9yYXRpb24xJjAkBgNVBAMT -->
+<!-- HU1pY3Jvc29mdCBUaW1lLVN0YW1wIFBDQSAyMDEwAhMzAAAAoBqYeD5m2KrXAAAA -->
+<!-- AACgMA0GCWCGSAFlAwQCAQUAoIIBMjAaBgkqhkiG9w0BCQMxDQYLKoZIhvcNAQkQ -->
+<!-- AQQwLwYJKoZIhvcNAQkEMSIEIMMf29NO0usFEorBBs0R9ZZWJBAdTy9qG4F7KxzY -->
+<!-- gD4LMIHiBgsqhkiG9w0BCRACDDGB0jCBzzCBzDCBsQQUhBVRZSKLhet7VUDRWAMc -->
+<!-- DcVyb8AwgZgwgYCkfjB8MQswCQYDVQQGEwJVUzETMBEGA1UECBMKV2FzaGluZ3Rv -->
+<!-- bjEQMA4GA1UEBxMHUmVkbW9uZDEeMBwGA1UEChMVTWljcm9zb2Z0IENvcnBvcmF0 -->
+<!-- aW9uMSYwJAYDVQQDEx1NaWNyb3NvZnQgVGltZS1TdGFtcCBQQ0EgMjAxMAITMwAA -->
+<!-- AKAamHg+Ztiq1wAAAAAAoDAWBBSmebZszGntrboWoSG0uabWT00G3TANBgkqhkiG -->
+<!-- 9w0BAQsFAASCAQB5ZNDSwUYK2kAFzcWwyocZiRwNgShN8x/tzheH4bFBJyFdGSO6 -->
+<!-- zC0OLAscihg1RqPGo8O/Nfwjn9QxCkkfR+eTI1IXsBWoLsc0sb8AMx18/CpmX51t -->
+<!-- FvjAdmm/UnqJoOl3WVeJtvgwA9oKC751ZTio+KsZt3MEWjfv1UAX+ZVJQN52KeHu -->
+<!-- DxpqUZZyJ2J0D0rt+xBUP4WoSEmLoHcUQFvp7vj1XoutaYcb+SdC1JiKYLVZ/0gA -->
+<!-- IZ9hBXm2Ook7t16SXTxVdETAEHgMq/lzLqXzH4MUffa+XGZQpMxnGpqKe79H8DFV -->
+<!-- 34AWZMEv1Lak20tgwWF5ql0kDP0j5SJmAIaN -->
+<!-- SIG # End signature block -->
