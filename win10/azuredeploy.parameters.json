@@ -1,0 +1,42 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "rdshNamePrefix": {
+      "value": "rdsh"
+    },
+    "numberOfRdshInstances": {
+      "value": 1
+    },
+    "adVnetNameResourceGroup": {
+      "value": "VnetResourceGroupName"
+    },
+    "adVnetName": {
+      "value": "VnetName"
+    },
+    "adSubnetName": {
+      "value": "SubnetName"
+    },
+    "adDomainName": {
+      "value": "contoso.com"
+    },
+    "adminUsername": {
+      "value": "vmadmin"
+    },
+    "adminPassword": {
+      "value": "password"
+    },
+    "imageSKU": {
+      "value": "2016-Datacenter"
+    },
+    "rdshVmSize": {
+      "value": "VMsize"
+    },
+    "registrationToken": {
+      "value": "RegistrationToken"
+    },
+    "baseUrl": {
+      "value": "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/RdmiAddHosts/"
+    }
+  }
+}
