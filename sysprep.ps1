@@ -27,3 +27,5 @@ if($runSysprep){
   write-output "skipping the Sysprep"
 }
 }
+
+RunSysprep
