@@ -20,6 +20,9 @@ param(
     [Parameter(mandatory = $true)]
     [string]$registrationToken,
 
+    [Parameter(Mandatory = $true)]
+    [string]$ActivationKey,
+
     [Parameter(mandatory = $true)]
     [string]$localAdminUserName,
 
@@ -27,7 +30,10 @@ param(
     [string]$localAdminPassword
 )
 
-
+Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope Process -Force -Confirm:$false
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force -Confirm:$false
+$PolicyList=Get-ExecutionPolicy -List
+$log = $PolicyList | Out-String 
 
 function Write-Log { 
 
@@ -59,6 +65,23 @@ function Write-Log {
     } 
 }
 
+
+
+Write-Log -Message "Policy List: $log"
+
+function ActivateWin10
+{
+    param
+    (
+        [Parameter(Mandatory = $true)] 
+        [string]$ActivationKey
+    )
+
+    cscript c:\windows\system32\slmgr.vbs /ipk $ActivationKey
+    dism /online /Enable-Feature /FeatureName:AppServerClient /NoRestart /Quiet
+}
+Write-Log -Message "Activating Windows 10 Pro"
+ActivateWin10 -ActivationKey $ActivationKey
 
 try {
     #Downloading the DeployAgent zip file to rdsh vm
@@ -108,3 +131,6 @@ catch {
     Write-log -Error $_.Exception.Message
 
 }
+
+Write-Log -Message "Rebooting VM"
+Shutdown -r -t 90
