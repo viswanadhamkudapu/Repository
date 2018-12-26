@@ -80,8 +80,7 @@ function ActivateWin10
     cscript c:\windows\system32\slmgr.vbs /ipk $ActivationKey
     dism /online /Enable-Feature /FeatureName:AppServerClient /NoRestart /Quiet
 }
-Write-Log -Message "Activating Windows 10 Pro"
-ActivateWin10 -ActivationKey $ActivationKey
+
 
 try {
     #Downloading the DeployAgent zip file to rdsh vm
@@ -131,6 +130,9 @@ catch {
     Write-log -Error $_.Exception.Message
 
 }
+
+Write-Log -Message "Activating Windows 10 Pro"
+ActivateWin10 -ActivationKey $ActivationKey
 
 Write-Log -Message "Rebooting VM"
 Shutdown -r -t 90
