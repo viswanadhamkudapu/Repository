@@ -22,6 +22,10 @@ param(
 
     [Parameter(Mandatory = $true)]
     [string]$ActivationKey,
+    
+    [Parameter(mandatory = $true)]
+    [string]$rdshIs1809OrLater,
+
 
     [Parameter(mandatory = $true)]
     [string]$localAdminUserName,
@@ -34,7 +38,7 @@ Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope Process -Force -Confirm:$f
 Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force -Confirm:$false
 $PolicyList=Get-ExecutionPolicy -List
 $log = $PolicyList | Out-String 
-
+$rdshIs1809OrLaterBool = ($rdshIs1809OrLater -eq "True")
 function Write-Log { 
 
 
@@ -121,7 +125,7 @@ try {
         Write-Log  -Message "Getting fully qualified domain name of RDSH VM: $SessionHostName"
            
         #Executing DeployAgent psl file in rdsh vm and add to hostpool
-        $DAgentInstall = .\DeployAgent.ps1 -ComputerName $SessionHostName -AgentBootServiceInstaller ".\RDAgentBootLoaderInstall\Microsoft.RDInfra.RDAgentBootLoader.Installer-x64.msi" -AgentInstaller ".\RDInfraAgentInstall\Microsoft.RDInfra.RDAgent.Installer-x64.msi" -SxSStackInstaller ".\RDInfraSxSStackInstall\Microsoft.RDInfra.StackSxS.Installer-x64.msi" -AdminCredentials $adminCredentials -RegistrationToken $registrationToken -StartAgent $true
+        $DAgentInstall = .\DeployAgent.ps1 -ComputerName $SessionHostName -AgentBootServiceInstaller ".\RDAgentBootLoaderInstall\Microsoft.RDInfra.RDAgentBootLoader.Installer-x64.msi" -AgentInstaller ".\RDInfraAgentInstall\Microsoft.RDInfra.RDAgent.Installer-x64.msi" -SxSStackInstaller ".\RDInfraSxSStackInstall\Microsoft.RDInfra.StackSxS.Installer-x64.msi" -AdminCredentials $adminCredentials -RegistrationToken $registrationToken -StartAgent $true -rdshIs1809OrLater $rdshIs1809OrLaterBool
         Write-Log -Message "DeployAgent Script was successfully executed and RDAgentBootLoader,RDAgent,StackSxS installed inside VM for existing hostpool: $HostPoolName `
         $DAgentInstall"
     }
