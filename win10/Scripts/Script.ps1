@@ -125,7 +125,7 @@ try {
         Write-Log  -Message "Getting fully qualified domain name of RDSH VM: $SessionHostName"
            
         #Executing DeployAgent psl file in rdsh vm and add to hostpool
-        $DAgentInstall = .\DeployAgent.ps1 -ComputerName $SessionHostName -AgentBootServiceInstaller ".\RDAgentBootLoaderInstall\Microsoft.RDInfra.RDAgentBootLoader.Installer-x64.msi" -AgentInstaller ".\RDInfraAgentInstall\Microsoft.RDInfra.RDAgent.Installer-x64.msi" -SxSStackInstaller ".\RDInfraSxSStackInstall\Microsoft.RDInfra.StackSxS.Installer-x64.msi" -AdminCredentials $adminCredentials -RegistrationToken $registrationToken -StartAgent $true -rdshIs1809OrLater $rdshIs1809OrLaterBool
+        $DAgentInstall = .\DeployAgent.ps1 -ComputerName $SessionHostName -AgentBootServiceInstallerFolder ".\RDAgentBootLoaderInstall" -AgentInstallerFolder ".\RDInfraAgentInstall" -SxSStackInstallerFolder ".\RDInfraSxSStackInstall" -EnableSxSStackScriptFolder ".\EnableSxSStackScript"  -AdminCredentials $adminCredentials -RegistrationToken $registrationToken -StartAgent $true -rdshIs1809OrLater $rdshIs1809OrLaterBool
         Write-Log -Message "DeployAgent Script was successfully executed and RDAgentBootLoader,RDAgent,StackSxS installed inside VM for existing hostpool: $HostPoolName `
         $DAgentInstall"
     }
