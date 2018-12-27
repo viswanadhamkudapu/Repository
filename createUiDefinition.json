@@ -10,7 +10,7 @@
 				"label": "Hostpool name",
 				"constraints": {
 					"required": true
-					"regex": "^((?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])|(?=.*[0-9])(?=.*[a-z])(?=.*[!@#$%^&*])|(?=.*[0-9])(?=.*[A-Z])(?=.*[!@#$%^&*])|(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])).{6,72}$",
+					"regex": "^((?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]))",
 					"validationMessage": "Enter hostpool name without underscore"
 				},
 				"visible": true
