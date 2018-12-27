@@ -1,0 +1,252 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rdshNamePrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "This prefix will be used in combination with the VM number to create the VM name. If using “rdsh” as the prefix, VMs would be named “rdsh-0”, “rdsh-1”, etc. You should use a unique prefix to reduce name collisions in Active Directory."
+            },
+            "defaultValue": "rdsh"
+        },
+        "numberOfRdshInstances": {
+            "type": "int",
+            "defaultValue": 1,
+            "metadata": {
+                "description": "Number of RemoteDesktopSessionHosts"
+            }
+        },
+        "adVnetNameResourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "The resource group containing the existing active directory virtual network."
+            }
+        },
+        "adVnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the virtual network the VMs will be connected to."
+            }
+        },
+        "adSubnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The subnet the VMs will be placed in."
+            }
+        },
+        "adDomainName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the AD domain. For example contoso.com"
+            },
+            "defaultValue": "contoso.com"
+        },
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the administrator of the new VM and the domain. Exclusion list: 'administrator'. For example johnadmin"
+            },
+            "defaultValue": "vmadmin"
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The password for the administrator account of the new VM and the domain"
+            },
+            "defaultValue": "[concat('Subscription#',subscription().subscriptionId)]"
+        },
+        "imageSKU": {
+            "type": "string",
+            "allowedValues": [
+                "2012-R2-Datacenter",
+                "2016-Datacenter"
+            ],
+            "metadata": {
+                "description": "Windows server SKU"
+            },
+            "defaultValue": "2016-Datacenter"
+        },
+        "rdshVmSize": {
+            "type": "string",
+            "metadata": {
+                "description": "The size of the RDSH VMs"
+            }
+        },
+        "registrationToken": {
+            "type": "string",
+            "metadata": {
+                "description": "provide valid registration token"
+            },
+            "defaultValue": " "
+        },
+        "baseUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "The base URL for RDmi info",
+                "artifactsBaseUrl": ""
+            },
+            "defaultValue": "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/RdmiAddHosts/"
+        }
+    },
+    "variables": {
+        "rdshPrefix": "[concat(parameters('rdshNamePrefix'),'-')]",
+        "imagePublisher": "MicrosoftWindowsServer",
+        "imageOffer": "WindowsServer",
+        "subnet-id": "[concat(resourceId(parameters('adVnetNameResourceGroup'),'Microsoft.Network/virtualNetworks',parameters('adVnetName')),'/subnets/',parameters('adSubnetName'))]",
+        "uniqueBase": "[toLower(uniqueString(parameters('rdshNamePrefix'), resourceGroup().name, deployment().name))]",
+        "dnsLabelPrefix": "[concat(take(toLower(variables('uniqueBase')),4))]",
+        "deployAgentURI": "[concat(parameters('baseUrl'),'/Scripts/DeployAgent.zip')]",
+        "scriptURI": "[concat(parameters('baseUrl'),'/Scripts/Script.ps1')]"
+        
+    },
+    "resources": [
+        {
+            "apiVersion": "2016-03-30",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[concat(variables('rdshPrefix'),'IP-', copyindex())]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "publicIp",
+                "count": "[parameters('numberOfRdshInstances')]"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "dnsSettings": {
+                    "domainNameLabel": "[concat(variables('dnsLabelPrefix'), copyindex())]"
+                }
+            }
+        },
+        {
+            "apiVersion": "2016-03-30",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat(variables('rdshPrefix'), copyindex(), '-nic')]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "rdsh-nic-loop",
+                "count": "[parameters('numberOfRdshInstances')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses/', concat(variables('rdshPrefix'),'IP-', copyindex()))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('rdshPrefix'),'IP-', copyindex()))]"
+                            },
+                            "subnet": {
+                                "id": "[variables('subnet-id')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2017-03-30",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(variables('rdshPrefix'), copyindex())]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "rdsh-vm-loop",
+                "count": "[parameters('numberOfRdshInstances')]"
+            },
+            "dependsOn": [
+               
+                "[resourceId('Microsoft.Network/networkInterfaces/', concat(variables('rdshPrefix'), copyindex(), '-nic'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('rdshVmSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[concat(variables('rdshPrefix'), copyIndex())]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('imagePublisher')]",
+                        "offer": "[variables('imageOffer')]",
+                        "sku": "[parameters('imageSKU')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "createOption": "FromImage"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('rdshPrefix'), copyindex(), '-nic'))]"
+                        }
+                    ]
+                }
+            },
+            "resources": [
+                {
+                    "apiVersion": "2017-03-30",
+                    "type": "extensions",
+                    "name": "dscextension",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('rdshPrefix'), copyindex()))]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Powershell",
+                        "type": "DSC",
+                        "typeHandlerVersion": "2.11",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "ModulesUrl": "[concat(parameters('baseUrl'),'/DSC/Configuration.zip')]",
+                            "ConfigurationFunction": "Configuration.ps1\\SessionHost",
+                            "Properties": {
+                                "DomainName": "[parameters('adDomainName')]",
+                                "AdminCreds": {
+                                    "UserName": "[parameters('adminUsername')]",
+                                    "Password": "PrivateSettingsRef:AdminPassword"
+                                }
+                            }
+                        },
+                        "protectedSettings": {
+                            "Items": {
+                                "AdminPassword": "[parameters('adminPassword')]"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "apiVersion": "2015-06-15",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('rdshPrefix'), copyindex(),'/','rdAgent')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', concat(variables('rdshPrefix'), copyindex(),'/extensions/dscextension'))]"
+            ],
+            "copy": {
+                "name": "rdsh-vm-loop",
+                "count": "[parameters('numberOfRdshInstances')]"
+            },
+            "tags": {
+                "displayName": "script"
+            },
+            "properties": {
+                "publisher": "Microsoft.Compute",
+                "type": "CustomScriptExtension",
+                "typeHandlerVersion": "1.8",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": [
+                        "[variables('scriptURI')]"
+                    ],
+                    "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File Script.ps1', ' -registrationToken \"', parameters('registrationToken'), '\"',' ',' -localAdminUsername \"', parameters('adminUsername'), '\"',' ', ' -localAdminpassword \"', parameters('adminPassword'), '\"',' ', ' -Fileuri \"', variables('deployAgentURI'), '\"')]"
+                }
+            }
+        }
+    ]
+}
