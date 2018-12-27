@@ -8,11 +8,6 @@
 				"name": "hostpoolName",
 				"type": "Microsoft.Common.TextBox",
 				"label": "Hostpool name",
-				"constraints": {
-					"required": true
-					"regex": "^((?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]))",
-					"validationMessage": "Enter hostpool name without underscore"
-				},
 				"visible": true
 			},
 			{
