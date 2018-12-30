@@ -8,12 +8,7 @@
 				"name": "hostpoolName",
 				"type": "Microsoft.Common.TextBox",
 				"label": "Hostpool name",
-				"visible": true,
-				"constraints": {
-                    "required": true,
-                    "regex": "^[a-z0-9A-Z]$",
-                    "validationMessage": "The VM Name must be between 3 and 79 characters long and contain letters, numbers and hyphens only."
-                }
+				"visible": true
 			},
 			{
 				"name": "mrsRegion",
