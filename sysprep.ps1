@@ -9,12 +9,14 @@ $output = "D:/odt.exe"
 Import-Module BitsTransfer
 Start-BitsTransfer -Source $url -Destination $output
 #to extract the ODT tool
+New-Item -Path "D:\O365" -ItemType Directory -Force -ErrorAction SilentlyContinue
 Start-Process -FilePath "D:/odt.exe" -ArgumentList '/extract:"D:/O365" /quiet'
 Set-Location "D:\O365"
 Invoke-Expression -Command "cmd.exe /c '.\setup.exe' /download 'D:\O365\configuration-Office365-x64.xml'" 
 Invoke-Expression -Command "cmd.exe /c 'D:\O365\setup.exe' /configure 'D:\O365\configuration-Office365-x64.xml'" 
 
 $checkinstalled=Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where-Object {$_.DisplayName -eq "Microsoft Office 365 ProPlus - en-us"}
+
 
 if($checkinstalled)
 {
