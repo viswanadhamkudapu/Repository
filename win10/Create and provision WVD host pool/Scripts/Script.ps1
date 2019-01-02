@@ -54,7 +54,7 @@ param(
     [Parameter(Mandatory = $false)]
     [string]$AadTenantId,
 
-    [Parameter(Mandatory = $true)]
+    [Parameter(Mandatory = $false)]
     [string]$ActivationKey
 
 )
