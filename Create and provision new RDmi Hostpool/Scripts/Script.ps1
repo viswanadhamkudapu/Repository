@@ -11,11 +11,6 @@ The supported Operating Systems Windows Server 2016.
 Readers
 
 #>
-Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force -Confirm:$false
-$PolicyList=Get-ExecutionPolicy -List
-$log = $PolicyList | Out-String 
-
-
 param(
     [Parameter(mandatory = $false)]
     [string]$RDBrokerURL,
@@ -29,25 +24,18 @@ param(
     [Parameter(mandatory = $false)]
     [string]$Description,
 
-
     [Parameter(mandatory = $false)]
     [string]$FriendlyName,
 
-
     [Parameter(mandatory = $true)]
-
     [string]$Hours,
-
-    [Parameter(mandatory = $true)]
-    [string]$FileURI,
 	
-	[Parameter(Mandatory = $false)]
+	[Parameter(mandatory = $true)]
+    [string]$rdshIs1809OrLater,
+
+    [Parameter(Mandatory = $false)]
     [string]$ActivationKey,
     
-    [Parameter(mandatory = $true)]
-    [string]$rdshIs1809OrLater,
-	
-
     [Parameter(mandatory = $false)]
     [string]$TenantAdminUPN,
 
@@ -63,6 +51,10 @@ param(
     [Parameter(mandatory = $true)]
     [string]$localAdminPassword
 )
+
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force -Confirm:$false
+$PolicyList=Get-ExecutionPolicy -List
+$log = $PolicyList | Out-String
 
 function Write-Log { 
 
@@ -100,7 +92,7 @@ function ActivateWin10
 {
     param
     (
-        [Parameter(Mandatory = $true)] 
+        [Parameter(Mandatory = $false)] 
         [string]$ActivationKey
     )
 
@@ -186,7 +178,6 @@ try {
        $obj"
         
             }
-
     
             $HPName = Get-RdsHostPool -TenantName $TenantName -Name $HostPoolName -ErrorAction SilentlyContinue
             Write-Log -Message "Checking Hostpool exists inside the Tenant"
@@ -291,13 +282,12 @@ catch {
     Write-log -Error $_.Exception.Message
 
 }
-
+if($rdshIs1809OrLater -eq "True"){
 Write-Log -Message "Activating Windows 10 Pro"
 ActivateWin10 -ActivationKey $ActivationKey
 
 Write-Log -Message "Rebooting VM"
 Shutdown -r -t 90
-
-
+}
 
 
