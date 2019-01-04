@@ -37,7 +37,7 @@ param(
 Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope Process -Force -Confirm:$false
 Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force -Confirm:$false
 $PolicyList=Get-ExecutionPolicy -List
-$log = $PolicyList | Out-String 
+$log = $PolicyList | Out-String
 $rdshIs1809OrLaterBool = ($rdshIs1809OrLater -eq "True")
 function Write-Log { 
 
