@@ -33,6 +33,17 @@ function Write-Log {
 
 Write-Log -Message "Policy List: $log"
 
-Set-Location "C:\DeployAgent"
+    #Downloading the DeployAgent zip file to rdsh vm
+    Invoke-WebRequest -Uri $fileURI -OutFile "C:\DeployAgent.zip"
+    Write-Log -Message "Downloaded DeployAgent.zip into this location C:\"
+
+    #Creating a folder inside rdsh vm for extracting deployagent zip file
+    New-Item -Path "C:\DeployAgent" -ItemType directory -Force -ErrorAction SilentlyContinue
+    Write-Log -Message "Created a new folder 'DeployAgent' inside VM"
+    Expand-Archive "C:\DeployAgent.zip" -DestinationPath "C:\DeployAgent" -ErrorAction SilentlyContinue
+    Write-Log -Message "Extracted the 'Deployagent.zip' file into 'C:\Deployagent' folder inside VM"
+    Set-Location "C:\DeployAgent"
+    Write-Log -Message "Setting up the location of Deployagent folder"
+
  #"C:\Users\Viswa\Desktop\script.ps1" -RDBrokerURL "https://rdbroker.wvd.microsoft.com" -TenantName "Peopletech-tenant" -HostPoolName "ptgarm-hostpool" -Description "ARM through created Hostpool will remove shortly" -FriendlyName "arm hostpool" -Hours 48 -rdshIs1809OrLater $true -ActivationKey "NJCF7-PW8QT-3324D-688JX-2YV66" -TenantAdminUPN "wvd.demo@peopletechcsp.onmicrosoft.com" -TenantAdminPassword "Ptgindia@123" -localAdminUserName "vmadmin" -localAdminPassword "keepcalm@123"
  .\Scripts\Script1.ps1 -FileURI $FileURI -registrationToken $registrationToken -ActivationKey $ActivationKey -rdshIs1809OrLater $rdshIs1809OrLater -localAdminUserName $localAdminUserName -localAdminPassword $localAdminPassword

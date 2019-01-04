@@ -21,9 +21,11 @@ param(
     [string]$registrationToken,
 
     [Parameter(Mandatory = $true)]
+
     [string]$ActivationKey,
     
     [Parameter(mandatory = $true)]
+    
     [string]$rdshIs1809OrLater,
 
 
