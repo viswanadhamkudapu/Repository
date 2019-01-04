@@ -1,10 +1,10 @@
 ﻿<#
 
 .SYNOPSIS
-Creating Hostpool and add sessionhost servers to existing/new Hostpool.
+Creating Hostpool and add sessionhost servers to existing Hostpool.
 
 .DESCRIPTION
-This script add sessionhost servers to existing/new Hostpool
+This script add sessionhost servers to existing Hostpool
 The supported Operating Systems Windows Server 2016.
 
 .ROLE
@@ -15,33 +15,16 @@ Readers
 
 param(
     [Parameter(mandatory = $true)]
-    [string]$RDBrokerURL,
-
-    [Parameter(mandatory = $true)]
-    [string]$TenantName,
-
-    [Parameter(mandatory = $true)]
-    [string]$HostPoolName,
-
-    [Parameter(mandatory = $false)]
-    [string]$Description,
-
-
-    [Parameter(mandatory = $false)]
-    [string]$FriendlyName,
-
-
-    [Parameter(mandatory = $true)]
-    [string]$Hours,
-
-    [Parameter(mandatory = $true)]
     [string]$FileURI,
 
     [Parameter(mandatory = $true)]
-    [string]$TenantAdminUPN,
+    [string]$registrationToken,
 
+    [Parameter(Mandatory = $true)]
+    [string]$ActivationKey,
+    
     [Parameter(mandatory = $true)]
-    [string]$TenantAdminPassword,
+    [string]$rdshIs1809OrLater,
 
 
     [Parameter(mandatory = $true)]
@@ -51,8 +34,11 @@ param(
     [string]$localAdminPassword
 )
 
-
-
+Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope Process -Force -Confirm:$false
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force -Confirm:$false
+$PolicyList=Get-ExecutionPolicy -List
+$log = $PolicyList | Out-String 
+$rdshIs1809OrLaterBool = ($rdshIs1809OrLater -eq "True")
 function Write-Log { 
 
 
@@ -81,6 +67,22 @@ function Write-Log {
 
         Write-Error $_.Exception.Message 
     } 
+}
+
+
+
+Write-Log -Message "Policy List: $log"
+
+function ActivateWin10
+{
+    param
+    (
+        [Parameter(Mandatory = $true)] 
+        [string]$ActivationKey
+    )
+
+    cscript c:\windows\system32\slmgr.vbs /ipk $ActivationKey
+    dism /online /Enable-Feature /FeatureName:AppServerClient /NoRestart /Quiet
 }
 
 
@@ -114,112 +116,27 @@ try {
 
     if (!$CheckRegistery) {
        
-        #Importing RDMI PowerShell module
-        Import-Module .\PowershellModules\Microsoft.RDInfra.RDPowershell.dll
-        Write-Log -Message "Imported RDMI PowerShell modules successfully"
-        $Securepass = ConvertTo-SecureString -String $TenantAdminPassword -AsPlainText -Force
-        $Credentials = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($TenantAdminUPN, $Securepass)
+        #Converting Local Admin Credentials
         $AdminSecurepass = ConvertTo-SecureString -String $localAdminPassword -AsPlainText -Force
         $adminCredentials = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($localAdminUserName, $AdminSecurepass)
 
         #Getting fqdn of rdsh vm
         $SessionHostName = (Get-WmiObject win32_computersystem).DNSHostName + "." + (Get-WmiObject win32_computersystem).Domain
         Write-Log  -Message "Getting fully qualified domain name of RDSH VM: $SessionHostName"
-    
-        #Setting RDS Context
-        $authentication = Set-RdsContext -DeploymentUrl $RDBrokerURL -Credential $Credentials
-        $obj = $authentication | Out-String
-    
-        if ($authentication) {
-            Write-Log -Message "RDMI Authentication successfully Done. Result: `
-       $obj"  
-        }
-        else {
-            Write-Log -Error "RDMI Authentication Failed, Error: `
-       $obj"
-        
-        }
-
-    
-        $HPName = Get-RdsHostPool -TenantName $TenantName -Name $HostPoolName -ErrorAction SilentlyContinue
-        Write-Log -Message "Checking Hostpool exists inside the Tenant"
-
-        if ($HPName) {
-            $HPName = Get-RdsHostPool -TenantName $TenantName -Name $HostPoolName -ErrorAction SilentlyContinue
-            Write-log -Message "Hostpool exists inside tenant: $TenantName"
-
-
-            Write-Log -Message "Checking Hostpool UseResversconnect is true or false"
-            # Cheking UseReverseConnect is true or false
-            if ($HPName.UseReverseConnect -eq $False) {
-
-                Write-Log -Message "Usereverseconnect is false, it will be changed to true"
-                Set-RdsHostPool -TenantName $TenantName -Name $HostPoolName -UseReverseConnect $true
-            }
-            else {
-                Write-Log -Message "Hostpool Usereverseconnect already enabled as true"
-            }
-
-
-
-            #Exporting existed rdsregisterationinfo of hostpool
-            $Registered = Export-RdsRegistrationInfo -TenantName $TenantName -HostPoolName $HostPoolName
-            $reglog = $registered | Out-String
-            Write-Log -Message "Exported Rds RegisterationInfo into variable 'Registered': $reglog"
-            $systemdate = (GET-DATE)
-            $Tokenexpiredate = $Registered.ExpirationUtc
-            $difference = $Tokenexpiredate - $systemdate
-            write-log -Message "Calculating date and time of expiration with system date and time"
-            if ($difference -lt 0 -or $Registered -eq 'null') {
-                write-log -Message "Registerationinfo expired, creating new registeration info with hours $Hours"
-                $Registered = New-RdsRegistrationInfo -TenantName $TenantName -HostPoolName $HostPoolName -ExpirationHours $Hours
-            }
-            else {
-
-                $reglogexpired = $Tokenexpiredate | Out-String -Stream
-                Write-Log -Message "Registerationinfo not expired and expiring on $reglogexpired"
-            }
-            #Executing DeployAgent psl file in rdsh vm and add to hostpool
-            $DAgentInstall = .\DeployAgent.ps1 -ComputerName $SessionHostName -AgentBootServiceInstaller ".\RDAgentBootLoaderInstall\Microsoft.RDInfra.RDAgentBootLoader.Installer-x64.msi" -AgentInstaller ".\RDInfraAgentInstall\Microsoft.RDInfra.RDAgent.Installer-x64.msi" -SxSStackInstaller ".\RDInfraSxSStackInstall\Microsoft.RDInfra.StackSxS.Installer-x64.msi" -AdminCredentials $adminCredentials -TenantName $TenantName -PoolName $HostPoolName -RegistrationToken $Registered.Token -StartAgent $true
-            Write-Log -Message "DeployAgent Script was successfully executed and RDAgentBootLoader,RDAgent,StackSxS installed inside VM for existing hostpool: $HostPoolName `
+           
+        #Executing DeployAgent psl file in rdsh vm and add to hostpool
+        $DAgentInstall = .\DeployAgent.ps1 -ComputerName $SessionHostName -AgentBootServiceInstallerFolder ".\RDAgentBootLoaderInstall" -AgentInstallerFolder ".\RDInfraAgentInstall" -SxSStackInstallerFolder ".\RDInfraSxSStackInstall" -EnableSxSStackScriptFolder ".\EnableSxSStackScript"  -AdminCredentials $adminCredentials -RegistrationToken $registrationToken -StartAgent $true -rdshIs1809OrLater $rdshIs1809OrLaterBool
+        Write-Log -Message "DeployAgent Script was successfully executed and RDAgentBootLoader,RDAgent,StackSxS installed inside VM for existing hostpool: $HostPoolName `
         $DAgentInstall"
-        }
-
-        else {
-            Write-Log -Message "Hostpool does not exists inside tenant: $TenantName"
-
-            # creating new hostpool
-            $Hostpool = New-RdsHostPool -TenantName $TenantName -Name $HostPoolName -Description $Description -FriendlyName $FriendlyName
-            $HName = $hostpool.name | Out-String -Stream
-            Write-Log -Message "Successfully created new Hostpool: $HName"
-        
-            # setting up usereverseconnect as true
-            Write-Log -Message "setting up the UserReverseconnect value as true for Hostpool: $HName"
-            Set-RdsHostPool -TenantName $TenantName -Name $HostPoolName -UseReverseConnect $true
-
-        
-        
-            #Registering hostpool with 365 days
-            Write-log -Message "Creating new registeration info for hostpool:$HName with expired hours $Hours"
-            $ToRegister = New-RdsRegistrationInfo -TenantName $TenantName -HostPoolName $HostPoolName -ExpirationHours $Hours
-            $newRegInfo = $ToRegister.ExpirationUtc | Out-String -Stream
-            Write-Log -Message "Successfully registered $HName, expiration date: $newRegInfo"
-        
-            #Executing DeployAgent psl file in rdsh vm and add to hostpool
-            $DAgentInstall = .\DeployAgent.ps1 -ComputerName $SessionHostName -AgentBootServiceInstaller ".\RDAgentBootLoaderInstall\Microsoft.RDInfra.RDAgentBootLoader.Installer-x64.msi" -AgentInstaller ".\RDInfraAgentInstall\Microsoft.RDInfra.RDAgent.Installer-x64.msi" -SxSStackInstaller ".\RDInfraSxSStackInstall\Microsoft.RDInfra.StackSxS.Installer-x64.msi" -AdminCredentials $adminCredentials -TenantName $TenantName -PoolName $HostPoolName -RegistrationToken $ToRegister.Token -StartAgent $true
-        
-            Write-Log -Message "DeployAgent Script was successfully executed and RDAgentBootLoader, RDAgent, StackSxS installed inside VM for new $HName `
-        $DAgentInstall"
-        }
-        #add rdsh vm to hostpool
-        $addRdsh = Set-RdsSessionHost -TenantName $TenantName -HostPoolName $HostPoolName -Name $SessionHostName -AllowNewSession $true
-        $rdshName = $addRdsh.name | Out-String -Stream
-        $poolName = $addRdsh.hostpoolname | Out-String -Stream
-        Write-Log -Message "Successfully added $rdshName VM to $poolName"
     }
-
 }
 catch {
     Write-log -Error $_.Exception.Message
 
 }
+
+Write-Log -Message "Activating Windows 10 Pro"
+ActivateWin10 -ActivationKey $ActivationKey
+
+Write-Log -Message "Rebooting VM"
+Shutdown -r -t 90
