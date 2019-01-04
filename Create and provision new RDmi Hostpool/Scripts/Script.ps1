@@ -198,8 +198,6 @@ try {
                     Write-Log -Message "Hostpool Usereverseconnect already enabled as true"
                 }
 
-
-
                 #Exporting existed rdsregisterationinfo of hostpool
                 $Registered = Export-RdsRegistrationInfo -TenantName $TenantName -HostPoolName $HostPoolName
                 $reglog = $registered | Out-String
@@ -235,8 +233,7 @@ try {
                 # setting up usereverseconnect as true
                 Write-Log -Message "setting up the UserReverseconnect value as true for Hostpool: $HName"
                 Set-RdsHostPool -TenantName $TenantName -Name $HostPoolName -UseReverseConnect $true
-
-        
+       
         
                 #Registering hostpool with 365 days
                 Write-log -Message "Creating new registeration info for hostpool:$HName with expired hours $Hours"
