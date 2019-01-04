@@ -14,8 +14,6 @@ Readers
 
 
 param(
-
-
     [Parameter(mandatory = $false)]
     [string]$RDBrokerURL,
 
@@ -44,7 +42,7 @@ param(
     [string]$ActivationKey,
     
     [Parameter(mandatory = $true)]
-    [string]$rdshIs1809OrLater
+    [string]$rdshIs1809OrLater,
 	
 
     [Parameter(mandatory = $false)]
