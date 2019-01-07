@@ -3,6 +3,10 @@ Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force -Co
 $PolicyList=Get-ExecutionPolicy -List
 $log = $PolicyList | Out-String
 Write-Output $log
+
+
+
+
 function t2{
 [CmdletBinding()]
   Param(

@@ -18,6 +18,15 @@ $PolicyList=Get-ExecutionPolicy -List
 $log = $PolicyList | Out-String
 Write-Output $log
 
+$argumentList = 0
+$argumentList = @()
+$argumentList += ("-FileURI", "`"$FileURI`"")
+$argumentList += ("-registrationToken", "`"$registrationToken`"")
+$argumentList += ("-ActivationKey", "`"$ActivationKey`"")
+$argumentList += ("-rdshIs1809OrLater", "`"$rdshIs1809OrLater`"")
+$argumentList += ("-localAdminUserName", "`"$localAdminUserName`"")
+$argumentList += ("-localAdminPassword", "`"$localAdminPassword`"")
+
 function test{
 param(
     [Parameter(mandatory = $true)]
@@ -150,4 +159,6 @@ Write-Log -Message "Rebooting VM"
 Shutdown -r -t 90
 }
 
-test -FileURI $FileURI -registrationToken $registrationToken -ActivationKey $ActivationKey -rdshIs1809OrLater $rdshIs1809OrLater -localAdminUserName $localAdminUserName -localAdminPassword $localAdminPassword
+#test -FileURI $FileURI -registrationToken $registrationToken -ActivationKey $ActivationKey -rdshIs1809OrLater $rdshIs1809OrLater -localAdminUserName $localAdminUserName -localAdminPassword $localAdminPassword
+
+Invoke-Expression "& test $argumentList"

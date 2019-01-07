@@ -361,7 +361,7 @@
             "name": "[concat(variables('rdshPrefix'), copyindex(),'/','rdAgent')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', concat(variables('rdshPrefix'), copyindex(),'/extensions/joindomain'))]"
+                "[concat('Microsoft.Compute/virtualMachines/', concat(variables('rdshPrefix'), copyindex(),'/extensions/joindomain'))]",
                 "[concat('Microsoft.Compute/virtualMachines/', concat(variables('rdshPrefix'), copyindex(),'/extensions/dscextension'))]"
                 
             ],
