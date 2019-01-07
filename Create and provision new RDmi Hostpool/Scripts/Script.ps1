@@ -30,7 +30,7 @@ param(
     [Parameter(mandatory = $true)]
     [string]$Hours,
 	
-	[Parameter(mandatory = $true)]
+    [Parameter(mandatory = $true)]
     [string]$rdshIs1809OrLater,
 
     [Parameter(Mandatory = $false)]
