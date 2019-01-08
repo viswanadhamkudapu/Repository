@@ -351,6 +351,7 @@ else
     $rdshName = $rdsh.SessionHostName | Out-String -Stream
     $poolName = $rdsh.hostpoolname | Out-String -Stream
   
+  if($rdshIs1809OrLater -eq "True"){
     Write-Log -Message "Activating Windows Virtual Desktop SKU"
     ActivateWvdSku -ActivationKey $ActivationKey
 
@@ -358,4 +359,5 @@ else
 
     Write-Log -Message "Reeboting VM"
     Shutdown -r -t 90
+    }
 }
