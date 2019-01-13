@@ -68,6 +68,10 @@ param(
   [string]$ActivationKey
 )
 
+Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope Process -Force -Confirm:$false
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force -Confirm:$false
+$PolicyList=Get-ExecutionPolicy -List
+$log = $PolicyList | Out-String
 
 function Write-Log {
 
@@ -100,6 +104,9 @@ function Write-Log {
     Write-Error $_.Exception.Message
   }
 }
+
+Write-Log -Message "Policy List: $log"
+
 function ActivateWin10
 {
   param

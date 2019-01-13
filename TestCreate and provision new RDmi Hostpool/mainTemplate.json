@@ -10,7 +10,6 @@
             "defaultValue": "Gallery",
             "allowedValues": [
                 "CustomVHD",
-                "CustomImage",
                 "Gallery"
             ]
         },
@@ -31,20 +30,6 @@
                 "2016-Datacenter"
             ],
             "defaultValue": "Windows-10-Enterprise-multi-session"
-        },
-        "rdshCustomImageSourceName": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "(Required when rdshImageSource = CustomImage) Name of the managed disk."
-            }
-        },
-        "rdshCustomImageSourceResourceGroup": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "(Required when rdshImageSource = CustomImage) Resource group name for the managed disk, if you choose to provide one."
-            }
         },
         "rdshIsWindowsServer": {
             "type": "bool",
@@ -104,13 +89,6 @@
                 "description": "(Required when rdshUseManagedDisks = False) The resource group containing the storage account of the image vhd file."
             },
             "defaultValue": ""
-        },
-        "domainToJoin": {
-            "type": "string",
-            "metadata": {
-                "description": "FQDN of the AD domain controller to which sesion host VMs are going to be joined. For example, “contoso.com”."
-            },
-            "defaultValue": "contoso.com"
         },
         "existingDomainUPN": {
             "type": "string",
@@ -203,6 +181,7 @@
         },
         "activationKey": {
             "type": "securestring",
+			"defaultValue": "",
             "metadata": {
                 "description": "Windows Virtual Desktop Activation Key (required until this process gets available in Azure platform)"
             }
@@ -213,13 +192,14 @@
                 "description": "The base URL for RDmi info",
                 "artifactsBaseUrl": ""
             },
-            "defaultValue": "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/RdmiAddHosts/"
+            "defaultValue": "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/TestCreate%20and%20provision%20new%20RDmi%20Hostpool/"
         }
     },
     "variables": {
         "rdshManagedDisks": "[if(equals(parameters('rdshImageSource'), 'CustomVHD'), parameters('rdshUseManagedDisks'), bool('true'))]",
         "rdshPrefix": "[concat(parameters('rdshNamePrefix'),'-')]",
         "avSetSKU": "[if(variables('rdshManagedDisks'), 'Aligned', 'Classic')]",
+        "existingDomainName": "[last(split(parameters('existingDomainUPN'), '@'))]",
         "existingDomainUsername": "[first(split(parameters('existingDomainUPN'), '@'))]",
         "vhds": "[concat('vhds','/', variables('rdshPrefix'))]",
         "subnet-id": "[concat(resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/virtualNetworks',parameters('existingVnetName')),'/subnets/',parameters('existingSubnetName'))]",
@@ -288,12 +268,6 @@
                     },
                     "vhds": {
                         "value": "[variables('vhds')]"
-                    },
-                    "rdshImageSourceResourceGroup": {
-                        "value": "[parameters('rdshCustomImageSourceResourceGroup')]"
-                    },
-                    "rdshImageSourceName": {
-                        "value": "[parameters('rdshCustomImageSourceName')]"
                     }
                 }
             },
@@ -319,9 +293,9 @@
                 "typeHandlerVersion": "1.3",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
-                    "name": "[parameters('domainToJoin')]",
+                    "name": "[variables('existingDomainName')]",
                     "ouPath": "[parameters('ouPath')]",
-                    "user": "[concat(parameters('domainToJoin'),'\\', variables('existingDomainUsername'))]",
+                    "user": "[concat(variables('existingDomainName'),'\\', variables('existingDomainUsername'))]",
                     "restart": "true",
                     "options": "3"
                 },
@@ -379,12 +353,11 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
-                        "[variables('deployAgentUri')]",
                         "[variables('scriptUri')]"
                     ]
                 },
                 "protectedSettings": {
-                    "commandToExecute": "[concat('powershell.exe -noninteractive -executionpolicy bypass -file Script.ps1',' -RdBrokerURL \"', parameters('rdBrokerURL'), '\"', ' ', ' -TenantGroupName \"', parameters('existingTenantGroupName'), '\"',' ',' -TenantName \"', parameters('existingTenantName'), '\"',' ', ' -HostPoolName \"', parameters('hostPoolName'), '\"',' ', ' -FriendlyName \"', variables('HostPoolFriendlyName'), '\"',' ', ' -Description \"', variables('HostPoolDescription'), '\"',' ', ' -Hours \"', variables('registrationExpirationHours'), '\"',' ', ' -TenantAdminUPN \"', parameters('tenantAdminUpnOrApplicationId'), '\"',' ', ' -TenantAdminPassword \"', parameters('tenantAdminPassword'), '\"',' ',' -localAdminUsername \"', variables('existingDomainUsername'), '\"',' ', ' -localAdminpassword \"', parameters('existingDomainPassword'), '\"',' ', ' -rdshIs1809OrLater \"', parameters('rdshIs1809OrLater'), '\"', ' ', ' -isServicePrincipal \"', parameters('isServicePrincipal'), '\"', ' ', ' -aadTenantId \"', parameters('aadTenantId'), '\"', ' ', ' -ActivationKey \"', parameters('activationKey'), '\"')]"
+                    "commandToExecute": "[concat('powershell.exe -noninteractive -executionpolicy bypass -file Script.ps1',' -RdBrokerURL \"', parameters('rdBrokerURL'), '\"', ' ', ' -TenantGroupName \"', parameters('existingTenantGroupName'), '\"',' ',' -TenantName \"', parameters('existingTenantName'), '\"',' ', ' -HostPoolName \"', parameters('hostPoolName'), '\"',' ', ' -FriendlyName \"', variables('HostPoolFriendlyName'), '\"',' ', ' -Description \"', variables('HostPoolDescription'), '\"',' ', ' -Hours \"', variables('registrationExpirationHours'), '\"',' ', ' -TenantAdminUPN \"', parameters('tenantAdminUpnOrApplicationId'), '\"',' ', ' -TenantAdminPassword \"', parameters('tenantAdminPassword'), '\"',' ',' -localAdminUsername \"', variables('existingDomainUsername'), '\"',' ', ' -localAdminpassword \"', parameters('existingDomainPassword'), '\"',' ', ' -rdshIs1809OrLater \"', parameters('rdshIs1809OrLater'), '\"', ' ', ' -isServicePrincipal \"', parameters('isServicePrincipal'), '\"', ' ', ' -aadTenantId \"', parameters('aadTenantId'), '\"', ' ', ' -ActivationKey \"', parameters('activationKey'), '\"',' ', ' -FileURI \"', variables('deployAgentURI'), '\"')]"
                 }
             }
         }
