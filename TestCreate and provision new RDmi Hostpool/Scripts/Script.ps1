@@ -347,9 +347,6 @@ try {
         #Executing DeployAgent psl file in rdsh vm and add to hostpool
         $DAgentInstall = .\DeployAgent.ps1 -ComputerName $SessionHostName -AgentBootServiceInstaller ".\RDAgentBootLoaderInstall\" -AgentInstaller ".\RDInfraAgentInstall\" -SxSStackInstaller ".\RDInfraSxSStackInstall\" -AdminCredentials $adminCredentials -RegistrationToken $registrationToken -StartAgent $true -rdshIs1809OrLater $rdshIs1809OrLater -EnableSxSStackScriptFile ".\enablesxsstackrc.ps1"
         Write-Log -Message "DeployAgent Script was successfully executed and RDAgentBootLoader,RDAgent,StackSxS installed inside VM for existing hostpool: $HostPoolName `n$DAgentInstall"
-        
-         [Microsoft.RDInfra.RDManagementData.RdMgmtSessionHost]$addRdsh = ([PsRdsSessionHost]::new($TenantName,$HostPoolName,$SessionHostName)).GetSessionHost()
-         Write-Log -Message "RDSH object content: `n$($addRdsh | Out-String)"
 
       }
 
@@ -377,8 +374,6 @@ try {
 
         Write-Log -Message "DeployAgent Script was successfully executed and RDAgentBootLoader, RDAgent, StackSxS installed inside VM for new $HName `n$DAgentInstall"
 
-        [Microsoft.RDInfra.RDManagementData.RdMgmtSessionHost]$addRdsh = ([PsRdsSessionHost]::new($TenantName,$HostPoolName,$SessionHostName)).GetSessionHost()
-        Write-Log -Message "RDSH object content: `n$($addRdsh | Out-String)"
       }
       #add host vm to hostpool
       [Microsoft.RDInfra.RDManagementData.RdMgmtSessionHost]$addRdsh = ([PsRdsSessionHost]::new($TenantName,$HostPoolName,$SessionHostName)).GetSessionHost()
@@ -401,7 +396,7 @@ try {
       Write-Log -Message "DeployAgent Script was successfully executed and RDAgentBootLoader,RDAgent,StackSxS installed inside VM for existing hostpool: $HostPoolName `n$DAgentInstall"
 
       [Microsoft.RDInfra.RDManagementData.RdMgmtSessionHost]$addRdsh = ([PsRdsSessionHost]::new($TenantName,$HostPoolName,$SessionHostName)).GetSessionHost()
-         Write-Log -Message "RDSH object content: `n$($addRdsh | Out-String)"
+      Write-Log -Message "RDSH object content: `n$($addRdsh | Out-String)"
 
       Write-Log -Message "Successfully added $SessionHostName VM to HostPool"
     }
