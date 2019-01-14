@@ -56,7 +56,7 @@ param(
   [string]$localAdminPassword,
 
   [Parameter(mandatory = $true)]
-  [bool]$rdshIs1809OrLater,
+  [string]$rdshIs1809OrLater,
 
   [Parameter(mandatory = $false)]
   [string]$isServicePrincipal = "False",
@@ -424,4 +424,3 @@ if ($rdshIs1809OrLaterBool) {
   Write-Log -Message "Rebooting VM"
   Shutdown -r -t 90
 }
-
