@@ -223,13 +223,13 @@ class PsRdsSessionHost
 try {
 
   #Downloading the DeployAgent zip file to rdsh vm
-  Invoke-WebRequest -Uri $fileURI -OutFile "C:\DeployAgent.zip"
+  #Invoke-WebRequest -Uri $fileURI -OutFile "C:\DeployAgent.zip"
   Write-Log -Message "Downloaded DeployAgent.zip into this location C:\"
 
   #Creating a folder inside rdsh vm for extracting deployagent zip file
   New-Item -Path "C:\DeployAgent" -ItemType directory -Force -ErrorAction SilentlyContinue
   Write-Log -Message "Created a new folder 'DeployAgent' inside VM"
-  Expand-Archive "C:\DeployAgent.zip" -DestinationPath "C:\DeployAgent" -ErrorAction SilentlyContinue
+  #Expand-Archive "C:\DeployAgent.zip" -DestinationPath "C:\DeployAgent" -ErrorAction SilentlyContinue
   Write-Log -Message "Extracted the 'Deployagent.zip' file into 'C:\Deployagent' folder inside VM"
   Set-Location "C:\DeployAgent"
   Write-Log -Message "Setting up the location of Deployagent folder"
@@ -334,7 +334,7 @@ try {
 
 
         #Exporting existed rdsregisterationinfo of hostpool
-        $Registered = Export-RdsRegistrationInfo -TenantName $TenantName -HostPoolName $HostPoolName
+        $Registered = Export-RdsRegistrationInfo -TenantName $TenantName -HostPoolName $HostPoolName -ErrorAction SilentlyContinue
         $registrationToken = $Registered.Token
         $reglog = $registered | Out-String
         Write-Log -Message "Exported Rds RegisterationInfo into variable 'Registered': $reglog"
