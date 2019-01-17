@@ -20,17 +20,55 @@ $LogOffMessageBody = Get-AutomationVariable -Name 'LogOffMessageBody'
 $automationAccountName = Get-AutomationVariable -Name 'accountName'
 $runbookName = Get-AutomationVariable -Name 'runbookName'
 
+    Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope Process -Force -Confirm:$false
+    Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force -Confirm:$false
+    Get-ExecutionPolicy -List
+
+Invoke-WebRequest -Uri $fileURI -OutFile "C:\WVDModules.zip"
+New-Item -Path "C:\WVDModules" -ItemType directory -Force -ErrorAction SilentlyContinue
+Expand-Archive "C:\WVDModules.zip" -DestinationPath "C:\WVDModules" -Force -ErrorAction SilentlyContinue
+Copy-Item -path "C:\WVDModules\AzureModules\*" -Recurse -Destination 'C:\Modules\Global' -ErrorAction SilentlyContinue
+
+
+
+function Write-Log {
+
+  [CmdletBinding()]
+  param(
+
+    [Parameter(mandatory = $false)]
+    [string]$Message,
+    [Parameter(mandatory = $false)]
+    [string]$Error
+  )
+
+  try {
+    $DateTime = Get-Date -Format ‘MM-dd-yy HH:mm:ss’
+    $Invocation = "$($MyInvocation.MyCommand.Source):$($MyInvocation.ScriptLineNumber)"
+    if ($Message) {
+
+      Add-Content -Value "$DateTime - $Invocation - $Message" -Path "$([environment]::GetEnvironmentVariable('WVDModules', 'Machine'))\ScriptLog.log"
+    }
+    else {
+
+
+      Add-Content -Value "$DateTime - $Invocation - $Error" -Path "$([environment]::GetEnvironmentVariable('WVDModules', 'Machine'))\ScriptLog.log"
+    }
+  }
+  catch {
+
+
+
+    Write-Error $_.Exception.Message
+  }
+}
+
+Write-Log -Message "Policy List: $log"
 
 $JobCollectionName = "AutoScaleJobCollection"
 $webhookName = "$HostPoolName-webhook"
 $schJObName = "$HostpoolName-job"
 
-
-Invoke-WebRequest -Uri $fileURI -OutFile "C:\PowerShellModules.zip"
-New-Item -Path "C:\PowerShellModules" -ItemType directory -Force -ErrorAction SilentlyContinue
-Expand-Archive "C:\PowerShellModules.zip" -DestinationPath "C:\PowerShellModules" -Force -ErrorAction SilentlyContinue
-$AzureModulesPath = Get-ChildItem -Path "C:\PowerShellModules"| Where-Object {$_.FullName -match 'AzureModules'}
-Expand-Archive $AzureModulesPath.fullname -DestinationPath 'C:\Modules\Global' -ErrorAction SilentlyContinue
 
 Import-Module AzureRM.Resources
 Import-Module AzureRM.Profile
@@ -39,9 +77,7 @@ Import-Module Azure
 Import-Module AzureRM.Automation
 Import-Module AzureAD
 
-    Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope Process -Force -Confirm:$false
-    Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force -Confirm:$false
-    Get-ExecutionPolicy -List
+
     #The name of the Automation Credential Asset this runbook will use to authenticate to Azure.
     $CredentialAssetName = 'DefaultAzureCredential'
 
@@ -49,7 +85,48 @@ Import-Module AzureAD
     $Cred = Get-AutomationPSCredential -Name $CredentialAssetName
     #Add-AzureRmAccount -Environment 'AzureCloud' -Credential $Cred
     Add-AzureRmAccount -Environment 'AzureCloud' -Credential $Cred -TenantId $AADTenantId -ServicePrincipal
-    Select-AzureRmSubscription -SubscriptionId $subsriptionid
+    #Select-AzureRmSubscription -SubscriptionId $subsriptionid
     $EnvironmentName = "AzureCloud"
 
-get-azurermvm
+    Import-Module "C:\WVDModules\RDPowershell\Microsoft.RDInfra.RDPowershell.dll"
+    Write-Log -Message "Imported RDMI PowerShell modules successfully"
+
+    $authentication = Add-RdsAccount -DeploymentUrl $RDBrokerURL -Credential $Cred -ServicePrincipal -TenantId $AadTenantId
+    $obj = $authentication | Out-String
+
+
+    if ($authentication)
+      {
+        Write-Log -Message "RDMI Authentication successfully Done. Result:`n$obj"
+
+
+      }
+      else
+      {
+        Write-Log -Error "RDMI Authentication Failed, Error:`n$obj"
+      }
+
+
+      # Set context to the appropriate tenant group
+      Write-Log "Running switching to the $TenantGroupName context"
+      Set-RdsContext -TenantGroupName $TenantGroupName
+      try
+      {
+        $tenants = Get-RdsTenant -Name $TenantName
+        if (!$tenants)
+        {
+          Write-Log "No tenants exist or you do not have proper access."
+        }
+      }
+      catch
+      {
+        Write-Log -Message $_
+      }
+
+
+      $HPName = Get-RdsHostPool -TenantName $TenantName -Name $HostPoolName -ErrorAction SilentlyContinue
+      Write-Log -Message "Checking Hostpool exists inside the Tenant"
+
+
+Get-Content -Path "C:\WVDModules\ScriptLog.txt"
+
