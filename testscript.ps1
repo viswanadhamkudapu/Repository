@@ -25,12 +25,28 @@ $JobCollectionName = "AutoScaleJobCollection"
 $webhookName = "$HostPoolName-webhook"
 $schJObName = "$HostpoolName-job"
 
-Write-Output "$subsriptionid"
-Write-Output "$AADApplicationId"
 
-Write-Output "$AADTenantId"
-Write-Output "$fileURI"
-Write-Output "$RDBrokerURL"
-Write-Output "$JobCollectionName"
-Write-Output "$webhookName"
-Write-Output "$schJObName"
+Invoke-WebRequest -Uri $fileURI -OutFile "C:\PowerShellModules.zip"
+New-Item -Path "C:\PowerShellModules" -ItemType directory -Force -ErrorAction SilentlyContinue
+Expand-Archive "C:\PowerShellModules.zip" -DestinationPath "C:\PowerShellModules" -Force -ErrorAction SilentlyContinue
+$AzureModulesPath = Get-ChildItem -Path "C:\PowerShellModules"| Where-Object {$_.FullName -match 'AzureModules'}
+Expand-Archive $AzureModulesPath.fullname -DestinationPath 'C:\Modules\Global' -ErrorAction SilentlyContinue
+
+Import-Module AzureRM.Resources
+Import-Module AzureRM.Profile
+Import-Module AzureRM.Websites
+Import-Module Azure
+Import-Module AzureRM.Automation
+Import-Module AzureAD
+
+    Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope Process -Force -Confirm:$false
+    Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force -Confirm:$false
+    Get-ExecutionPolicy -List
+    #The name of the Automation Credential Asset this runbook will use to authenticate to Azure.
+    $CredentialAssetName = 'DefaultAzureCredential'
+
+    #Get the credential with the above name from the Automation Asset store
+    $Cred = Get-AutomationPSCredential -Name $CredentialAssetName
+    Add-AzureRmAccount -Environment 'AzureCloud' -Credential $Cred
+    Select-AzureRmSubscription -SubscriptionId $subsriptionid
+    $EnvironmentName = "AzureCloud"
