@@ -47,7 +47,8 @@ Import-Module AzureAD
 
     #Get the credential with the above name from the Automation Asset store
     $Cred = Get-AutomationPSCredential -Name $CredentialAssetName
-    Add-AzureRmAccount -Environment 'AzureCloud' -Credential $Cred
+    #Add-AzureRmAccount -Environment 'AzureCloud' -Credential $Cred
+    Add-AzureRmAccount -Environment 'AzureCloud' -Credential $Cred -TenantId $AADTenantId -ServicePrincipal
     Select-AzureRmSubscription -SubscriptionId $subsriptionid
     $EnvironmentName = "AzureCloud"
 
