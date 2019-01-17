@@ -394,7 +394,6 @@ try {
 
     }
     else {
-     
       #Getting fqdn of rdsh vm
       $SessionHostName = (Get-WmiObject win32_computersystem).DNSHostName + "." + (Get-WmiObject win32_computersystem).Domain
       Write-Log -Message "Getting fully qualified domain name of RDSH VM: $SessionHostName"
@@ -405,7 +404,6 @@ try {
 
       [Microsoft.RDInfra.RDManagementData.RdMgmtSessionHost]$addRdsh = ([PsRdsSessionHost]::new($TenantName,$HostPoolName,$SessionHostName)).GetSessionHost()
       Write-Log -Message "RDSH object content: `n$($addRdsh | Out-String)"
-
       Write-Log -Message "Successfully added $SessionHostName VM to HostPool"
     }
 
