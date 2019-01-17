@@ -50,3 +50,5 @@ Import-Module AzureAD
     Add-AzureRmAccount -Environment 'AzureCloud' -Credential $Cred
     Select-AzureRmSubscription -SubscriptionId $subsriptionid
     $EnvironmentName = "AzureCloud"
+
+get-azurermvm
