@@ -24,7 +24,6 @@
         },
         "ExistingHostpoolName": {
             "type": "string",
-            "defaultValue": "",
             "metadata": {
                 "description": "The name of the hostpool to be in the RDS Tenant."
             }
@@ -217,7 +216,7 @@
                 "description": "The base URL for RDmi info",
                 "artifactsBaseUrl": ""
             },
-            "defaultValue": "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/TestCreate%20and%20provision%20new%20RDmi%20Hostpool/"
+            "defaultValue": "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/TestPatchonexisting%20WVD%20Hostpool/"
         }
     },
     "variables": {
@@ -391,7 +390,7 @@
             "dependsOn": [
                 "[concat('Microsoft.Compute/virtualMachines/', concat(variables('rdshPrefix'), copyindex(),'/extensions/joindomain'))]",
                 "[concat('Microsoft.Compute/virtualMachines/', concat(variables('rdshPrefix'), copyindex(),'/extensions/dscextension'))]",
-				"[concat('Microsoft.Compute/virtualMachines/', concat(variables('rdshPrefix'), copyindex(),'/extensions/removevms'))]"
+				"[concat('Microsoft.Compute/virtualMachines/', concat(variables('rdshPrefix'), '0','/extensions/removevms'))]"
             ],
             "copy": {
                 "name": "rdsh-vm-loop",

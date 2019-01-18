@@ -127,6 +127,7 @@ Import-Module AzureAD
       $HPName = Get-RdsHostPool -TenantName $TenantName -Name $HostPoolName -ErrorAction SilentlyContinue
       Write-Log -Message "Checking Hostpool exists inside the Tenant"
 
-
+      $StopVM = Stop-AzureRmVM -Name "win2krdsh-0" -ResourceGroupName "testrgarm" -Force
+      Write-Log -Message "azurermVM successfully stopped $stopvm.name Provisioningstate: $stopvm.status"
 Get-Content -Path "C:\WVDModules\ScriptLog.txt"
 
