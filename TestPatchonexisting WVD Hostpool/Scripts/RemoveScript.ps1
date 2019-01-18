@@ -235,8 +235,10 @@ param(
                         $ZoneName=$DName.Forest
                 
                 
-            #Import-Module AzureRM.Resources
-            #Import-Module Azurerm
+            Import-Module AzureRM.Resources
+            Import-Module Azurerm
+			Import-Module Azurerm.Profile
+			Import-Module Azurerm.Compute
             $AzSecurepass=ConvertTo-SecureString -String $TenantAdminPassword -AsPlainText -Force
             $AzCredentials=New-Object System.Management.Automation.PSCredential($TenantAdminUPN, $AzSecurepass)
             #$loginResult=Login-AzureRmAccount -SubscriptionId $SubscriptionId  -Credential $AzCredentials
