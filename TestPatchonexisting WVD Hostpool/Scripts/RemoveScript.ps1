@@ -481,6 +481,10 @@ param(
     
                         Write-Log -Message "VM was not registered with RDInfraAgent, script is executing now"
                     }
+					
+					#Getting fqdn of rdsh vm
+					$SessionHostName = (Get-WmiObject win32_computersystem).DNSHostName + "." + (Get-WmiObject win32_computersystem).Domain
+					Write-Log -Message "Getting fully qualified domain name of RDSH VM: $SessionHostName"
 
                 
                 if (!$CheckRegistery){
