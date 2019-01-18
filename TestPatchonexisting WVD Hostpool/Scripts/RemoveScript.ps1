@@ -227,7 +227,8 @@ param(
             $allShsNames=$shsNames | select -Unique
             Write-Log -Message "Collected old sessionhosts of Hostpool $HostPoolName : `
             $allShsNames"
-                        
+                        	
+                        Add-WindowsFeature RSAT-AD-PowerShell
                         #Get Domaincontroller VMname
                         $DName=Get-ADDomainController -Discover -DomainName $DomainName
                         $DControllerVM=$DName.Name
@@ -261,7 +262,7 @@ param(
                 Write-Log -Message "Sesssion host server in drain mode : `
                 $shsDrainlog"
                 
-                Remove-RdsSessionHost -TenantName $tenantname -HostPoolName $HostPoolName -Name $sh -Force $true
+                Remove-RdsSessionHost -TenantName $tenantname -HostPoolName $HostPoolName -Name $sh -Force
                 Write-Log -Message "Successfully $sh removed from hostpool"
                 
                 $VMName=$sh.Split(".")[0]
@@ -281,8 +282,6 @@ param(
 
                         $_.NetworkProfile.NetworkInterfaces | ForEach-Object {
                             $NICName = Split-Path -Path $_.ID -leaf
-                            #Write-Warning -Message "Removing NIC: $NICName"
-                            #Get-AzureRmNetworkInterface -ResourceGroupName $ResourceGroup -Name $NICName | Remove-AzureRmNetworkInterface -Force
                             Get-AzureRmNetworkInterface | Where-Object {$_.Name -eq $NICName} | Remove-AzureRmNetworkInterface -Force
                         }
                         Write-Log -Message "Successfully removed $VMName vm NIC"
@@ -291,7 +290,7 @@ param(
                         if($a.StorageProfile.OsDisk.ManagedDisk ) {
                             ($DataDisks + $OSDisk) | ForEach-Object {
                                 #Write-Warning -Message "Removing Disk: $_"
-                                #Get-AzureRmDisk -ResourceGroupName $ResourceGroup -DiskName $_ | Remove-AzureRmDisk -Force
+                                Get-AzureRmDisk -ResourceGroupName $ResourceGroup -DiskName $_ | Remove-AzureRmDisk -Force
                             }
                         }
                         # Support to remove unmanaged disks (from Storage Account Blob)

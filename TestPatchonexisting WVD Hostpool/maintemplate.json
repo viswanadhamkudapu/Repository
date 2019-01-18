@@ -370,15 +370,15 @@
                 "settings": {
                     "fileUris": [
                         "[variables('removeScriptURI')]"
-                    ],
+                    ]
+                },
 					"ProtectedSettings":{
-                    "commandToExecute": "[concat('powershell.exe -noninteractive -executionpolicy bypass -File RemoveScript.ps1',' -RDBrokerURL \"', parameters('RDBrokerURL'), '\"',' ',' -TenantGroupName \"', parameters('ExistingTenantGroupName'), '\"',' ',' -TenantName \"', parameters('ExistingTenantName'), '\"',' ',' -HostPoolName \"', parameters('ExistingHostPoolName'), '\"',' ',' -Hours \"', variables('RegistrationExpirationHours'), '\"',' ',' -TenantAdminUPN \"', parameters('tenantAdminUpnOrApplicationId'), '\"',' ',' -TenantAdminPassword \"', parameters('TenantAdminPassword'), '\"',' ',' -SubscriptionId \"', variables('subscriptionId'), '\"',' ',' -Fileuri \"', variables('deployAgentURI'), '\"',' ',' -deleteordeallocateVMs \"', parameters('ActionOnPreviousVirtualMachines'), '\"',' ',' -messageTitle \"', variables('messageTitle'), '\"',' ',' -userNotificationMessege \"', parameters('userNotificationMessege'), '\"',' ',' -userLogoffDelayInMinutes \"', parameters('userLogoffDelayInMinutes'), '\"',' ',' -localAdminUsername \"', variables('existingDomainUsername'), '\"',' ',' -localAdminpassword \"', parameters('existingDomainPassword'), '\"',' ',' -rdshIs1809OrLater \"', parameters('rdshIs1809OrLater'), '\"', ' ',' -isServicePrincipal \"', parameters('isServicePrincipal'), '\"','  ',' -aadTenantId \"', parameters('aadTenantId'), '\"',' ',' -ActivationKey \"', parameters('activationKey'), '\"',' ',' -DomainName \"', variables('existingDomainName'), '\"')]"
-					}
-                }
-            },
-            "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', concat(variables('rdshPrefix'), copyindex(),'/extensions/joindomain'))]",
-                "[concat('Microsoft.Compute/virtualMachines/', concat(variables('rdshPrefix'), copyindex(),'/extensions/dscextension'))]"
+                    "commandToExecute": "[concat('powershell.exe -noninteractive -executionpolicy bypass -file RemoveScript.ps1',' -RDBrokerURL \"', parameters('RDBrokerURL'), '\"',' ',' -TenantGroupName \"', parameters('ExistingTenantGroupName'), '\"',' ',' -TenantName \"', parameters('ExistingTenantName'), '\"',' ',' -HostPoolName \"', parameters('ExistingHostPoolName'), '\"',' ',' -Hours \"', variables('RegistrationExpirationHours'), '\"',' ',' -TenantAdminUPN \"', parameters('tenantAdminUpnOrApplicationId'), '\"',' ',' -TenantAdminPassword \"', parameters('TenantAdminPassword'), '\"',' ',' -SubscriptionId \"', variables('subscriptionId'), '\"',' ',' -Fileuri \"', variables('deployAgentURI'), '\"',' ',' -deleteordeallocateVMs \"', parameters('ActionOnPreviousVirtualMachines'), '\"',' ',' -messageTitle \"', variables('messageTitle'), '\"',' ',' -userNotificationMessege \"', parameters('userNotificationMessege'), '\"',' ',' -userLogoffDelayInMinutes \"', parameters('userLogoffDelayInMinutes'), '\"',' ',' -localAdminUsername \"', variables('existingDomainUsername'), '\"',' ',' -localAdminpassword \"', parameters('existingDomainPassword'), '\"',' ',' -rdshIs1809OrLater \"', parameters('rdshIs1809OrLater'), '\"', ' ',' -isServicePrincipal \"', parameters('isServicePrincipal'), '\"','  ',' -aadTenantId \"', parameters('aadTenantId'), '\"',' ',' -ActivationKey \"', parameters('activationKey'), '\"',' ',' -DomainName \"', variables('existingDomainName'), '\"')]"
+                    }
+                },
+               "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', concat(variables('rdshPrefix'), '0','/extensions/joindomain'))]",
+                "[concat('Microsoft.Compute/virtualMachines/', concat(variables('rdshPrefix'), '0','/extensions/dscextension'))]"
             ]
         },
 		
