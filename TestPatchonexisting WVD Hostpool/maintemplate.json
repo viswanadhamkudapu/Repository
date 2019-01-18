@@ -385,7 +385,8 @@
 		{
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('rdshPrefix'), copyindex(),'/','rdAgent')]",
+            "name": "[concat(variables('rdshPrefix'), copyindex(1),'/','rdAgent')]",
+            "condition": "[greater(parameters('rdshNumberOfInstances'),1)]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Compute/virtualMachines/', concat(variables('rdshPrefix'), copyindex(),'/extensions/joindomain'))]",

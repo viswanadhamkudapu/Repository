@@ -239,8 +239,28 @@ param(
             #Import-Module Azurerm
             $AzSecurepass=ConvertTo-SecureString -String $TenantAdminPassword -AsPlainText -Force
             $AzCredentials=New-Object System.Management.Automation.PSCredential($TenantAdminUPN, $AzSecurepass)
-            $loginResult=Login-AzureRmAccount -SubscriptionId $SubscriptionId  -Credential $AzCredentials
-            if ($loginResult.Context.Subscription.Id -eq $SubscriptionId)
+            #$loginResult=Login-AzureRmAccount -SubscriptionId $SubscriptionId  -Credential $AzCredentials
+			
+			#Authenticate AzureRM
+			if ($isServicePrincipal -eq "True")
+			  {
+				$authentication = Add-AzureRmAccount -Credential $AzCredentials -ServicePrincipal -TenantId $AadTenantId
+			  }
+			  else
+			  {
+				$authentication = Add-AzureRmAccount -Credential $Credentials -SubscriptionId $SubscriptionId
+			  }
+					  $obj = $authentication | Out-String
+
+					  if ($authentication)
+					  {
+						Write-Log -Message "AzureRM Login successfully Done. Result:`n$obj"
+					  }
+					  else
+					  {
+						Write-Log -Error "AzureRM Login Failed, Error:`n$obj"
+					  }
+			if ($authentication.Context.Subscription.Id -eq $SubscriptionId)
             {
                  $success=$true
                  Write-Log -Message "Successfully logged into AzureRM"
