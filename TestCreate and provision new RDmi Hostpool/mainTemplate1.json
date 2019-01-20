@@ -204,6 +204,7 @@
     },
     "variables": {
         "rdshManagedDisks": "[if(equals(parameters('rdshImageSource'), 'CustomVHD'), parameters('rdshUseManagedDisks'), bool('true'))]",
+        "rdshUnmanagedDisks": "[if(equals(parameters('storageAccountResourceGroupName'), 'empty'), 'newStorageAccount',parameters('storageAccountResourceGroupName'))]",
         "rdshPrefix": "[concat(parameters('rdshNamePrefix'),'-')]",
         "avSetSKU": "[if(variables('rdshManagedDisks'), 'Aligned', 'Classic')]",
         "existingDomainName": "[last(split(parameters('existingDomainUPN'), '@'))]",
@@ -274,6 +275,9 @@
                     },
                     "subnet-id": {
                         "value": "[variables('subnet-id')]"
+                    },
+                    "newStorageAccount":{
+                        "value": "[variables('rdshUnmanagedDisks')]"
                     },
                     "vhds": {
                         "value": "[variables('vhds')]"

@@ -14,6 +14,13 @@
                 "description": "The storage account containing the custom VHD."
             }
         },
+        "newStorageAccount": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "new storage account"
+            }
+        },
         "rdshGalleryImageSKU": {
             "type": "string",
             "allowedValues": [
@@ -84,7 +91,7 @@
         "galleryPublisher": "[if( equals(parameters('rdshGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'MicrosoftWindowsDesktop', 'MicrosoftwindowsServer')]",
         "galleryOffer": "[if( equals(parameters('rdshGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'Windows-10', 'WindowsServer')]",
         "gallerySku": "[if( equals(parameters('rdshGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'rs5-pro', parameters('rdshGalleryImageSKU'))]",
-        "newStorageAct": "[if(equals(parameters('storageAccountResourceGroupName'),'empty'), 'new','existing')]",
+        "newStorageAct": "[if(equals(parameters('newStorageAccount'),'newStorageAccount'), 'new','existing')]",
 		"newstorageAccountName": "[concat(uniquestring(resourceGroup().id), 'stndrsa')]",
         "storageaccountnew": "[concat(resourceId(variables('resourcegroupname'),'Microsoft.Storage/storageAccounts',variables('newstorageAccountName')))]",
         "storageAccountType": "Standard_LRS",
@@ -121,7 +128,7 @@
 		{
             "apiVersion": "2017-06-01",
             "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('newstorageAccountName')]",
+            "name": "[variables('storageAccountName')]",
             "sku": {
                 "name": "[variables('storageAccountType')]"
             },
