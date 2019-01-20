@@ -13,6 +13,36 @@
                 "Gallery"
             ]
         },
+        "VmImageVhdUri": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "URI of the sysprepped image vhd file to be used to create the session host VMs. For example, https://rdsstorage.blob.core.windows.net/vhds/sessionhostimage.vhd"
+            }
+        },
+        "storageAccountResourceGroupName": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The storage account containing the custom VHD."
+            }
+        },
+        "newstorageAccountName":{
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The storage account name"
+            }
+
+        },
+        "storageAccountNameNew":{
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The storage account name"
+            }
+            
+        },
         "rdshUseManagedDisks": {
             "type": "bool",
             "defaultValue": true,
@@ -23,7 +53,13 @@
     },
     "variables": {
         "rdshManagedDisks": "[if(or(equals(parameters('rdshImageSource'), 'CustomVHD'),equals(parameters('rdshUseManagedDisks'),bool('false'))), parameters('rdshUseManagedDisks'), bool('true'))]",
-        "resourcegroupname": "[resourceGroup().name]"
+        "resourcegroupname": "[resourceGroup().name]",
+        "resourcegroupnamenew": "[resourceGroup().name]",
+        "newstorageaccountrgname": "[if(equals(parameters('storageAccountNameNew'), 'newStorageAccount'), variables('resourcegroupnamenew'),parameters('storageAccountResourceGroupName'))]",
+        "storageAccountName": "[if(equals(parameters('storageAccountNameNew'), 'newStorageAccount'),parameters('newstorageAccountName'),split(split(parameters('VmImageVhdUri'),'/')[2], '.' )[0])]",
+        "storageaccountVhd": "[concat(resourceId(parameters('storageAccountResourceGroupName'),'Microsoft.Storage/storageAccounts/',variables('storageAccountName')))]",
+        "storageaccountNew": "[concat(resourceId(variables('newstorageaccountrgname'),'Microsoft.Storage/storageAccounts/',variables('storageAccountName')))]",
+        "storageaccount": "[if(equals(parameters('VmImageVhdUri'),'empty'),variables('storageaccountVhd'),variables('storageaccountNew'))]"
     },
      "resources": [],
     "outputs": {
@@ -37,6 +73,18 @@
         },
         "itemplateoutput":{
             "value": "[concat( if(variables('rdshManagedDisks'), 'managedDisks', 'unmanagedDisks'), '-', toLower(replace(parameters('rdshImageSource'),' ', '')), 'vm')]",
+            "type":"string"
+        },
+        "storageoutput":{
+            "value": "[variables('newstorageaccountrgname')]",
+            "type":"string"
+        },
+        "storagesuboutput":{
+            "value": "[variables('storageaccountNew')]",
+            "type":"string"
+        },
+        "strgoutput":{
+            "value": "[variables('storageaccount')]",
             "type":"string"
         }
     }
