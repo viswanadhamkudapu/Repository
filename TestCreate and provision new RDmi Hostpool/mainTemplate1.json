@@ -219,10 +219,7 @@
         "registrationToken": "[if(equals(parameters('registrationToken'),'empty'), json('null'), parameters('registrationToken'))]",
         "scriptUri": "[concat(parameters('baseurl'),'/Scripts/Script.ps1')]",
         "deployAgentUri": "[concat(parameters('baseurl'),'/Scripts/DeployAgent.zip')]",
-        "newstorageAccountName": "[concat(uniquestring(resourceGroup().id), 'stndrsa')]",
-        "resourcegroupname": "[resourceGroup().name]",       
-        "rdshUnmanagedDisks": "[if(equals(parameters('storageAccountResourceGroupName'), 'empty'), variables('resourcegroupname'),parameters('storageAccountResourceGroupName'))]",
-        "storageAccountType": "Standard_LRS"
+        "rdshUnmanagedDisks": "[if(equals(variables('vmTemplateName'), 'unmanagedDisks-galleryvm'), 'newStorageAccount',json('null'))]"        
     },
     "resources": [
         {
@@ -239,16 +236,6 @@
             }
         },
         {
-            "apiVersion": "2017-06-01",
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('newstorageAccountName')]",
-            "sku": {
-                "name": "[variables('storageAccountType')]"
-            },
-            "kind": "Storage",
-            "location": "[resourceGroup().location]"
-        },
-        {
             "apiVersion": "2017-05-10",
             "name": "vmCreation-linkedTemplate",
             "type": "Microsoft.Resources/deployments",
@@ -263,7 +250,7 @@
                         "value": "[parameters('vmImageVhdUri')]"
                     },
                     "storageAccountResourceGroupName": {
-                        "value": "[variables('rdshUnmanagedDisks')]"
+                        "value": "[parameters('storageAccountResourceGroupName')]"
                     },
                     "rdshGalleryImageSKU": {
                         "value": "[parameters('rdshGalleryImageSKU')]"
@@ -290,7 +277,7 @@
                         "value": "[variables('subnet-id')]"
                     },
                     "storageAccountNameNew":{
-                        "value": "[variables('newstorageAccountName')]"
+                        "value": "[variables('rdshUnmanagedDisks')]"
                     },
                     "vhds": {
                         "value": "[variables('vhds')]"
