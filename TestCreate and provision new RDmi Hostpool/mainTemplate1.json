@@ -219,7 +219,10 @@
         "registrationToken": "[if(equals(parameters('registrationToken'),'empty'), json('null'), parameters('registrationToken'))]",
         "scriptUri": "[concat(parameters('baseurl'),'/Scripts/Script.ps1')]",
         "deployAgentUri": "[concat(parameters('baseurl'),'/Scripts/DeployAgent.zip')]",
-        "rdshUnmanagedDisks": "[if(equals(variables('vmTemplateName'), 'unmanagedDisks-galleryvm'), 'newStorageAccount',json('null'))]"        
+        "rdshUnmanagedDisks": "[if(equals(variables('vmTemplateName'), 'unmanagedDisks-galleryvm'), 'newStorageAccount',json('null'))]",
+        "newstorageAccountName": "[concat(uniquestring(resourceGroup().id), 'stndrsa')]",
+        "newstorageact": "[if(equals(variables('vmTemplateName'), 'unmanagedDisks-galleryvm'), variables('newstorageAccountName'),json('null'))]",
+        "storageAccountType": "Standard_LRS"      
     },
     "resources": [
         {
@@ -234,6 +237,16 @@
             "sku": {
                 "name": "[variables('avSetSKU')]"
             }
+        },
+        {
+            "apiVersion": "2017-06-01",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('newstorageact')]",
+            "sku": {
+                "name": "[variables('storageAccountType')]"
+            },
+            "kind": "Storage",
+            "location": "[resourceGroup().location]"
         },
         {
             "apiVersion": "2017-05-10",
@@ -278,6 +291,9 @@
                     },
                     "storageAccountNameNew":{
                         "value": "[variables('rdshUnmanagedDisks')]"
+                    },
+                    "newstorageAccountName":{
+                        "value": "[variables('newstorageact')]"
                     },
                     "vhds": {
                         "value": "[variables('vhds')]"

@@ -24,6 +24,14 @@
             }
             
         },
+        "newstorageAccountName":{
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The storage account name"
+            }
+
+        },
         "rdshGalleryImageSKU": {
             "type": "string",
             "allowedValues": [
@@ -94,11 +102,9 @@
         "galleryPublisher": "[if( equals(parameters('rdshGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'MicrosoftWindowsDesktop', 'MicrosoftwindowsServer')]",
         "galleryOffer": "[if( equals(parameters('rdshGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'Windows-10', 'WindowsServer')]",
         "gallerySku": "[if( equals(parameters('rdshGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'rs5-evd', parameters('rdshGalleryImageSKU'))]",
-        "newstorageAccountName": "[concat(uniquestring(resourceGroup().id), 'stndrsa')]",
-        "storageAccountType": "Standard_LRS",
         "resourcegroupname": "[resourceGroup().name]",
         "newstorageaccountrgname": "[if(equals(parameters('storageAccountNameNew'), 'newStorageAccount'), variables('resourcegroupname'),parameters('storageAccountResourceGroupName'))]",
-        "storageAccountName": "[if(equals(parameters('storageAccountNameNew'), 'newStorageAccount'),variables('newstorageAccountName'),split(split(parameters('VmImageVhdUri'),'/')[2], '.' )[0])]",
+        "storageAccountName": "[if(equals(parameters('storageAccountNameNew'), 'newStorageAccount'),parameters('newstorageAccountName'),split(split(parameters('VmImageVhdUri'),'/')[2], '.' )[0])]",
         "storageaccountVhd": "[concat(resourceId(parameters('storageAccountResourceGroupName'),'Microsoft.Storage/storageAccounts',variables('storageAccountName')))]",
         "storageaccountNew": "[concat(resourceId(variables('newstorageaccountrgname'),'Microsoft.Storage/storageAccounts',variables('storageAccountName')))]",
         "storageaccount": "[if(equals(parameters('VmImageVhdUri'),'empty'),variables('storageaccountNew'),variables('storageaccountVhd'))]"
@@ -126,16 +132,6 @@
                     }
                 ]
             }
-        },
-        {
-            "apiVersion": "2017-06-01",
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('newstorageAccountName')]",
-            "sku": {
-                "name": "[variables('storageAccountType')]"
-            },
-            "kind": "Storage",
-            "location": "[resourceGroup().location]"
         },
         {
             "apiVersion": "2018-06-01",
