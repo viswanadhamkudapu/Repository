@@ -193,14 +193,6 @@
                 "description": "Windows 10 multi session Activation Key"
             }
         },
-        "storageAccountNameNew":{
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "The storage account name"
-            }
-            
-        },
         "baseUrl": {
             "type": "string",
             "metadata": {
@@ -227,6 +219,7 @@
         "registrationToken": "[if(equals(parameters('registrationToken'),'empty'), json('null'), parameters('registrationToken'))]",
         "scriptUri": "[concat(parameters('baseurl'),'/Scripts/Script.ps1')]",
         "deployAgentUri": "[concat(parameters('baseurl'),'/Scripts/DeployAgent.zip')]",
+        "newstorageAccountName": "[concat(uniquestring(resourceGroup().id), 'stndrsa')]",
         "resourcegroupname": "[resourceGroup().name]",       
         "rdshUnmanagedDisks": "[if(equals(parameters('storageAccountResourceGroupName'), 'empty'), variables('resourcegroupname'),parameters('storageAccountResourceGroupName'))]",
         "storageAccountType": "Standard_LRS"
@@ -248,7 +241,7 @@
         {
             "apiVersion": "2017-06-01",
             "type": "Microsoft.Storage/storageAccounts",
-            "name": "[parameters('storageAccountNameNew')]",
+            "name": "[variables('newstorageAccountName')]",
             "sku": {
                 "name": "[variables('storageAccountType')]"
             },
@@ -297,7 +290,7 @@
                         "value": "[variables('subnet-id')]"
                     },
                     "storageAccountNameNew":{
-                        "value": "[parameters('storageAccountNameNew')]"
+                        "value": "[variables('newstorageAccountName')]"
                     },
                     "vhds": {
                         "value": "[variables('vhds')]"
