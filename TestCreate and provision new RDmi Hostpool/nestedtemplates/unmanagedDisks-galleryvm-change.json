@@ -14,13 +14,12 @@
                 "description": "The storage account containing the custom VHD."
             }
         },
-        "storageAccountNameNew":{
+        "newStorageAccountname": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
-                "description": "The storage account containing the custom VHD."
+                "description": "new storage account"
             }
-            
         },
         "rdshGalleryImageSKU": {
             "type": "string",
@@ -91,14 +90,16 @@
     "variables": {
         "galleryPublisher": "[if( equals(parameters('rdshGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'MicrosoftWindowsDesktop', 'MicrosoftwindowsServer')]",
         "galleryOffer": "[if( equals(parameters('rdshGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'Windows-10', 'WindowsServer')]",
-        "gallerySku": "[if( equals(parameters('rdshGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'rs5-evd', parameters('rdshGalleryImageSKU'))]",
+        "gallerySku": "[if( equals(parameters('rdshGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'rs5-pro', parameters('rdshGalleryImageSKU'))]",
+        "newStorageAct": "[if(equals(parameters('newStorageAccountname'),'newStorageAccount'), 'new','existing')]",
+		"newstorageAccountName": "[concat(uniquestring(resourceGroup().id), 'stndrsa')]",
+        "storageaccountnew": "[concat(resourceId(variables('resourcegroupname'),'Microsoft.Storage/storageAccounts',variables('newstorageAccountName')))]",
+        "storageAccountType": "Standard_LRS",
+		"resourcegroupname": "resourceGroup().name",
         "storageAccountNameVhd": "[split( split( parameters('VmImageVhdUri'), '/')[2], '.' )[0]]",
         "storageaccountVhd": "[concat(resourceId(parameters('storageAccountResourceGroupName'),'Microsoft.Storage/storageAccounts',variables('storageAccountNameVhd')))]",
-        "vhdsnew": "[concat('vhds','/', parameters('rdshPrefix'))]",
-        "vhds": "[if(equals(parameters('storageAccountNameNew'),'empty'),variables('storageAccountNameVhd'),variables('vhdsnew'))]",
-        "storageAccountNameNew": "Parameters('storageAccountName')",
-        "storageaccountNew": "[concat(resourceId(parameters('storageAccountResourceGroupName'),'Microsoft.Storage/storageAccounts',variables('storageAccountNameNew')))]",
-        "storageaccount": "[if(equals(parameters('VmImageVhdUri'),'empty'),variables('storageaccountNew'),variables('storageaccountVhd'))]"
+		"storageaccount": "[if(equals(variables('newStorageAct'),'new'),variables('storageaccountnew'),variables('storageaccountVhd'))]"
+		
     },
     "resources": [
         {
@@ -123,6 +124,16 @@
                     }
                 ]
             }
+        },
+		{
+            "apiVersion": "2017-06-01",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('storageAccountName')]",
+            "sku": {
+                "name": "[variables('storageAccountType')]"
+            },
+            "kind": "Storage",
+            "location": "[resourceGroup().location]"
         },
         {
             "apiVersion": "2018-06-01",
@@ -158,7 +169,7 @@
                     "osDisk": {
                         "createOption": "FromImage",
                         "vhd": {
-                            "uri": "[concat(reference(variables('storageaccount'), '2016-01-01').primaryEndpoints.blob, variables('vhds'), copyindex(), '-osdisk.vhd')]"
+                            "uri": "[concat(reference(variables('storageaccount'), '2016-01-01').primaryEndpoints.blob, parameters('vhds'), copyindex(), '-osdisk.vhd')]"
                         },
                         "name": "[concat(parameters('rdshPrefix'), copyindex(),'-osDisk')]"
                     }

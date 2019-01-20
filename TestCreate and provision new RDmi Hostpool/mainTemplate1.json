@@ -204,7 +204,6 @@
     },
     "variables": {
         "rdshManagedDisks": "[if(equals(parameters('rdshImageSource'), 'CustomVHD'), parameters('rdshUseManagedDisks'), bool('true'))]",
-        "rdshUnmanagedDisks": "[if(equals(parameters('storageAccountResourceGroupName'), 'empty'), 'newStorageAccount',parameters('storageAccountResourceGroupName'))]",
         "rdshPrefix": "[concat(parameters('rdshNamePrefix'),'-')]",
         "avSetSKU": "[if(variables('rdshManagedDisks'), 'Aligned', 'Classic')]",
         "existingDomainName": "[last(split(parameters('existingDomainUPN'), '@'))]",
@@ -219,7 +218,11 @@
         "HostPoolName": "[if(equals(parameters('HostPoolName'),'empty'), json('null'), parameters('HostPoolName'))]",
         "registrationToken": "[if(equals(parameters('registrationToken'),'empty'), json('null'), parameters('registrationToken'))]",
         "scriptUri": "[concat(parameters('baseurl'),'/Scripts/Script.ps1')]",
-        "deployAgentUri": "[concat(parameters('baseurl'),'/Scripts/DeployAgent.zip')]"
+        "deployAgentUri": "[concat(parameters('baseurl'),'/Scripts/DeployAgent.zip')]",
+        "resourcegroupname": "resourceGroup().name",       
+        "rdshUnmanagedDisks": "[if(equals(parameters('storageAccountResourceGroupName'), 'empty'), variables('resourcegroupname'),parameters('storageAccountResourceGroupName'))]",
+        "storageAccountNameNew": "[concat(uniquestring(resourceGroup().id), 'stndrsa')]",
+        "storageAccountType": "Standard_LRS"
     },
     "resources": [
         {
@@ -236,6 +239,16 @@
             }
         },
         {
+            "apiVersion": "2017-06-01",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('storageAccountNameNew')]",
+            "sku": {
+                "name": "[variables('storageAccountType')]"
+            },
+            "kind": "Storage",
+            "location": "[resourceGroup().location]"
+        },
+        {
             "apiVersion": "2017-05-10",
             "name": "vmCreation-linkedTemplate",
             "type": "Microsoft.Resources/deployments",
@@ -250,7 +263,7 @@
                         "value": "[parameters('vmImageVhdUri')]"
                     },
                     "storageAccountResourceGroupName": {
-                        "value": "[parameters('storageAccountResourceGroupName')]"
+                        "value": "[variables('rdshUnmanagedDisks')]"
                     },
                     "rdshGalleryImageSKU": {
                         "value": "[parameters('rdshGalleryImageSKU')]"
@@ -276,8 +289,8 @@
                     "subnet-id": {
                         "value": "[variables('subnet-id')]"
                     },
-                    "newStorageAccount":{
-                        "value": "[variables('rdshUnmanagedDisks')]"
+                    "storageAccountNameNew":{
+                        "value": "[variables('storageAccountNameNew')]"
                     },
                     "vhds": {
                         "value": "[variables('vhds')]"
