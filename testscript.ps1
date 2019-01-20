@@ -1,4 +1,4 @@
-﻿<#$subsriptionid = Get-AutomationVariable -Name 'subsriptionid'
+﻿$subsriptionid = Get-AutomationVariable -Name 'subsriptionid'
 $ResourceGroupName = Get-AutomationVariable -Name 'ResourceGroupName'
 $Location = Get-AutomationVariable -Name 'Location'
 $RDBrokerURL = Get-AutomationVariable -Name 'RDBrokerURL'
@@ -47,12 +47,12 @@ function Write-Log {
     $Invocation = "$($MyInvocation.MyCommand.Source):$($MyInvocation.ScriptLineNumber)"
     if ($Message) {
 
-      Add-Content -Value "$DateTime - $Invocation - $Message" -Path "$([environment]::GetEnvironmentVariable('WVDModules', 'Machine'))\ScriptLog.log"
+      Add-Content -Value "$DateTime - $Invocation - $Message" -Path "C:\WVDModules\ScriptLog.log"
     }
     else {
 
 
-      Add-Content -Value "$DateTime - $Invocation - $Error" -Path "$([environment]::GetEnvironmentVariable('WVDModules', 'Machine'))\ScriptLog.log"
+      Add-Content -Value "$DateTime - $Invocation - $Error" -Path "C:\WVDModules\ScriptLog.log"
     }
   }
   catch {
@@ -129,10 +129,9 @@ Import-Module AzureAD
 
       $StopVM = Stop-AzureRmVM -Name "win2krdsh-0" -ResourceGroupName "testrgarm" -Force
       Write-Log -Message "azurermVM successfully stopped $stopvm.name Provisioningstate: $stopvm.status"
-Get-Content -Path "C:\WVDModules\ScriptLog.txt"
+      Get-Content -Path "C:\WVDModules\ScriptLog.log"
 
-#>
-
+<#
 $subsriptionid = Get-AutomationVariable -Name 'subsriptionid'
 $ResourceGroupName = Get-AutomationVariable -Name 'ResourceGroupName'
 $Location = Get-AutomationVariable -Name 'Location'
@@ -249,6 +248,7 @@ Import-Module AzureRM.Automation
 Remove-AzureRmAutomationAccount -Name "msftsaas-autoAccount" -ResourceGroupName `$ResourceGroupName -Force
 "@| Out-File -FilePath RemoveAccount:\RemoveAccount.ps1 -Force
 #>
+<#
 New-PSDrive -Name CreateScalefile -PSProvider FileSystem -Root "C:\" | Out-Null
 @"
 param(
@@ -331,7 +331,7 @@ Get-Content -Path "C:\ScaleScript-`$hostpoolname\ScriptLog.log"
 
 "@ | Out-File -FilePath RemoveAccount:\ScleScript.ps1 -Force 
   
-    
+  
     
     #Create a Run Book
     $AAcctRunbook=New-AzureRmAutomationRunbook -Name $autoScaleRunbookName -Type PowerShell -ResourceGroupName $ResourceGroupName -AutomationAccountName $autoScaleAccountName
@@ -364,3 +364,4 @@ Get-Content -Path "C:\ScaleScript-`$hostpoolname\ScriptLog.log"
     New-AzureRmSchedulerJobCollection -JobCollectionName $JobCollectionName -ResourceGroupName $ResourceGroupName -Location $Location -Plan Free
 
     New-AzureRmSchedulerHttpJob -ResourceGroupName $ResourceGroupName -JobCollectionName $JobCollectionName -JobName $schJObName -Method POST -Uri $webHookURI -StartTime $BeginPeakTime
+    #>
