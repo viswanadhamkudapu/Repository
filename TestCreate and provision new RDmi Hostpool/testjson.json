@@ -13,13 +13,6 @@
                 "Gallery"
             ]
         },
-        "VmImageVhdUri": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "URI of the sysprepped image vhd file to be used to create the session host VMs. For example, https://rdsstorage.blob.core.windows.net/vhds/sessionhostimage.vhd"
-            }
-        },
         "rdshUseManagedDisks": {
             "type": "bool",
             "defaultValue": true,
@@ -30,13 +23,13 @@
     },
     "variables": {
         "rdshManagedDisks": "[if(or(equals(parameters('rdshImageSource'), 'CustomVHD'),equals(parameters('rdshUseManagedDisks'),bool('false'))), parameters('rdshUseManagedDisks'), bool('true'))]",
-        "vhdstorageAccountName": "[split( split( parameters('VmImageVhdUri'), '/')[2], '.' )[0]]"
+        "resourcegroupname": "[resourceGroup().name]"
     },
      "resources": [],
     "outputs": {
         "resourceGroupOutput": {
-            "value": "[resourceGroup()]",
-            "type" : "object"
+            "value": "[variables('resourcegroupname')]",
+            "type" : "string"
         },
         "rdshManagedDisksoutput": {
             "value": "[if(equals(parameters('rdshImageSource'), 'CustomVHD'), parameters('rdshUseManagedDisks'), bool('true'))]",
@@ -45,11 +38,6 @@
         "itemplateoutput":{
             "value": "[concat( if(variables('rdshManagedDisks'), 'managedDisks', 'unmanagedDisks'), '-', toLower(replace(parameters('rdshImageSource'),' ', '')), 'vm')]",
             "type":"string"
-        },
-        "imgoutput":{
-            "value": "[variables('vhdstorageAccountName')]",
-            "type":"string"
         }
-
     }
 }
