@@ -94,10 +94,7 @@
         "gallerySku": "[if( equals(parameters('rdshGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'rs5-evd', parameters('rdshGalleryImageSKU'))]",
         "storageAccountNameVhd": "[split( split( parameters('VmImageVhdUri'), '/')[2], '.' )[0]]",
         "storageaccountVhd": "[concat(resourceId(parameters('storageAccountResourceGroupName'),'Microsoft.Storage/storageAccounts',variables('storageAccountNameVhd')))]",
-        "vhdsnew": "[concat('vhds','/', parameters('rdshPrefix'))]",
-        "vhds": "[if(equals(parameters('storageAccountNameNew'),'empty'),variables('storageAccountNameVhd'),variables('vhdsnew'))]",
-        "storageAccountNameNew": "Parameters('storageAccountName')",
-        "storageaccountNew": "[concat(resourceId(parameters('storageAccountResourceGroupName'),'Microsoft.Storage/storageAccounts',variables('storageAccountNameNew')))]",
+        "storageaccountNew": "[concat(resourceId(parameters('storageAccountResourceGroupName'),'Microsoft.Storage/storageAccounts',parameters('storageAccountNameNew')))]",
         "storageaccount": "[if(equals(parameters('VmImageVhdUri'),'empty'),variables('storageaccountNew'),variables('storageaccountVhd'))]"
     },
     "resources": [
@@ -158,7 +155,7 @@
                     "osDisk": {
                         "createOption": "FromImage",
                         "vhd": {
-                            "uri": "[concat(reference(variables('storageaccount'), '2016-01-01').primaryEndpoints.blob, variables('vhds'), copyindex(), '-osdisk.vhd')]"
+                            "uri": "[concat(reference(variables('storageaccount'), '2016-01-01').primaryEndpoints.blob, parameters('vhds'), copyindex(), '-osdisk.vhd')]"
                         },
                         "name": "[concat(parameters('rdshPrefix'), copyindex(),'-osDisk')]"
                     }

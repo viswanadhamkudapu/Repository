@@ -211,7 +211,7 @@
         }
     },
     "variables": {
-        "rdshManagedDisks": "[if(equals(parameters('rdshImageSource'), 'CustomVHD'), parameters('rdshUseManagedDisks'), bool('true'))]",
+        "rdshManagedDisks": "[if(or(equals(parameters('rdshImageSource'), 'CustomVHD'),equals(parameters('rdshUseManagedDisks'),bool('false'))), parameters('rdshUseManagedDisks'), bool('true'))]",
         "rdshPrefix": "[concat(parameters('rdshNamePrefix'),'-')]",
         "avSetSKU": "[if(variables('rdshManagedDisks'), 'Aligned', 'Classic')]",
         "existingDomainName": "[last(split(parameters('existingDomainUPN'), '@'))]",
@@ -227,7 +227,7 @@
         "registrationToken": "[if(equals(parameters('registrationToken'),'empty'), json('null'), parameters('registrationToken'))]",
         "scriptUri": "[concat(parameters('baseurl'),'/Scripts/Script.ps1')]",
         "deployAgentUri": "[concat(parameters('baseurl'),'/Scripts/DeployAgent.zip')]",
-        "resourcegroupname": "resourceGroup().name",       
+        "resourcegroupname": "[resourceGroup().name]",       
         "rdshUnmanagedDisks": "[if(equals(parameters('storageAccountResourceGroupName'), 'empty'), variables('resourcegroupname'),parameters('storageAccountResourceGroupName'))]",
         "storageAccountType": "Standard_LRS"
     },
