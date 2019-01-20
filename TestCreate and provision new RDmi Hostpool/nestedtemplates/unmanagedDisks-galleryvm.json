@@ -96,8 +96,8 @@
         "storageAccountType": "Standard_LRS",
         "resourcegroupname": "[resourceGroup().name]",
         "newstorageaccountrgname": "[if(equals(parameters('storageAccountNameNew'), 'newStorageAccount'), variables('resourcegroupname'),parameters('storageAccountResourceGroupName'))]",
-        "storageAccountNameVhd": "[split( split( parameters('VmImageVhdUri'), '/')[2], '.' )[0]]",
-        "storageaccountVhd": "[concat(resourceId(parameters('storageAccountResourceGroupName'),'Microsoft.Storage/storageAccounts',variables('storageAccountNameVhd')))]",
+        "vhdstorageAccountName": "[split( split( parameters('VmImageVhdUri'), '/')[2], '.' )[0]]",
+        "storageaccountVhd": "[concat(resourceId(parameters('storageAccountResourceGroupName'),'Microsoft.Storage/storageAccounts',variables('vhdstorageAccountName')))]",
         "storageaccountNew": "[concat(resourceId(variables('newstorageaccountrgname'),'Microsoft.Storage/storageAccounts',variables('newstorageAccountName')))]",
         "storageaccount": "[if(equals(parameters('VmImageVhdUri'),'empty'),variables('storageaccountNew'),variables('storageaccountVhd'))]"
     },
