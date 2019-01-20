@@ -14,7 +14,7 @@
                 "description": "The storage account containing the custom VHD."
             }
         },
-        "newStorageAccount": {
+        "newStorageAccountname": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
@@ -91,7 +91,7 @@
         "galleryPublisher": "[if( equals(parameters('rdshGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'MicrosoftWindowsDesktop', 'MicrosoftwindowsServer')]",
         "galleryOffer": "[if( equals(parameters('rdshGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'Windows-10', 'WindowsServer')]",
         "gallerySku": "[if( equals(parameters('rdshGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'rs5-pro', parameters('rdshGalleryImageSKU'))]",
-        "newStorageAct": "[if(equals(parameters('newStorageAccount'),'newStorageAccount'), 'new','existing')]",
+        "newStorageAct": "[if(equals(parameters('newStorageAccountname'),'newStorageAccount'), 'new','existing')]",
 		"newstorageAccountName": "[concat(uniquestring(resourceGroup().id), 'stndrsa')]",
         "storageaccountnew": "[concat(resourceId(variables('resourcegroupname'),'Microsoft.Storage/storageAccounts',variables('newstorageAccountName')))]",
         "storageAccountType": "Standard_LRS",
