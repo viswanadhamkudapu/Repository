@@ -310,10 +310,22 @@ param(
 
                         # Support to remove managed disks
                         if($a.StorageProfile.OsDisk.ManagedDisk ) {
-                            ($DataDisks + $OSDisk) | ForEach-Object {
-                                #Write-Warning -Message "Removing Disk: $_"
-                                Get-AzureRmDisk -ResourceGroupName $ResourceGroup -DiskName $_ | Remove-AzureRmDisk -Force
+                            
+                            if($OSDisk){
+                            foreach($ODisk in $OSDisk){
+                            Get-AzureRmDisk -ResourceGroupName $_.ResourceGroupName -DiskName $ODisk | Remove-AzureRmDisk -Force
                             }
+                            }
+                                                        
+                            if($DataDisks){
+                            foreach($DDisk in $DataDisks){
+                            Get-AzureRmDisk -ResourceGroupName $_.ResourceGroupName -DiskName $DDisk | Remove-AzureRmDisk -Force
+                            }
+                            }
+
+
+
+
                         }
                         # Support to remove unmanaged disks (from Storage Account Blob)
                         else {
