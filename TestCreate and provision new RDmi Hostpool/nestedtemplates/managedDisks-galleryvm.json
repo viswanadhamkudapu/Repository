@@ -38,7 +38,6 @@
             "metadata": {
                 "description": "The storage account name"
             }
-
         },
         "rdshPrefix": {
             "type": "string",
