@@ -189,22 +189,26 @@
         }
     },
     "variables": {
-        "rdshManagedDisks": "[if(equals(parameters('rdshImageSource'), 'CustomVHD'), parameters('rdshUseManagedDisks'), bool('true'))]",
+        "rdshManagedDisks": "[if(or(equals(parameters('rdshImageSource'), 'CustomVHD'),equals(parameters('rdshUseManagedDisks'),bool('false'))), parameters('rdshUseManagedDisks'), bool('true'))]",
         "rdshPrefix": "[concat(parameters('rdshNamePrefix'),'-')]",
         "avSetSKU": "[if(variables('rdshManagedDisks'), 'Aligned', 'Classic')]",
         "existingDomainName": "[last(split(parameters('existingDomainUPN'), '@'))]",
         "existingDomainUsername": "[first(split(parameters('existingDomainUPN'), '@'))]",
         "vhds": "[concat('vhds','/', variables('rdshPrefix'))]",
         "subnet-id": "[concat(resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/virtualNetworks',parameters('existingVnetName')),'/subnets/',parameters('existingSubnetName'))]",
-        "HostPoolFriendlyName": "[if(equals(parameters('registrationToken'),'empty'), json('null'), 'Hostpool')]",
-        "HostPoolDescription": "[if(equals(parameters('registrationToken'),'empty'), json('null'), 'Created through ARM template')]",
-        "RegistrationExpirationHours": "[if(equals(parameters('registrationToken'),'empty'), json('null'), '48')]",
+        "HostPoolFriendlyName": "[if(equals(parameters('registrationToken(optional)'),'empty'), json('null'), 'Hostpool')]",
+        "HostPoolDescription": "[if(equals(parameters('registrationToken(optional)'),'empty'), json('null'), 'Created through ARM template')]",
+        "RegistrationExpirationHours": "[if(equals(parameters('registrationToken(optional)'),'empty'), json('null'), '48')]",
         "vmTemplateName": "[concat( if(variables('rdshManagedDisks'), 'managedDisks', 'unmanagedDisks'), '-', toLower(replace(parameters('rdshImageSource'),' ', '')), 'vm')]",
         "vmTemplateUri": "[concat(parameters('baseurl'),'/nestedtemplates/',variables('vmTemplateName'),'.json')]",
         "HostPoolName": "[if(equals(parameters('HostPoolName'),'empty'), json('null'), parameters('HostPoolName'))]",
-        "registrationToken": "[if(equals(parameters('registrationToken'),'empty'), json('null'), parameters('registrationToken'))]",
+        "registrationToken": "[if(equals(parameters('registrationToken(optional)'),'empty'), json('null'), parameters('registrationToken(optional)'))]",
         "scriptUri": "[concat(parameters('baseurl'),'/Scripts/Script.ps1')]",
-        "deployAgentUri": "[concat(parameters('baseurl'),'/Scripts/DeployAgent.zip')]"
+        "deployAgentUri": "[concat(parameters('baseurl'),'/Scripts/DeployAgent.zip')]",
+        "rdshUnmanagedDisks": "[if(equals(variables('vmTemplateName'), 'unmanagedDisks-galleryvm'), 'newStorageAccount','empty')]",
+        "newstorageAccountName": "[concat(uniquestring(resourceGroup().id), 'stndrsa')]",
+        "newstorageact": "[if(equals(variables('vmTemplateName'), 'unmanagedDisks-galleryvm'), variables('newstorageAccountName'),'empty')]",
+        "storageAccountType": "Standard_LRS"      
     },
     "resources": [
         {
@@ -219,6 +223,17 @@
             "sku": {
                 "name": "[variables('avSetSKU')]"
             }
+        },
+        {
+            "apiVersion": "2017-06-01",
+            "type": "Microsoft.Storage/storageAccounts",
+            "condition": "[equals(variables('vmTemplateName'), 'unmanagedDisks-galleryvm')]",
+            "name": "[variables('newstorageact')]",
+            "sku": {
+                "name": "[variables('storageAccountType')]"
+            },
+            "kind": "Storage",
+            "location": "[resourceGroup().location]"
         },
         {
             "apiVersion": "2017-05-10",
@@ -260,6 +275,12 @@
                     },
                     "subnet-id": {
                         "value": "[variables('subnet-id')]"
+                    },
+                    "storageAccountNameNew":{
+                        "value": "[variables('rdshUnmanagedDisks')]"
+                    },
+                    "newstorageAccountName":{
+                        "value": "[variables('newstorageact')]"
                     },
                     "vhds": {
                         "value": "[variables('vhds')]"
@@ -351,7 +372,7 @@
                     ]
                 },
                 "protectedSettings": {
-                    "commandToExecute": "[concat('powershell.exe -noninteractive -executionpolicy bypass -file Script.ps1',' -RdBrokerURL \"', parameters('rdBrokerURL'), '\"', ' ', ' -TenantGroupName \"', parameters('existingTenantGroupName'), '\"',' ',' -TenantName \"', parameters('existingTenantName'), '\"',' ', ' -registrationToken \"', variables('registrationToken'), '\"',' ', ' -HostPoolName \"', variables('hostPoolName'), '\"',' ', ' -FriendlyName \"', variables('HostPoolFriendlyName'), '\"',' ', ' -Description \"', variables('HostPoolDescription'), '\"',' ', ' -Hours \"', variables('registrationExpirationHours'), '\"',' ', ' -TenantAdminUPN \"', parameters('tenantAdminUpn'), '\"',' ', ' -TenantAdminPassword \"', parameters('tenantAdminPassword'), '\"',' ',' -localAdminUsername \"', variables('existingDomainUsername'), '\"',' ', ' -localAdminpassword \"', parameters('existingDomainPassword'), '\"',' ', ' -rdshIs1809OrLater \"', parameters('rdshIs1809OrLater'), '\"', ' ', ' -isServicePrincipal \"', parameters('isServicePrincipal'), '\"', ' ', ' -aadTenantId \"', parameters('aadTenantId'), '\"', ' ', ' -ActivationKey \"', parameters('windows10activationKey'), '\"',' ', ' -FileURI \"', variables('deployAgentURI'), '\"')]"
+                    "commandToExecute": "[concat('powershell.exe -noninteractive -executionpolicy bypass -file Script.ps1',' -RdBrokerURL \"', parameters('rdBrokerURL'), '\"', ' ', ' -TenantGroupName \"', parameters('existingTenantGroupName'), '\"',' ',' -TenantName \"', parameters('existingTenantName'), '\"',' ', ' -registrationToken \"', variables('registrationToken'), '\"',' ', ' -HostPoolName \"', variables('hostPoolName'), '\"',' ', ' -FriendlyName \"', variables('HostPoolFriendlyName'), '\"',' ', ' -Description \"', variables('HostPoolDescription'), '\"',' ', ' -Hours \"', variables('registrationExpirationHours'), '\"',' ', ' -TenantAdminUPN \"', parameters('tenantAdminUpn'), '\"',' ', ' -TenantAdminPassword \"', parameters('tenantAdminPassword'), '\"',' ',' -localAdminUsername \"', variables('existingDomainUsername'), '\"',' ', ' -localAdminpassword \"', parameters('existingDomainPassword'), '\"',' ', ' -rdshIs1809OrLater \"', parameters('rdshIs1809OrLater'), '\"',' ','-ActivationKey \"', parameters('windows10activationKey'), '\"',' ', ' -FileURI \"', variables('deployAgentURI'), '\"')]"
                 }
             }
         }
