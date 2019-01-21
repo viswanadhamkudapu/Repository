@@ -4,21 +4,18 @@
     "parameters": {
         "VmImageVhdUri": {
             "type": "string",
-            "defaultValue": "",
             "metadata": {
                 "description": "URI of the sysprepped image vhd file to be used to create the session host VMs. For example, https://rdsstorage.blob.core.windows.net/vhds/sessionhostimage.vhd"
             }
         },
         "storageAccountResourceGroupName": {
             "type": "string",
-            "defaultValue": "",
             "metadata": {
                 "description": "The storage account containing the custom VHD."
             }
         },
         "storageAccountNameNew":{
             "type": "string",
-            "defaultValue": "",
             "metadata": {
                 "description": "The storage account name"
             }
@@ -26,7 +23,6 @@
         },
         "newstorageAccountName":{
             "type": "string",
-            "defaultValue": "",
             "metadata": {
                 "description": "The storage account name"
             }
