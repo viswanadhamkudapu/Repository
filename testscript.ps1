@@ -124,11 +124,13 @@ Import-Module AzureAD
       }
 
 
-      $HPName = Get-RdsHostPool -TenantName $TenantName -Name $HostPoolName -ErrorAction SilentlyContinue
-      Write-Log -Message "Checking Hostpool exists inside the Tenant"
+     $HPName = Get-RdsHostPool -TenantName $TenantName -Name $HostPoolName -ErrorAction SilentlyContinue
+     $Hostpoolinfo = $HPName | Out-String
+      Write-Log -Message "Checking Hostpool exists inside the Tenant: `n$Hostpoolinfo"
 
-      $StopVM = Stop-AzureRmVM -Name "win2krdsh-0" -ResourceGroupName "testrgarm" -Force
-      Write-Log -Message "azurermVM successfully stopped $stopvm.name Provisioningstate: $stopvm.status"
+      $StopVM = Stop-AzureRmVM -Name "removerg16-0" -ResourceGroupName "removerg16" -Force
+      $stopvm=$StopVM | Out-String
+      Write-Log -Message "azurermVM successfully stopped $stopvm"
       Get-Content -Path "C:\WVDModules\ScriptLog.log"
 
 <#

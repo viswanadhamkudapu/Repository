@@ -196,7 +196,7 @@ Get-RdsTenant -Name `$TenantName
 Get-RdsHostPool -TenantName `$TenantName -Name `$HostPoolName
 Get-Content -Path "C:\ScaleScript-`$hostpoolname\ScriptLog.log"
 
-"@ | Out-File -FilePath RemoveAccount:\ScleScript.ps1 -Force 
+"@ | Out-File -FilePath CreateScalefile:\ScleScript.ps1 -Force 
   
   
     
