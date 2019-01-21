@@ -24,6 +24,22 @@
                 "description": "Gallery image SKU."
             }
         },
+		"storageAccountNameNew":{
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The storage account name"
+            }
+            
+        },
+        "newstorageAccountName":{
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The storage account name"
+            }
+
+        },
         "rdshPrefix": {
             "type": "string",
             "metadata": {

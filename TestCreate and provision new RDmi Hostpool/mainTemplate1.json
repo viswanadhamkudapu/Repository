@@ -219,9 +219,9 @@
         "registrationToken": "[if(equals(parameters('registrationToken'),'empty'), json('null'), parameters('registrationToken'))]",
         "scriptUri": "[concat(parameters('baseurl'),'/Scripts/Script.ps1')]",
         "deployAgentUri": "[concat(parameters('baseurl'),'/Scripts/DeployAgent.zip')]",
-        "rdshUnmanagedDisks": "[if(equals(variables('vmTemplateName'), 'unmanagedDisks-galleryvm'), 'newStorageAccount',json('null'))]",
+        "rdshUnmanagedDisks": "[if(equals(variables('vmTemplateName'), 'unmanagedDisks-galleryvm'), 'newStorageAccount','empty')]",
         "newstorageAccountName": "[concat(uniquestring(resourceGroup().id), 'stndrsa')]",
-        "newstorageact": "[if(equals(variables('vmTemplateName'), 'unmanagedDisks-galleryvm'), variables('newstorageAccountName'),json('null'))]",
+        "newstorageact": "[if(equals(variables('vmTemplateName'), 'unmanagedDisks-galleryvm'), variables('newstorageAccountName'),'empty')]",
         "storageAccountType": "Standard_LRS"      
     },
     "resources": [
@@ -241,6 +241,7 @@
         {
             "apiVersion": "2017-06-01",
             "type": "Microsoft.Storage/storageAccounts",
+            "condition": "[equals(variables('vmTemplateName'), 'unmanagedDisks-galleryvm')]",
             "name": "[variables('newstorageact')]",
             "sku": {
                 "name": "[variables('storageAccountType')]"
