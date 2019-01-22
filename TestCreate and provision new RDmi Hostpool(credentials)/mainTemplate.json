@@ -199,7 +199,7 @@
         "HostPoolFriendlyName": "[if(equals(parameters('registrationToken(optional)'),'empty'), json('null'), 'Hostpool')]",
         "HostPoolDescription": "[if(equals(parameters('registrationToken(optional)'),'empty'), json('null'), 'Created through ARM template')]",
         "RegistrationExpirationHours": "[if(equals(parameters('registrationToken(optional)'),'empty'), json('null'), '48')]",
-        "vmTemplateName": "[concat( if(variables('rdshManagedDisks'), 'managedDisks', 'unmanagedDisks'), '-', toLower(replace(parameters('rdshImageSource'),' ', '')), 'vm')]")]",
+        "vmTemplateName": "[concat( if(variables('rdshManagedDisks'), 'managedDisks', 'unmanagedDisks'), '-', toLower(replace(parameters('rdshImageSource'),' ', '')), 'vm')]",
         "vmTemplateUri": "[concat(parameters('baseurl'),'/nestedtemplates/',variables('vmTemplateName'),'.json')]",
         "HostPoolName": "[if(equals(parameters('HostPoolName'),'empty'), json('null'), parameters('HostPoolName'))]",
         "registrationToken": "[if(equals(parameters('registrationToken(optional)'),'empty'), json('null'), parameters('registrationToken(optional)'))]",
