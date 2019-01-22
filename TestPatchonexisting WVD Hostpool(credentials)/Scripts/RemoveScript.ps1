@@ -310,7 +310,6 @@ param(
                             Get-AzureRmDisk -ResourceGroupName $_.ResourceGroupName -DiskName $DDisk | Remove-AzureRmDisk -Force
                             }
                             }
-                            }
                         }
                         # Support to remove unmanaged disks (from Storage Account Blob)
                         else {

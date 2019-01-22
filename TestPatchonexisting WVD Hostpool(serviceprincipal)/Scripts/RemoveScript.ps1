@@ -159,7 +159,7 @@ param(
       }
       else
       {
-        $authentication = Add-RdsAccount -DeploymentUrl $RDBrokerURL -Credential $Credentials
+        $authentication = Add-RdsAccount -DeploymentUrl $RDBrokerURL -Credential $Credentials -ServicePrincipal -TenantId $AadTenantId
       }
       $obj = $authentication | Out-String
 
