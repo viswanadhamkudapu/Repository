@@ -54,10 +54,10 @@ param(
     [Parameter(mandatory = $true)]
     [string]$DomainName,
 	
-	[Parameter(mandatory = $true)]
+	  [Parameter(mandatory = $true)]
     [string]$rdshIs1809OrLater,
 
-	[Parameter(mandatory = $false)]
+	  [Parameter(mandatory = $false)]
     [string]$ActivationKey,	
 
     [Parameter(mandatory = $true)]

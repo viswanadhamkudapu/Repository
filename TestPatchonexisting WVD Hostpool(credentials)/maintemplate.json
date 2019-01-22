@@ -28,7 +28,7 @@
                 "description": "The name of the hostpool to be in the RDS Tenant."
             }
         },
-		"ActionOnPreviousVirtualMachines": {
+        "ActionOnPreviousVirtualMachines": {
             "defaultValue": "Delete",
             "allowedValues": [
                 "Deallocate",
@@ -103,7 +103,7 @@
         "rdshIs1809OrLater": {
             "type": "bool",
             "metadata": {
-                "description": "If the VM is Windows Server 2019+ or Windows 10 1809+, enter true. Else, enter false."
+                "description": "If the VM is Windows 10 1809+, enter true. Else, enter false."
             },
             "defaultValue": true
         },
@@ -129,14 +129,14 @@
             "metadata": {
                 "description": "The VM disk type for the VM: HDD or SSD."
             },
-            "defaultValue": "SSD"
+            "defaultValue": "HDD"
         },
         "rdshVmSize": {
             "type": "string",
             "metadata": {
                 "description": "The size of the session host VMs."
             },
-            "defaultValue": "Standard_D2s_v3"
+            "defaultValue": "Standard_A2"
         },
         "rdshUseManagedDisks": {
             "type": "bool",
@@ -206,10 +206,10 @@
         }
     },
     "variables": {
-        "rdshManagedDisks": "[if(equals(parameters('rdshImageSource'), 'CustomVHD'), parameters('rdshUseManagedDisks'), bool('true'))]",
+        "rdshManagedDisks": "[if(or(equals(parameters('rdshImageSource'), 'CustomVHD'),equals(parameters('rdshUseManagedDisks'),bool('false'))), parameters('rdshUseManagedDisks'), bool('true'))]",
         "rdshPrefix": "[concat(parameters('rdshNamePrefix'),'-')]",
-		"messageTitle": "Request for Logoff",
-		"subscriptionId": "[subscription().subscriptionId]",
+        "messageTitle": "Request for Logoff",
+        "subscriptionId": "[subscription().subscriptionId]",
         "avSetSKU": "[if(variables('rdshManagedDisks'), 'Aligned', 'Classic')]",
         "existingDomainName": "[last(split(parameters('existingDomainUPN'), '@'))]",
         "existingDomainUsername": "[first(split(parameters('existingDomainUPN'), '@'))]",
@@ -219,8 +219,12 @@
         "vmTemplateName": "[concat( if(variables('rdshManagedDisks'), 'managedDisks', 'unmanagedDisks'), '-', toLower(replace(parameters('rdshImageSource'),' ', '')), 'vm')]",
         "vmTemplateUri": "[concat(parameters('baseurl'),'/nestedtemplates/',variables('vmTemplateName'),'.json')]",
         "scriptUri": "[concat(parameters('baseurl'),'/Scripts/Script.ps1')]",
-		"removeScriptURI": "[concat(parameters('baseUrl'),'/Scripts/RemoveScript.ps1')]",
-        "deployAgentUri": "[concat(parameters('baseurl'),'/Scripts/DeployAgent.zip')]"
+        "removeScriptURI": "[concat(parameters('baseUrl'),'/Scripts/RemoveScript.ps1')]",
+        "deployAgentUri": "[concat(parameters('baseurl'),'/Scripts/DeployAgent.zip')]",
+        "rdshUnmanagedDisks": "[if(equals(variables('vmTemplateName'), 'unmanagedDisks-galleryvm'), 'newStorageAccount','empty')]",
+        "newstorageAccountName": "[concat(uniquestring(resourceGroup().id), 'stndrsa')]",
+        "newstorageact": "[if(equals(variables('vmTemplateName'), 'unmanagedDisks-galleryvm'), variables('newstorageAccountName'),'empty')]",
+        "storageAccountType": "Standard_LRS"
     },
     "resources": [
         {
@@ -235,6 +239,17 @@
             "sku": {
                 "name": "[variables('avSetSKU')]"
             }
+        },
+        {
+            "apiVersion": "2017-06-01",
+            "type": "Microsoft.Storage/storageAccounts",
+            "condition": "[equals(variables('vmTemplateName'), 'unmanagedDisks-galleryvm')]",
+            "name": "[variables('newstorageact')]",
+            "sku": {
+                "name": "[variables('storageAccountType')]"
+            },
+            "kind": "Storage",
+            "location": "[resourceGroup().location]"
         },
         {
             "apiVersion": "2017-05-10",
@@ -276,6 +291,12 @@
                     },
                     "subnet-id": {
                         "value": "[variables('subnet-id')]"
+                    },
+                    "storageAccountNameNew": {
+                        "value": "[variables('rdshUnmanagedDisks')]"
+                    },
+                    "newstorageAccountName": {
+                        "value": "[variables('newstorageact')]"
                     },
                     "vhds": {
                         "value": "[variables('vhds')]"
@@ -358,17 +379,16 @@
                         "[variables('removeScriptURI')]"
                     ]
                 },
-					"ProtectedSettings":{
+                "ProtectedSettings": {
                     "commandToExecute": "[concat('powershell.exe -noninteractive -executionpolicy bypass -file RemoveScript.ps1',' -RDBrokerURL \"', parameters('RDBrokerURL'), '\"',' ',' -TenantGroupName \"', parameters('ExistingTenantGroupName'), '\"',' ',' -TenantName \"', parameters('ExistingTenantName'), '\"',' ',' -HostPoolName \"', parameters('ExistingHostPoolName'), '\"',' ',' -Hours \"', variables('RegistrationExpirationHours'), '\"',' ',' -TenantAdminUPN \"', parameters('tenantAdminUpn'), '\"',' ',' -TenantAdminPassword \"', parameters('TenantAdminPassword'), '\"',' ',' -SubscriptionId \"', variables('subscriptionId'), '\"',' ',' -Fileuri \"', variables('deployAgentURI'), '\"',' ',' -deleteordeallocateVMs \"', parameters('ActionOnPreviousVirtualMachines'), '\"',' ',' -messageTitle \"', variables('messageTitle'), '\"',' ',' -userNotificationMessege \"', parameters('userNotificationMessege'), '\"',' ',' -userLogoffDelayInMinutes \"', parameters('userLogoffDelayInMinutes'), '\"',' ',' -localAdminUsername \"', variables('existingDomainUsername'), '\"',' ',' -localAdminpassword \"', parameters('existingDomainPassword'), '\"',' ',' -rdshIs1809OrLater \"', parameters('rdshIs1809OrLater'), '\"',' ',' -ActivationKey \"', parameters('windows10activationKey'), '\"',' ',' -DomainName \"', variables('existingDomainName'), '\"')]"
-                    }
-                },
-               "dependsOn": [
+                }
+            },
+            "dependsOn": [
                 "[concat('Microsoft.Compute/virtualMachines/', concat(variables('rdshPrefix'), '0','/extensions/joindomain'))]",
                 "[concat('Microsoft.Compute/virtualMachines/', concat(variables('rdshPrefix'), '0','/extensions/dscextension'))]"
             ]
         },
-		
-		{
+        {
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(variables('rdshPrefix'), copyindex(1),'/','rdAgent')]",
@@ -377,7 +397,7 @@
             "dependsOn": [
                 "[concat('Microsoft.Compute/virtualMachines/', concat(variables('rdshPrefix'), copyindex(),'/extensions/joindomain'))]",
                 "[concat('Microsoft.Compute/virtualMachines/', concat(variables('rdshPrefix'), copyindex(),'/extensions/dscextension'))]",
-				"[concat('Microsoft.Compute/virtualMachines/', concat(variables('rdshPrefix'), '0','/extensions/removevms'))]"
+                "[concat('Microsoft.Compute/virtualMachines/', concat(variables('rdshPrefix'), '0','/extensions/removevms'))]"
             ],
             "copy": {
                 "name": "rdsh-vm-loop",
