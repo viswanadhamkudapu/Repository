@@ -17,10 +17,8 @@ param(
   [Parameter(mandatory = $false)]
   [string]$RDBrokerURL,
 
-
   [Parameter(mandatory = $true)]
   [string]$TenantGroupName,
-
 
   [Parameter(mandatory = $false)]
   [string]$TenantName,
