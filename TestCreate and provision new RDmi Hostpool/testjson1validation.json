@@ -1,0 +1,52 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rdshImageSource": {
+            "type": "string",
+            "metadata": {
+                "description": "Select the image source for the session host vms. VMs from a Gallery image will be created with Managed Disks."
+            },
+            "defaultValue": "Gallery",
+            "allowedValues": [
+                "CustomVHD",
+                "Gallery"
+            ]
+        },
+		  "hostpoolName": {
+            "type": "string",
+            "metadata": {
+                "description": "enter hostpool name without enter underscore"
+            }
+			},
+		
+        "rdshUseManagedDisks": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "True indicating you would like to use managed disks or false indicating you would like to use unmanaged disks."
+            }
+        }
+    },
+    "variables": {
+        "rdshManagedDisks": "[if(or(equals(parameters('rdshImageSource'), 'CustomVHD'),equals(parameters('rdshUseManagedDisks'),bool('false'))), parameters('rdshUseManagedDisks'), bool('true'))]",
+        "resourcegroupname": "[resourceGroup().name]",
+        "result": "[if(contains(parameters('HostPoolName'),'_'), json('Provide HostpoolName with out underscore'), parameters('HostPoolName'))]"
+    },
+     "resources": [],
+    "outputs": {
+        "resourceGroupOutput": {
+            "value": "[variables('resourcegroupname')]",
+            "type" : "string"
+        },
+        "itemplateoutput":{
+            "value": "[concat( if(variables('rdshManagedDisks'), 'managedDisks', 'unmanagedDisks'), '-', toLower(replace(parameters('rdshImageSource'),' ', '')), 'vm')]",
+            "type":"string"
+        },
+        "error":{
+            "value": "[variables('result')]",
+            "type": "string"
+
+        }
+    }
+}
