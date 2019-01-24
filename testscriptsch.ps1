@@ -51,7 +51,8 @@ $webhookname = Get-AutomationVariable -Name 'webhookname'
 $scheduledTimeInterval = Get-AutomationVariable -Name 'scheduledTimeInterval'
 $scheduledFrequency = Get-AutomationVariable -Name 'scheduledFrequency'
 
-
+$JobCollectionName = "wvdjobcollection"
+$schJObName = "$hostpoolname-job"
 
 
 
