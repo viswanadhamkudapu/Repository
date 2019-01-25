@@ -19,14 +19,13 @@ $LogOffMessageTitle = Get-AutomationVariable -Name 'LogOffMessageTitle'
 $LogOffMessageBody = Get-AutomationVariable -Name 'LogOffMessageBody'
 $automationAccountName = Get-AutomationVariable -Name 'existingAutomationAccountName'
 $runbookName = Get-AutomationVariable -Name 'runbookName'
-$autoScaleRunbookName = Get-AutomationVariable -Name 'autoScaleRunbookName'
-$wvdrunbook = Get-AutomationVariable -Name 'wvdrunbook'
 $webhookname = Get-AutomationVariable -Name 'webhookname'
 $scheduledTimeInterval = Get-AutomationVariable -Name 'scheduledTimeInterval'
 $scheduledFrequency = Get-AutomationVariable -Name 'scheduledFrequency'
 
 $JobCollectionName = "wvdjobcollection"
 $schJObName = "$hostpoolname-job"
+$autoScaleRunbookName = "WVDAutoScaleRunbook"
 
 
 
