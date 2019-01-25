@@ -1,29 +1,3 @@
-<#
-$subscriptionid = "6a16494b-c870-4e97-8708-e32c43f6e242"
-$JobCollectionName = "wvdAutoScaleJobCollection"
-$autoScaleAccountName = "ubikite-scale-automation-cred"
-$autoScaleRunbookName = "ubikiteautoScaleRunbook"
-
-$ResourceGroupName = "ubikite-scale-automationRG"
-$HostPoolName = "PtG-Hostpool"
-$Location = "Japan East"
-$newtimespan = New-TimeSpan -Minutes 15
-$TimeNow = (Get-Date) + $newtimespan
-$TimeNow -f "MMddyy HH:mm:ss"
-$utctime = $TimeNow.ToUniversalTime()
-
-$webhookName = "ubikitewebh"
-$schJObName = "$HostpoolName-job"
-$runbookName = "deployautoscale"
-
-$BeginPeakTime = $utctime
-$TenantGroupName = "PTG"
-$fileURI = "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/WVDModules.zip"
-
-$AADApplicationID = "92995fca-4373-4463-8d22-7d5c5e1d6761"
-$AADServicePrincipalSecret = "k21HQYIhJk7lwhr/hhh4kBgqFK/ctTGCtxXMU7u3+aE="
-#>
-
 $subscriptionId = Get-AutomationVariable -Name 'subscriptionId'
 $ResourceGroupName = Get-AutomationVariable -Name 'ResourceGroupName'
 $Location = Get-AutomationVariable -Name 'Location'
@@ -224,36 +198,3 @@ Get-Content -Path "C:\ScaleScript-`$hostpoolname\ScriptLog.log"
 
    Remove-PSDrive -Name CreateScalefile
    #Remove-AzureRmAutomationRunbook -Name $runbookName -Force -ResourceGroupName $resourcegroupname -AutomationAccountName $autoScaleAccountName
-
-   
-   
-   <#
-   
-   ResourceGroupName : ubikite-scale-automationRG
-	JobCollectionName : wvdAutoScaleJobCollection
-	JobName           : PtG-Hostpool-job
-	JobActionType     : Https
-	LastRun           : 1/23/2019 10:05:15 AM
-	NextRun           : 1/23/2019 10:06:13 AM
-	StartTime         : 1/23/2019 7:25:13 AM
-	Status            : Enabled
-	Recurrence        : Every 1 Minutes
-	Failures          : 0
-	Faults            : 0
-	Executions        : 161
-	EndSchedule       : On 1/23/2020 7:11:25 AM.
-	Method            : POST
-	Uri               : https://s5events.azure-automation.net/webhooks?token=cnEhlB%2bKNjllnCWiDMqNywoHRODWLp4%2fCD8Bcx9JKuA%3d
-                    
-Body              : 
-Headers           : 
-   
-   #>
-   
-   
-   
-   
-   
-   
-
-
