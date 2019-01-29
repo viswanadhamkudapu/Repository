@@ -15,6 +15,8 @@ This template creates virtual machines and registers them as session hosts to a 
 
 Follow the guidance below for entering the appropriate parameters for your scenario.
 
+# VM Image Type
+
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FRDS-Templates%2Fmaster%2Frdmi-peopletech%2FPatch%20an%20existing%20RDmi%20hostpool%2FmainTemplate.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>

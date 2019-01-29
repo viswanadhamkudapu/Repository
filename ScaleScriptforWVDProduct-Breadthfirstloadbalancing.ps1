@@ -1,6 +1,6 @@
 ﻿param(
 [Parameter(Mandatory = $True)]
-$RDBroker,
+$RDBrokerURL,
 
 [Parameter(Mandatory = $True)]
 $AADTenantId,
@@ -11,77 +11,88 @@ $AADApplicationId,
 [Parameter(Mandatory = $True)]
 $AADServicePrincipalSecret,
 
-#[Parameter(Mandatory = $True)]
-#$SubscriptionID,
+[Parameter(Mandatory = $True)]
+$SubscriptionID,
+
+[Parameter(Mandatory = $True)]
+$TenantGroupName,
+
+[Parameter(Mandatory = $True)]
+$TenantName,
+
+[Parameter(Mandatory = $True)]
+$BeginPeakTime,
+
+[Parameter(Mandatory = $True)]
+$EndPeakTime,
+
+[Parameter(Mandatory = $True)]
+$TimeDifference,
+
+[Parameter(Mandatory = $True)]
+$SessionThresholdPerCPU,
+
+[Parameter(Mandatory = $True)]
+$MinimumNumberOfRDSH,
+
+[Parameter(Mandatory = $True)]
+$LimitSecondsToForceLogOffUser,
+
+[Parameter(Mandatory = $True)]
+$LogOffMessageTitle,
+
+[Parameter(Mandatory = $True)]
+$LogOffMessageBody,
 
 [Parameter(Mandatory = $True)]
 $HostpoolName
 )
 
-$fileURI = "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/RDMIMonitoring.zip"
+Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope Process -Force -Confirm:$false
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force -Confirm:$false
+$PolicyList=Get-ExecutionPolicy -List
+$log = $PolicyList | Out-String
 
-    Invoke-WebRequest -Uri $fileURI -OutFile "C:\RDMIMonitoring-$HostpoolName.zip"
-    New-Item -Path "C:\RDMIMonitoring-$HostpoolName" -ItemType Directory -Force -ErrorAction SilentlyContinue
-    Expand-Archive "C:\RDMIMonitoring-$HostpoolName.zip" -DestinationPath "C:\RDMIMonitoring-$HostpoolName" -ErrorAction SilentlyContinue
-    Copy-Item -Path "C:\RDMIMonitoring-$HostpoolName\AzureModules\*"  -Destination 'C:\Modules\Global' -Force -Recurse
+$fileURI = "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/WVDModules.zip"
 
-    Import-Module AzureRM.Profile
-    Import-Module AzureRM.Compute
-    Import-Module AzureRM.Sql
-    Import-module AzureAD
-    Import-module AzureRM.Resources
-    #XMl Configuration File Path 
-    $XMLPath = "C:\RDMIMonitoring-$hostpoolName\SQLSettings.xml"
+if(!(Test-Path -Path "C:\WVDAutoScale-$HostpoolName")){
+  
+    Invoke-WebRequest -Uri $fileURI -OutFile "C:\WVDAutoScale-$HostpoolName.zip"
+    New-Item -Path "C:\WVDAutoScale-$HostpoolName" -ItemType Directory -Force -ErrorAction SilentlyContinue
+    Expand-Archive "C:\WVDAutoScale-$HostpoolName.zip" -DestinationPath "C:\WVDAutoScale-$HostpoolName" -ErrorAction SilentlyContinue
+    Copy-Item -Path "C:\WVDAutoScale-$HostpoolName\AzureModules\*"  -Destination 'C:\Modules\Global' -Force -Recurse
+    }
 
-    ##### Load XML Configuration values as variables #########
-    Write-output "loading values from SQLSettings.xml"
-    $Variable=[XML] (Get-Content "$XMLPath")
+function Write-Log {
+  [CmdletBinding()]
+  param(
+      [Parameter(mandatory = $false)]
+    [string]$Message,
+    [Parameter(mandatory = $false)]
+    [string]$Error
+  )
+  try {
+    $DateTime = Get-Date -Format "MM-dd-yy HH:mm:ss"
+    $Invocation = "$($MyInvocation.MyCommand.Source):$($MyInvocation.ScriptLineNumber)"
+    if ($Message) {
+     Add-Content -Value "$DateTime - $Invocation - $Message" -Path "C:\WVDAutoScale-$hostpoolname\ScriptLog.log"
+    }
+    else {
+     Add-Content -Value "$DateTime - $Invocation - $Error" -Path "C:\WVDAutoScale-$hostpoolname\ScriptLog.log"
+    }
+  }
+  catch {
+  Write-Error $_.Exception.Message
+  }
+}
 
-	    $Variable = [XML] (Get-Content "$XMLPath")
-		$SQLUsername = $Variable.Credentials.UserID
-		$SQLPassword = $Variable.Credentials.password
-		$SQLServer = $Variable.Credentials.Server
-		$Databasename = $Variable.Credentials.Database
 
-        Write-output -Message "Connecting to the Hello RDS database"
-		$secpasswd = ConvertTo-SecureString $SQLPassword -AsPlainText -Force
-		$db_credential = New-Object System.Management.Automation.PSCredential ($SQLUsername, $secpasswd)
-		$DatabaseServer=$SQLServer
-        $HelloRDSDB=$Databasename
-        $connection = New-Object -TypeName System.Data.SqlClient.SqlConnection -ArgumentList "Initial Catalog=${HelloRDSDB};Password=$($db_credential.GetNetworkCredential().Password);Server=${DatabaseServer};User Id=$($db_credential.UserName);"
-        $connection.Open()
-
-        $query = “SELECT * FROM tbl_autoscaledetails where HostpoolName='$($HostpoolName)'”
-        $command = $connection.CreateCommand()
-        $command.CommandText = $query
-        #$result = $command.ExecuteReader()
-        
-        $DataAdapter = new-object System.Data.SqlClient.SqlDataAdapter $Command
-        $Dataset = new-object System.Data.Dataset
-        $DataAdapter.Fill($Dataset)
-        #$dataset = Get-Dataset -Connection $Connection -SQL $query
-        #$Dataset
-        [String]$TenantName = $Dataset.Tables.TENANTNAME
-        [String]$BeginPeakTime = $Dataset.Tables.STARTTIME
-        [String]$EndPeakTime = $Dataset.Tables.ENDTIME
-        $TimeDifference = $Dataset.Tables.TIMEDIFFERENCE
-        $SessionThresholdPerCPU = $Dataset.Tables.SESSIONTHRESHOLDPERCPU
-        $MinimumNumberOfRDSH = $Dataset.Tables.MINNOOFRDSESSION
-        $LimitSecondsToForceLogOffUser = $Dataset.Tables.LIMITFORCELOGOFFUSERSINMIN
-        [String]$LogOffMessageTitle = $Dataset.Tables.LOGOFFMESSAGETITLE
-        [String]$LogOffMessageBody = $Dataset.Tables.LOGOFFMESSAGEBODY
 
 
 #$CurrentPath = Split-Path $script:MyInvocation.MyCommand.Path
-$CurrentPath = "C:\RDMIMonitoring-$HostpoolName"
+$CurrentPath = "C:\WVDAutoScale-$HostpoolName"
 
-#Log path
-$rdmiTenantlog = "$CurrentPath\RdmiTenantScale"
-
-#usage log path
-$RdmiTenantUsagelog = "$CurrentPath\RdmiTenantUsage.log"
-
-#Load Azure ps module and RDMI Module
+#Load Azure ps module and WVD Module
 #Import-Module -Name AzureRM
 cd "$CurrentPath\PowershellModules"
 Import-Module .\Microsoft.RdInfra.RdPowershell.dll
@@ -91,7 +102,7 @@ $secpasswd = ConvertTo-SecureString $AADServicePrincipalSecret -AsPlainText -For
 $appcreds = New-Object System.Management.Automation.PSCredential ($AADApplicationId, $secpasswd)
 
 #Login-AzureRmAccount -ServicePrincipal -Credential $appcreds -TenantId $AADTenantId #-Subscription $CurrentAzureSubscriptionName
- Connect-AzureRmAccount -ServicePrincipal -Credential $appcreds -TenantId $AADTenantId
+Connect-AzureRmAccount -ServicePrincipal -Credential $appcreds -TenantId $AADTenantId
 
 #select the current Azure Subscription specified in the config
 #Select-AzureRmSubscription -SubscriptionId $SubscriptionID
@@ -100,7 +111,7 @@ $appcreds = New-Object System.Management.Automation.PSCredential ($AADApplicatio
 #$CurrentDateTime = Get-Date
 $CurrentDateTime = Get-Date
 $CurrentDateTime=$CurrentDateTime.ToUniversalTime()
-write-output "Starting RDMI Tenant Hosts Scale Optimization: Current Date Time is: $CurrentDateTime" "Info"
+write-log -Message "Starting WVD Tenant Hosts Scale Optimization: Current Date Time is: $CurrentDateTime" "Info"
 
 $TimeDifferenceInHours = $TimeDifference.Split(":")[0]
 $TimeDifferenceInMinutes = $TimeDifference.Split(":")[1]
@@ -117,28 +128,27 @@ if ($EndPeakDateTime -lt $BeginPeakDateTime) {
     $EndPeakDateTime = $EndPeakDateTime.AddDays(1)
 }	
 
-#get the available HostPoolnames in the RDMITenant
+#authenticate to WVD
 try {
-    Add-RdsAccount -DeploymentUrl $RDBroker -ServicePrincipal -Credential $appcreds -TenantId $AADTenantId
-    #Set-RdsContext -DeploymentUrl $Rdbroker -Credential $credential
-    #$hostPoolNames=Get-RdsHostPool -TenantName $tenantName -Name $hostPoolName -ErrorAction Stop
+    Add-RdsAccount -DeploymentUrl $RDBrokerURL -ServicePrincipal -Credential $appcreds -TenantId $AADTenantId
+    
 }
 catch {
-    write-output "Failed to retrieve RDMITenant Hostpools: $($_.exception.message)" "Error"
+    write-log -Error "WVD authentication Failed: $($_.exception.message)"
     Exit 1
 }
 
-
+      #Set context to the appropriate tenant group
+      Write-Log "Running switching to the $TenantGroupName context"
+      Set-RdsContext -TenantGroupName $TenantGroupName
 
 	
 #check if it is during the peak or off-peak time
 if ($CurrentDateTime -ge $BeginPeakDateTime -and $CurrentDateTime -le $EndPeakDateTime) {
-    Write-output "It is in peak hours now"
-    write-output "Peak hours: starting session hosts as needed based on current workloads." "Info"
+    write-log -Message "It is in peak hours now"
+    write-log -Message "Peak hours: starting session hosts as needed based on current workloads." "Info"
     
     #Get the Session Hosts in the hostPool
-		
-    #foreach($hostPoolName in $hostPoolNames){
     try {
         $RDSessionHost = Get-RdsSessionHost -TenantName $tenantName -HostPoolName $hostPoolName -ErrorAction SilentlyContinue
             
@@ -168,11 +178,11 @@ if ($CurrentDateTime -ge $BeginPeakDateTime -and $CurrentDateTime -le $EndPeakDa
     #total capacity of sessions of running VMs
     $AvailableSessionCapacity = 0
 	
-    write-output "Looping thru available hostpool list ..." "Info"
+    write-log -Message "Looping thru available hostpool list ..." "Info"
     foreach ($sessionHost in $RDSessionHost.SessionHostName) {
-        write-output "Checking session host: $($sessionHost)" "Info"
+        write-log -Message "Checking session host: $($sessionHost)" "Info"
 			
-        #Get Azure Virtual Machines
+        #Login to Azure
         try {
             $TenantLogin = Add-AzureRmAccount -ServicePrincipal -Credential $appcreds -TenantId $AADTenantId
 				
@@ -183,9 +193,7 @@ if ($CurrentDateTime -ge $BeginPeakDateTime -and $CurrentDateTime -le $EndPeakDa
         }
 			
 			
-        #foreach ($roleInstance in $Deployment)
-        #{
-				 
+       			 
         $VMName = $sessionHost.Split(".")[0]
         $roleInstance = Get-AzureRmVM -Status | Where-Object {$_.Name.Contains($VMName)} | Select-Object -Unique
                  
@@ -209,12 +217,12 @@ if ($CurrentDateTime -ge $BeginPeakDateTime -and $CurrentDateTime -le $EndPeakDa
         #}
     }
 		
-    write-output "Current number of running hosts: " $numberOfRunningHost
-    write-output "Current number of running hosts: $numberOfRunningHost" "Info"
+    write-log -Message "Current number of running hosts: " $numberOfRunningHost
+    write-log -Message "Current number of running hosts: $numberOfRunningHost" "Info"
 		
     if ($numberOfRunningHost -lt $MinimumNumberOfRDSH) {
 			
-        write-output "Current number of running session hosts is less than minimum requirements, start session host ..." "Info"
+        write-log -Message "Current number of running session hosts is less than minimum requirements, start session host ..." "Info"
 		
         	
         #start VM to meet the minimum requirement            
@@ -262,7 +270,7 @@ if ($CurrentDateTime -ge $BeginPeakDateTime -and $CurrentDateTime -le $EndPeakDa
                                 $IsVMStarted = $true
                             }
                             #wait for 15 seconds
-                            Start-Sleep -Seconds 15
+                            #Start-Sleep -Seconds 15
                         }
 								
                         # we need to calculate available capacity of sessions
@@ -288,10 +296,10 @@ if ($CurrentDateTime -ge $BeginPeakDateTime -and $CurrentDateTime -le $EndPeakDa
 		
     else {
         #check if the available capacity meets the number of sessions or not
-        write-output "Current total number of user sessions: $(($hostPoolUserSessions).count)" "Info"
-        write-output "Current available session capacity is: $AvailableSessionCapacity" "Info"
+        write-log -Message "Current total number of user sessions: $(($hostPoolUserSessions).count)" "Info"
+        write-log -Message "Current available session capacity is: $AvailableSessionCapacity" "Info"
         if ($hostPoolUserSessions.Count -ge $AvailableSessionCapacity) {
-            write-output "Current available session capacity is less than demanded user sessions, starting session host" "Info"
+            write-log -Message "Current available session capacity is less than demanded user sessions, starting session host" "Info"
             #running out of capacity, we need to start more VMs if there are any 
 				
             foreach ($sessionHost in $RDSessionHost.SessionHostName) {
@@ -336,7 +344,7 @@ if ($CurrentDateTime -ge $BeginPeakDateTime -and $CurrentDateTime -le $EndPeakDa
                                     $IsVMStarted = $true
                                 }
                                 #wait for 15 seconds
-                                Start-Sleep -Seconds 15
+                                #Start-Sleep -Seconds 15
                             }
 									
 									
@@ -351,7 +359,7 @@ if ($CurrentDateTime -ge $BeginPeakDateTime -and $CurrentDateTime -le $EndPeakDa
                             $numberOfRunningHost = $numberOfRunningHost + 1
 									
                             $totalRunningCores = $totalRunningCores + $roleSize.NumberOfCores
-                            write-output "new available session capacity is: $AvailableSessionCapacity" "Info"
+                            write-log -Message "new available session capacity is: $AvailableSessionCapacity" "Info"
                             if ($AvailableSessionCapacity -gt $hostPoolUserSessions.Count) {
                                 break
                             }
@@ -364,17 +372,18 @@ if ($CurrentDateTime -ge $BeginPeakDateTime -and $CurrentDateTime -le $EndPeakDa
     }	
 		
     #write to the usage log
-    write-output $hostPoolName $totalRunningCores $numberOfRunningHost 
+    write-log -Message $hostPoolName $totalRunningCores $numberOfRunningHost 
 
 }
-#} #Peak or not peak hour
+
+#Peak or not peak hour
 else {
-    write-output "It is Off-peak hours"
-    write-output "It is off-peak hours. Starting to scale down RD session hosts..." "Info"
-    Write-output ("Processing hostPool {0}" -f $hostPoolName)
+    write-log -Message "It is Off-peak hours"
+    write-log -Message "It is off-peak hours. Starting to scale down RD session hosts..." "Info"
+    write-log -Message ("Processing hostPool {0}" -f $hostPoolName)
     #foreach($hostPoolName in $hostPoolNames)
     #{
-    write-output "Processing hostPool $($hostPoolName)"
+    write-log -Message "Processing hostPool $($hostPoolName)"
     #Get the Session Hosts in the hostPool
     try {
             
@@ -384,7 +393,7 @@ else {
                        
     }
     catch {
-        write-output "Failed to retrieve session hosts in hostPool: $($hostPoolName) with error: $($_.exception.message)" "Error"
+        write-log -Error "Failed to retrieve session hosts in hostPool: $($hostPoolName) with error: $($_.exception.message)" "Error"
         Exit 1
     }
 		
@@ -404,7 +413,7 @@ else {
 				
         }
         catch {
-            write-output "Failed to retrieve Azure deployment information for cloud service: $ResourceGroupName with error: $($_.exception.message)" "Error"
+            write-log -Error "Failed to retrieve Azure deployment information for cloud service: $ResourceGroupName with error: $($_.exception.message)" "Error"
             Exit 1
         }
 			
@@ -455,7 +464,7 @@ else {
                                 $isInstanceReady = $true
                             }
                             #wait for 15 seconds
-                            Start-Sleep -Seconds 15
+                            #Start-Sleep -Seconds 15
                         }
 								
                         if ($isInstanceReady) {
@@ -469,7 +478,7 @@ else {
 										
                             } 
                             catch {
-                                write-output "Failed to set drain mode on session host: $($sessionHost.SessionHost) with error: $($_.exception.message)" "Error"
+                                write-log -Error "Failed to set drain mode on session host: $($sessionHost.SessionHost) with error: $($_.exception.message)" "Error"
                                 Exit 1
                             }
 								
@@ -481,11 +490,11 @@ else {
                                        
                             }
                             catch {
-                                write-output "Failed to retrieve user sessions in hostPool: $($hostPoolName) with error: $($_.exception.message)" "Error"
+                                write-log -Error "Failed to retrieve user sessions in hostPool: $($hostPoolName) with error: $($_.exception.message)" "Error"
                                 Exit 1
                             }
 									
-                            write-output "Counting the current sessions on the host..." "Info"
+                            write-log -Message "Counting the current sessions on the host..." "Info"
                             $existingSession = 0
                             foreach ($session in $hostPoolUserSessions) {
                                 if ($session.SessionHostName -eq $sessionHost) {
@@ -497,7 +506,7 @@ else {
                                             
                                         }
                                         catch {
-                                            write-output "Failed to send message to user with error: $($_.exception.message)" "Error"
+                                            write-log -Error "Failed to send message to user with error: $($_.exception.message)" "Error"
                                             Exit 1
                                         }
                                     }
@@ -512,13 +521,13 @@ else {
 									
                             if ($LimitSecondsToForceLogOffUser -ne 0) {
                                 #force users to log off
-                                write-output "Force users to log off..." "Info"
+                                write-log -Message "Force users to log off..." "Info"
                                 try {
                                     $hostPoolUserSessions = Get-RdsUserSession -TenantName $tenantName -HostPoolName $hostPoolName
                                             
                                 }
                                 catch {
-                                    write-output "Failed to retrieve list of user sessions in hostPool: $($hostPoolName) with error: $($_.exception.message)" "Error"
+                                    write-log -Error "Failed to retrieve list of user sessions in hostPool: $($hostPoolName) with error: $($_.exception.message)" "Error"
                                     exit 1
                                 }
                                 foreach ($session in $hostPoolUserSessions) {
@@ -532,7 +541,7 @@ else {
                                             #break
                                         }
                                         catch {
-                                            write-output "Failed to log off user with error: $($_.exception.message)" "Error"
+                                            write-log -Error "Failed to log off user with error: $($_.exception.message)" "Error"
                                             exit 1
                                         }
                                     }
@@ -550,7 +559,7 @@ else {
 											
                                 }
                                 catch {
-                                    write-output "Failed to stop Azure VM: $($roleInstance.Name) with error: $($_.exception.message)" "Error"
+                                    write-log -Error "Failed to stop Azure VM: $($roleInstance.Name) with error: $($_.exception.message)" "Error"
                                     exit 1
                                 }
 										
@@ -563,9 +572,9 @@ else {
                                     if ($vm.PowerState -eq "VM deallocated") {
                                         $IsVMStopped = $true
                                     }
-                                    write-output "Waiting for Azure VM to stop $($roleInstance.Name) ..." "Info"
+                                    write-log -Message "Waiting for Azure VM to stop $($roleInstance.Name) ..." "Info"
                                     #wait for 15 seconds
-                                    Start-Sleep -Seconds 15
+                                    #Start-Sleep -Seconds 15
                                 }
 										
                                 $vm = Get-AzureRmVM -Status | Where-Object { $_.Name -eq $roleInstance.Name }
@@ -580,16 +589,19 @@ else {
                             }
                         }
                     }
-                    #Break # break out of the inner foreach loop once a match is found and checked
                 }
-                #}
+               
             }
         }
 			
         #write to the usage log
-        write-output $HostpoolName $totalRunningCores $numberOfRunningHost
+        write-log -Message $HostpoolName $totalRunningCores $numberOfRunningHost
     }
     #}
 } #Scale hostPools
 
 #endregion
+
+Get-Content -Path "C:\WVDAutoScale-$hostpoolname\ScriptLog.log"
+
+#Need to implement Azure Storage account for storing logs

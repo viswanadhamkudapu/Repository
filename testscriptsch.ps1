@@ -148,7 +148,7 @@ Get-Content -Path "C:\ScaleScript-`$hostpoolname\ScriptLog.log"
     if(!$getWebhookUri){
     $newAAWebhook = New-AzureRmAutomationWebhook -Name $webhookName -RunbookName $autoScaleRunbookName -AutomationAccountName $autoScaleAccountName -Parameters $params -IsEnabled $true -ExpiryTime (Get-Date).AddYears(1) -ResourceGroupName $ResourceGroupName -Force
     $webhookURI = $newAAWebhook.WebhookURI | Out-String
-	Set-AzureRmAutomationVariable -AutomationAccountName $autoScaleAccountName -Name "webHookURI" -ResourceGroupName $resourcegroupname -Value $webhookURI -Encrypted $False
+	New-AzureRmAutomationVariable -AutomationAccountName $autoScaleAccountName -Name "webHookURI" -ResourceGroupName $resourcegroupname -Value $webhookURI -Encrypted $False
 	$getWebhookUri = Get-AutomationVariable -Name 'webHookURI' -ErrorAction SilentlyContinue
    }
    
