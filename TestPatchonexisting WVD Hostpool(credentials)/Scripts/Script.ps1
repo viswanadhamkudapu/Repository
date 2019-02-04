@@ -31,12 +31,12 @@ param(
 
   [Parameter(mandatory = $true)]
   [string]$FileURI,
-   
-  [Parameter(mandatory = $true)]
-  [string]$ApplicationId,
 
-  [Parameter(mandatory = $true)]
-  [string]$ApplicationSecret,
+  [Parameter(mandatory = $false)]
+  [string]$TenantAdminUPN,
+
+  [Parameter(mandatory = $false)]
+  [string]$TenantAdminPassword,
 
   [Parameter(mandatory = $true)]
   [string]$localAdminUserName,
@@ -245,11 +245,9 @@ try {
       #Importing RDMI PowerShell module
       Import-Module .\PowershellModules\Microsoft.RDInfra.RDPowershell.dll
       Write-Log -Message "Imported RDMI PowerShell modules successfully"
+      $Securepass = ConvertTo-SecureString -String $TenantAdminPassword -AsPlainText -Force
+      $Credentials = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($TenantAdminUPN,$Securepass)
       
-	  #Converting AzureLogin,WVD Credentials
-        $Securepass=ConvertTo-SecureString -String $ApplicationSecret -AsPlainText -Force
-        $Credentials=New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList($ApplicationId, $Securepass)
-
 
 
       #Getting fqdn of rdsh vm
@@ -257,13 +255,12 @@ try {
       Write-Log -Message "Getting fully qualified domain name of RDSH VM: $SessionHostName"
 
 
-			# Authenticating to WVD
-			
-			$authentication = Add-RdsAccount -DeploymentUrl $RDBrokerURL -Credential $Credentials -ServicePrincipal -TenantId $AadTenantId
-      
-			$obj = $authentication | Out-String
-      
-	  if ($authentication)
+      # Authenticating to WVD
+      $authentication = Add-RdsAccount -DeploymentUrl $RDBrokerURL -Credential $Credentials
+
+      $obj = $authentication | Out-String
+
+      if ($authentication)
       {
         Write-Log -Message "RDMI Authentication successfully Done. Result:`n$obj"
 

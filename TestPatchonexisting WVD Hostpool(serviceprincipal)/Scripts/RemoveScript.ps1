@@ -144,7 +144,7 @@ param(
                
         Import-Module ".\PowershellModules\Microsoft.RDInfra.RDPowershell.dll"
         
-        #AzureLogin Credentials
+        #Converting AzureLogin,WVD Credentials
         $Securepass=ConvertTo-SecureString -String $ApplicationSecret -AsPlainText -Force
         $Credentials=New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList($ApplicationId, $Securepass)
 
@@ -153,14 +153,9 @@ param(
         $AdminCredentials = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($localAdminUsername, $AdminSecurepass)
 
            # Authenticating to WVD
-      if ($isServicePrincipal -eq "True")
-      {
-        $authentication = Add-RdsAccount -DeploymentUrl $RDBrokerURL -Credential $Credentials -ServicePrincipal -TenantId $AadTenantId
-      }
-      else
-      {
-        $authentication = Add-RdsAccount -DeploymentUrl $RDBrokerURL -Credential $Credentials -ServicePrincipal -TenantId $AadTenantId
-      }
+			
+			$authentication = Add-RdsAccount -DeploymentUrl $RDBrokerURL -Credential $Credentials -ServicePrincipal -TenantId $AadTenantId
+      
       $obj = $authentication | Out-String
 
       if ($authentication)
