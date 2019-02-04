@@ -116,7 +116,7 @@ write-log -Message "Starting WVD Tenant Hosts Scale Optimization: Current Date T
 $TimeDifferenceInHours = $TimeDifference.Split(":")[0]
 $TimeDifferenceInMinutes = $TimeDifference.Split(":")[1]
 #Azure is using UTC time, justify it to the local time
-$CurrentDateTime = $CurrentDateTime.AddHours($TimeDifferenceInHours).AddMinutes($TimeDifferenceInMinutes);
+$CurrentDateTime = $CurrentDateTime.AddHours($TimeDifferenceInHours).AddMinutes($TimeDifferenceInMinutes)
 	
 $BeginPeakDateTime = [DateTime]::Parse($CurrentDateTime.ToShortDateString() + ' ' + $BeginPeakTime)
 	

@@ -401,7 +401,7 @@
             ],
             "copy": {
                 "name": "rdsh-vm-loop",
-                "count": "[parameters('rdshNumberOfInstances')]"
+                "count": "[if(equals(parameters('rdshNumberOfInstances'),1),1,sub(parameters('rdshNumberOfInstances'),1))]"
             },
             "tags": {
                 "displayName": "script"

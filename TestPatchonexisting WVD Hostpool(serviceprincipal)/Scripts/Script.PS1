@@ -33,10 +33,10 @@ param(
   [string]$FileURI,
 
   [Parameter(mandatory = $false)]
-  [string]$ApplicationID,
+  [string]$TenantAdminUPN,
 
   [Parameter(mandatory = $false)]
-  [string]$ApplicationSecret,
+  [string]$TenantAdminPassword,
 
   [Parameter(mandatory = $true)]
   [string]$localAdminUserName,
@@ -46,9 +46,6 @@ param(
 
   [Parameter(mandatory = $true)]
   [string]$rdshIs1809OrLater,
-
-  [Parameter(mandatory = $false)]
-  [string]$AadTenantId,
 
   [Parameter(mandatory = $false)]
   [string]$ActivationKey
@@ -248,8 +245,8 @@ try {
       #Importing RDMI PowerShell module
       Import-Module .\PowershellModules\Microsoft.RDInfra.RDPowershell.dll
       Write-Log -Message "Imported RDMI PowerShell modules successfully"
-      $Securepass = ConvertTo-SecureString -String $ApplicationSecret -AsPlainText -Force
-      $Credentials = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($ApplicationID,$Securepass)
+      $Securepass = ConvertTo-SecureString -String $TenantAdminPassword -AsPlainText -Force
+      $Credentials = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($TenantAdminUPN,$Securepass)
       
 
 
@@ -259,13 +256,15 @@ try {
 
 
       # Authenticating to WVD
-      $authentication = Add-RdsAccount -DeploymentUrl $RDBrokerURL -Credential $Credentials -ServicePrincipal -TenantId $AadTenantId
-      
+      $authentication = Add-RdsAccount -DeploymentUrl $RDBrokerURL -Credential $Credentials
+
       $obj = $authentication | Out-String
 
       if ($authentication)
       {
         Write-Log -Message "RDMI Authentication successfully Done. Result:`n$obj"
+
+
       }
       else
       {
