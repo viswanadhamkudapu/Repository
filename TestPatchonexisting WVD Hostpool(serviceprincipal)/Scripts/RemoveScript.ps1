@@ -387,102 +387,107 @@ param(
                             }
                 }
                 }
+
+                [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+			
+                #DSC Portion Log
+                class RdsSessionHost
+                {
+                  [string]$TenantName
+                  [string]$HostPoolName
+                  [string]$SessionHostName
+                  [int]$TimeoutInMin = 500
+
+                  RdsSessionHost () {}
+
+                  RdsSessionHost ($TenantName,$HostPoolName,$SessionHostName) {
+                    $this.TenantName = $TenantName
+                    $this.HostPoolName = $HostPoolName
+                    $this.SessionHostName = $SessionHostName
+                  }
+
+                  RdsSessionHost ($TenantName,$HostPoolName,$SessionHostName,$TimeoutInMin) {
+
+                    if ($TimeoutInMin -gt 800)
+                    {
+                      Write-Output "TimeoutInMin is too high, maximum value is 800"
+
+                    }
+
+                    $this.TenantName = $TenantName
+                    $this.HostPoolName = $HostPoolName
+                    $this.SessionHostName = $SessionHostName
+                    $this.TimeoutInMin = $TimeoutInMin
+                  }
+
+                  hidden [object] _SessionHost ([string]$operation)
+                  {
+                    if ($operation -ne "get" -and $operation -ne "set")
+                    {
+                      Write-Output "RdsSessionHost: Invalid operation: $operation. Valid Operations are get or set"
+                    }
+
+
+                    $specificToSet = @{ $true = "-AllowNewSession `$true"; $false = "" }[$operation -eq "set"]
+                    $commandToExecute = "$operation-RdsSessionHost -TenantName `$this.TenantName -HostPoolName `$this.HostPoolName -Name `$this.SessionHostName -ErrorAction SilentlyContinue $specificToSet"
+
+
+                    $sessionHost = (Invoke-Expression $commandToExecute)
+
+
+
+                    $StartTime = Get-Date
+                    while ($sessionHost -eq $null)
+                    {
+                      Start-Sleep -Seconds (60..120 | Get-Random)
+                      Write-Output "RdsSessionHost: Retrying Add SessionHost..."
+                      $sessionHost = (Invoke-Expression $commandToExecute)
+
+
+
+                      if ((Get-Date).Subtract($StartTime).Minutes -gt $this.TimeoutInMin)
+                      {
+                        if ($sessionHost -eq $null)
+                        {
+                          Write-Output "RdsSessionHost: An error ocurred while adding session host:`nSessionHost:$this.SessionHostname`nHostPoolName:$this.HostPoolNmae`nTenantName:$this.TenantName`nError Message: $($error[0] | Out-String)"
+                          return $null
+                        }
+                      }
+                    }
+
+                    return $sessionHost
+                  }
+  
+                  [object] SetSessionHost () {
+
+
+                    if ([string]::IsNullOrEmpty($this.TenantName) -or [string]::IsNullOrEmpty($this.HostPoolName) -or [string]::IsNullOrEmpty($this.HostPoolName))
+                    {
+                      return $null
+                    }
+                    else
+                    {
+
+                      return ($this._SessionHost("set"))
+                    }
+                  }
+
+                  [object] GetSessionHost () {
+
+
+
+                    if ([string]::IsNullOrEmpty($this.TenantName) -or [string]::IsNullOrEmpty($this.HostPoolName) -or [string]::IsNullOrEmpty($this.HostPoolName))
+                    {
+                      return $null
+                    }
+                    else
+                    {
+                      return ($this._SessionHost("get"))
+                    }
+                  }
+                }
+
 				
-				#DSC Portion Log
-				class PsRdsSessionHost
-				{
-				  [string]$TenantName = [string]::Empty
-				  [string]$HostPoolName = [string]::Empty
-				  [string]$SessionHostName = [string]::Empty
-				  [int]$TimeoutInMin = 900
-
-				  PsRdsSessionHost () {}
-
-				  PsRdsSessionHost ([string]$TenantName,[string]$HostPoolName,[string]$SessionHostName) {
-					$this.TenantName = $TenantName
-					$this.HostPoolName = $HostPoolName
-					$this.SessionHostName = $SessionHostName
-				  }
-
-				  PsRdsSessionHost ([string]$TenantName,[string]$HostPoolName,[string]$SessionHostName,[int]$TimeoutInMin) {
-
-					if ($TimeoutInMin -gt 1800)
-					{
-					  Write-Output "TimeoutInMin is too high, maximum value is 1800"
-
-					}
-
-					$this.TenantName = $TenantName
-					$this.HostPoolName = $HostPoolName
-					$this.SessionHostName = $SessionHostName
-					$this.TimeoutInMin = $TimeoutInMin
-				  }
-
-				  hidden [object] _trySessionHost ([string]$operation)
-				  {
-					if ($operation -ne "get" -and $operation -ne "set")
-					{
-					  Write-Output "PsRdsSessionHost: Invalid operation: $operation. Valid Operations are get or set"
-					}
-
-
-					$specificToSet = @{ $true = "-AllowNewSession `$true"; $false = "" }[$operation -eq "set"]
-					$commandToExecute = "$operation-RdsSessionHost -TenantName `$this.TenantName -HostPoolName `$this.HostPoolName -Name `$this.SessionHostName -ErrorAction SilentlyContinue $specificToSet"
-
-
-					$sessionHost = (Invoke-Expression $commandToExecute)
-
-
-
-					$StartTime = Get-Date
-					while ($sessionHost -eq $null)
-					{
-					  Start-Sleep (60..120 | Get-Random)
-					  Write-Output "PsRdsSessionHost: Retrying Add SessionHost..."
-					  $sessionHost = (Invoke-Expression $commandToExecute)
-
-
-
-					  if ((Get-Date).Subtract($StartTime).Minutes -gt $this.TimeoutInMin)
-					  {
-						if ($sessionHost -eq $null)
-						{
-						  Write-Output "PsRdsSessionHost: An error ocurred while adding session host:`nSessionHost:$this.SessionHostname`nHostPoolName:$this.HostPoolNmae`nTenantName:$this.TenantName`nError Message: $($error[0] | Out-String)"
-						  return $null
-						}
-					  }
-					}
-
-					return $sessionHost
-				  }
-				  
-				  [object] SetSessionHost () {
-
-
-					if ([string]::IsNullOrEmpty($this.TenantName) -or [string]::IsNullOrEmpty($this.HostPoolName) -or [string]::IsNullOrEmpty($this.HostPoolName))
-					{
-					  return $null
-					}
-					else
-					{
-
-					  return ($this._trySessionHost("set"))
-					}
-				  }
-
-				  [object] GetSessionHost () {
-					if ([string]::IsNullOrEmpty($this.TenantName) -or [string]::IsNullOrEmpty($this.HostPoolName) -or [string]::IsNullOrEmpty($this.HostPoolName))
-					{
-					  return $null
-					}
-					else
-					{
-					  return ($this._trySessionHost("get"))
-					}
-				  }
-				}
-
-				[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
                 #Adding new vm instance to existing hostpool                 
                  $CheckRegistery = Get-ItemProperty -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\RDInfraAgent" -ErrorAction SilentlyContinue
 
@@ -543,7 +548,7 @@ param(
 									$DAgentInstall = .\DeployAgent.ps1 -ComputerName $SessionHostName -AgentBootServiceInstaller ".\RDAgentBootLoaderInstall\" -AgentInstaller ".\RDInfraAgentInstall\" -SxSStackInstaller ".\RDInfraSxSStackInstall\" -AdminCredentials $adminCredentials -RegistrationToken $registrationToken -StartAgent $true -rdshIs1809OrLater $rdshIs1809OrLaterBool -EnableSxSStackScriptFile ".\enablesxsstackrc.ps1"
 									Write-Log -Message "DeployAgent Script was successfully executed and RDAgentBootLoader,RDAgent,StackSxS installed inside VM for existing hostpool: $HostPoolName `n$DAgentInstall"
 									#add host vm to hostpool
-									[Microsoft.RDInfra.RDManagementData.RdMgmtSessionHost]$addRdsh = ([PsRdsSessionHost]::new($TenantName,$HostPoolName,$SessionHostName)).GetSessionHost()
+									[Microsoft.RDInfra.RDManagementData.RdMgmtSessionHost]$addRdsh = ([RdsSessionHost]::new($TenantName,$HostPoolName,$SessionHostName)).GetSessionHost()
 									Write-Log -Message "host object content: `n$($addRdsh | Out-String)"
 									$rdshName = $addRdsh.Name | Out-String -Stream
 									$poolName = $addRdsh.HostPoolName | Out-String -Stream
@@ -551,7 +556,7 @@ param(
                            
                             }
 							if ($rdshIs1809OrLaterBool) {
-							  Write-Log -Message "Activating Windows 10 Pro"
+							  Write-Log -Message "Activating Windows 10 Multi Session VM"
 							  ActivateWin10 -ActivationKey $ActivationKey
 
 							  Write-Log -Message "Rebooting VM"

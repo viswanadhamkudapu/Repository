@@ -113,27 +113,29 @@ function ActivateWin10
   dism /online /Enable-Feature /FeatureName:AppServerClient /NoRestart /Quiet
 }
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 #DSC Portion Log
-class PsRdsSessionHost
+class RdsSessionHost
 {
-  [string]$TenantName = [string]::Empty
-  [string]$HostPoolName = [string]::Empty
-  [string]$SessionHostName = [string]::Empty
-  [int]$TimeoutInMin = 900
+  [string]$TenantName
+  [string]$HostPoolName
+  [string]$SessionHostName
+  [int]$TimeoutInMin = 500
 
-  PsRdsSessionHost () {}
+  RdsSessionHost () {}
 
-  PsRdsSessionHost ([string]$TenantName,[string]$HostPoolName,[string]$SessionHostName) {
+  RdsSessionHost ($TenantName,$HostPoolName,$SessionHostName) {
     $this.TenantName = $TenantName
     $this.HostPoolName = $HostPoolName
     $this.SessionHostName = $SessionHostName
   }
 
-  PsRdsSessionHost ([string]$TenantName,[string]$HostPoolName,[string]$SessionHostName,[int]$TimeoutInMin) {
+  RdsSessionHost ($TenantName,$HostPoolName,$SessionHostName,$TimeoutInMin) {
 
-    if ($TimeoutInMin -gt 1800)
+    if ($TimeoutInMin -gt 800)
     {
-      Write-Output "TimeoutInMin is too high, maximum value is 1800"
+      Write-Output "TimeoutInMin is too high, maximum value is 800"
 
     }
 
@@ -143,34 +145,41 @@ class PsRdsSessionHost
     $this.TimeoutInMin = $TimeoutInMin
   }
 
-  hidden [object] _trySessionHost ([string]$operation)
+  hidden [object] _SessionHost ([string]$operation)
   {
     if ($operation -ne "get" -and $operation -ne "set")
     {
-      Write-Output "PsRdsSessionHost: Invalid operation: $operation. Valid Operations are get or set"
+      Write-Output "RdsSessionHost: Invalid operation: $operation. Valid Operations are get or set"
     }
 
 
     $specificToSet = @{ $true = "-AllowNewSession `$true"; $false = "" }[$operation -eq "set"]
     $commandToExecute = "$operation-RdsSessionHost -TenantName `$this.TenantName -HostPoolName `$this.HostPoolName -Name `$this.SessionHostName -ErrorAction SilentlyContinue $specificToSet"
+
+
     $sessionHost = (Invoke-Expression $commandToExecute)
+
+
 
     $StartTime = Get-Date
     while ($sessionHost -eq $null)
     {
-      Start-Sleep (60..120 | Get-Random)
-      Write-Output "PsRdsSessionHost: Retrying Add SessionHost..."
+      Start-Sleep -Seconds (60..120 | Get-Random)
+      Write-Output "RdsSessionHost: Retrying Add SessionHost..."
       $sessionHost = (Invoke-Expression $commandToExecute)
+
+
 
       if ((Get-Date).Subtract($StartTime).Minutes -gt $this.TimeoutInMin)
       {
         if ($sessionHost -eq $null)
         {
-          Write-Output "PsRdsSessionHost: An error ocurred while adding session host:`nSessionHost:$this.SessionHostname`nHostPoolName:$this.HostPoolNmae`nTenantName:$this.TenantName`nError Message: $($error[0] | Out-String)"
+          Write-Output "RdsSessionHost: An error ocurred while adding session host:`nSessionHost:$this.SessionHostname`nHostPoolName:$this.HostPoolNmae`nTenantName:$this.TenantName`nError Message: $($error[0] | Out-String)"
           return $null
         }
       }
     }
+
     return $sessionHost
   }
   
@@ -184,7 +193,7 @@ class PsRdsSessionHost
     else
     {
 
-      return ($this._trySessionHost("set"))
+      return ($this._SessionHost("set"))
     }
   }
 
@@ -198,13 +207,11 @@ class PsRdsSessionHost
     }
     else
     {
-      return ($this._trySessionHost("get"))
+      return ($this._SessionHost("get"))
     }
   }
 }
 
-
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 try {
 
   #Downloading the DeployAgent zip file to rdsh vm
@@ -376,7 +383,7 @@ try {
       $DAgentInstall = .\DeployAgent.ps1 -ComputerName $SessionHostName -AgentBootServiceInstaller ".\RDAgentBootLoaderInstall\" -AgentInstaller ".\RDInfraAgentInstall\" -SxSStackInstaller ".\RDInfraSxSStackInstall\" -AdminCredentials $adminCredentials -RegistrationToken $registrationToken -StartAgent $true -rdshIs1809OrLater $rdshIs1809OrLaterBool -EnableSxSStackScriptFile ".\enablesxsstackrc.ps1"
       Write-Log -Message "DeployAgent Script was successfully executed and RDAgentBootLoader,RDAgent,StackSxS installed inside VM for existing hostpool: $HostPoolName `n$DAgentInstall"
 
-      [Microsoft.RDInfra.RDManagementData.RdMgmtSessionHost]$addRdsh = ([PsRdsSessionHost]::new($TenantName,$HostPoolName,$SessionHostName)).GetSessionHost()
+      [Microsoft.RDInfra.RDManagementData.RdMgmtSessionHost]$addRdsh = ([RdsSessionHost]::new($TenantName,$HostPoolName,$SessionHostName)).GetSessionHost()
       Write-Log -Message "RDSH object content: `n$($addRdsh | Out-String)"
       Write-Log -Message "Successfully added $SessionHostName VM to HostPool"
     }
@@ -390,7 +397,7 @@ catch {
 
 }
 if ($rdshIs1809OrLaterBool) {
-  Write-Log -Message "Activating Windows 10 Evd"
+  Write-Log -Message "Activating Windows 10 Multi Session VM"
   ActivateWin10 -ActivationKey $ActivationKey
 
   Write-Log -Message "Rebooting VM"
