@@ -94,7 +94,7 @@ $CurrentPath = "C:\WVDAutoScale-$HostpoolName"
 
 #Load Azure ps module and WVD Module
 #Import-Module -Name AzureRM
-cd "$CurrentPath\PowershellModules"
+Set-Location "$CurrentPath\RDPowershell"
 Import-Module .\Microsoft.RdInfra.RdPowershell.dll
 
 #The the following three lines is to use password/secret based authentication for service principal, to use certificate based authentication, please comment those lines, and uncomment the above line
@@ -372,7 +372,7 @@ if ($CurrentDateTime -ge $BeginPeakDateTime -and $CurrentDateTime -le $EndPeakDa
     }	
 		
     #write to the usage log
-    write-log -Message $hostPoolName $totalRunningCores $numberOfRunningHost 
+    write-log -Message "$hostPoolName $totalRunningCores $numberOfRunningHost"
 
 }
 
@@ -502,7 +502,7 @@ else {
                                         #send notification
                                         try {
                                             
-                                            Send-RdsUserSessionMessage -TenantName $tenantName -HostPoolName $hostPoolName -SessionHostName $session.SessionHostName -SessionId $session.sessionid -MessageTitle $LogOffMessageTitle -MessageBody "$($LogOffMessageBody) You will logged off in $($LimitSecondsToForceLogOffUser) seconds." -NoConfirm:$false
+                                            Send-RdsUserSessionMessage -TenantName $tenantName -HostPoolName $hostPoolName -SessionHostName $session.SessionHostName -SessionId $session.sessionid -MessageTitle $LogOffMessageTitle -MessageBody "$($LogOffMessageBody) You will logged off in $($LimitSecondsToForceLogOffUser) seconds." -NoUserPrompt:$false
                                             
                                         }
                                         catch {
@@ -535,7 +535,7 @@ else {
                                         #log off user
                                         try {
     													
-                                            Invoke-RdsUserSessionLogoff -TenantName $tenantName -HostPoolName $hostPoolName -SessionHostName $session.SessionHostName -SessionId $session.SessionId -NoConfirm:$false
+                                            Invoke-RdsUserSessionLogoff -TenantName $tenantName -HostPoolName $hostPoolName -SessionHostName $session.SessionHostName -SessionId $session.SessionId -NoUserPrompt:$false
                                                    
                                             $existingSession = $existingSession - 1
                                             #break
@@ -595,7 +595,8 @@ else {
         }
 			
         #write to the usage log
-        write-log -Message $HostpoolName $totalRunningCores $numberOfRunningHost
+        Write-Log -Message "$HostpoolName $totalRunningCores $numberOfRunningHost"
+        
     }
     #}
 } #Scale hostPools
