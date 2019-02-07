@@ -138,6 +138,19 @@ catch {
     Exit 1
 }
 
+
+		#Login to Azure
+        try {
+            Add-AzureRmAccount -ServicePrincipal -Credential $appcreds -TenantId $AADTenantId -SubscriptionId $SubscriptionID
+				
+        }
+        catch {
+            write-output "Failed to retrieve deployment information from Azure with error: $($_.exception.message)" "Error"
+            Exit 1
+        }
+			
+
+
       #Set context to the appropriate tenant group
       Write-Log "Running switching to the $TenantGroupName context"
       Set-RdsContext -TenantGroupName $TenantGroupName
@@ -151,7 +164,7 @@ if ($CurrentDateTime -ge $BeginPeakDateTime -and $CurrentDateTime -le $EndPeakDa
     #Get the Session Hosts in the hostPool
     try {
         $RDSessionHost = Get-RdsSessionHost -TenantName $tenantName -HostPoolName $hostPoolName -ErrorAction SilentlyContinue
-            
+          
             
     }
     catch {
@@ -180,18 +193,7 @@ if ($CurrentDateTime -ge $BeginPeakDateTime -and $CurrentDateTime -le $EndPeakDa
 	
     write-log -Message "Looping thru available hostpool list ..." "Info"
     foreach ($sessionHost in $RDSessionHost.SessionHostName) {
-        write-log -Message "Checking session host: $($sessionHost)" "Info"
-			
-        #Login to Azure
-        try {
-            $TenantLogin = Add-AzureRmAccount -ServicePrincipal -Credential $appcreds -TenantId $AADTenantId
-				
-        }
-        catch {
-            write-output "Failed to retrieve deployment information from Azure with error: $($_.exception.message)" "Error"
-            Exit 1
-        }
-			
+        write-log -Message "Checking session host: $($sessionHost)"
 			
        			 
         $VMName = $sessionHost.Split(".")[0]
@@ -405,17 +407,6 @@ else {
     $totalRunningCores = 0
 		
     foreach ($sessionHost in $RDSessionHost.SessionHostName) {
-			
-        #refresh the Azure VM list
-        try {
-            $TenantLogin = Add-AzureRmAccount -ServicePrincipal -Credential $appcreds -TenantId $AADTenantId
-				
-				
-        }
-        catch {
-            write-log -Error "Failed to retrieve Azure deployment information for cloud service: $ResourceGroupName with error: $($_.exception.message)" "Error"
-            Exit 1
-        }
 			
         #foreach ($roleInstance in $Deployment)
         #{
