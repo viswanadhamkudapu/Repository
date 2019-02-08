@@ -53,12 +53,6 @@ param(
 
     [Parameter(mandatory = $true)]
     [string]$DomainName,
-	
-	  [Parameter(mandatory = $true)]
-    [string]$rdshIs1809OrLater,
-
-	  [Parameter(mandatory = $false)]
-    [string]$ActivationKey,	
 
     [Parameter(mandatory = $true)]
     [string]$localAdminUsername,
@@ -97,7 +91,7 @@ param(
                 }
 		
     
-	$rdshIs1809OrLaterBool = ($rdshIs1809OrLater -eq "True")
+	
 	Invoke-WebRequest -Uri $fileURI -OutFile "C:\DeployAgent.zip"
     Write-Log -Message "Downloaded DeployAgent.zip into this location C:\"
 
@@ -138,19 +132,25 @@ param(
         $AdminSecurepass = ConvertTo-SecureString -String $localAdminPassword -AsPlainText -Force
         $AdminCredentials = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($localAdminUsername, $AdminSecurepass)
 
-           # Authenticating to WVD
-           $authentication = Add-RdsAccount -DeploymentUrl $RDBrokerURL -Credential $Credentials
-           $obj = $authentication | Out-String
+                 # Authenticating to WVD
+			  if ($isServicePrincipal -eq "True")
+			  {
+				$authentication = Add-RdsAccount -DeploymentUrl $RDBrokerURL -Credential $Credentials -ServicePrincipal -TenantId $AadTenantId
+			  }
+			  else
+			  {
+				$authentication = Add-RdsAccount -DeploymentUrl $RDBrokerURL -Credential $Credentials
+			  }
+			  $obj = $authentication | Out-String
 
-		  if ($authentication)
-		  {
-			Write-Log -Message "WVD Authentication successfully Done. Result:`n$obj"
-		  }
-		  else
-		  {
-			Write-Log -Error "WVD Authentication Failed, Error:`n$obj"
-		  }
-
+			  if ($authentication)
+			  {
+				Write-Log -Message "RDMI Authentication successfully Done. Result:`n$obj"
+			  }
+			  else
+			  {
+				Write-Log -Error "RDMI Authentication Failed, Error:`n$obj"
+			  }
 
       # Set context to the appropriate tenant group
       Write-Log "Running switching to the $TenantGroupName context"
