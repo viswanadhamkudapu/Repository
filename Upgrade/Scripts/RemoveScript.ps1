@@ -35,6 +35,12 @@ param(
     
     [Parameter(mandatory = $false)]
     [string]$FileURI,
+	
+	[Parameter(mandatory = $false)]
+    [string]$isServicePrincipal = "False",
+	
+	[Parameter(Mandatory = $false)]
+    [string]$AadTenantId,
     
     [Parameter(mandatory = $false)]
     [double]$Hours,
