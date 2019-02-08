@@ -1,4 +1,4 @@
-{
+﻿{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
@@ -223,7 +223,7 @@
 
                 "description": "The base URI where artifacts required by this template are located."
             },
-            "defaultValue": "https://raw.githubusercontent.com/Azure/RDS-Templates/master/wvd-templates/Create%20and%20provision%20WVD%20host%20pool"
+            "defaultValue": "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/Upgrade/"
         },
 
         "_artifactsLocationSasToken": {
