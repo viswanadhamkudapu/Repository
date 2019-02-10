@@ -170,7 +170,7 @@ if ($isServicePrincipal -eq "True")
 # Setting to Tls12 due to Azure web app security requirements
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-$BlnEnablePersistentDesktop = [System.Convert]::ToBoolean($EnablePersistentDesktop)
+
 
 $DeployAgentLocation = "C:\DeployAgent"
 
