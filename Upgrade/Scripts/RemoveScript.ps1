@@ -108,16 +108,16 @@ param(
         }
     }
 	
-	Invoke-WebRequest -Uri $fileURI -OutFile "C:\DeployAgent.zip"
-    Write-Log -Message "Downloaded DeployAgent.zip into this location C:\"
+	Invoke-WebRequest -Uri $fileURI -OutFile "C:\WVDModules.zip"
+    Write-Log -Message "Downloaded WVDModules.zip into this location C:\"
 
-    #Creating a folder inside rdsh vm for extracting deployagent zip file
-    New-Item -Path "C:\DeployAgent" -ItemType directory -Force -ErrorAction SilentlyContinue
-    Write-Log -Message "Created a new folder 'DeployAgent' inside VM"
-    Expand-Archive "C:\DeployAgent.zip" -DestinationPath "C:\DeployAgent" -ErrorAction SilentlyContinue
-    Write-Log -Message "Extracted the 'Deployagent.zip' file into 'C:\Deployagent' folder inside VM"
-    Set-Location "C:\DeployAgent"
-    Write-Log -Message "Setting up the location of Deployagent folder"
+    #Creating a folder inside rdsh vm for extracting WVDModules zip file
+    New-Item -Path "C:\WVDModules" -ItemType directory -Force -ErrorAction SilentlyContinue
+    Write-Log -Message "Created a new folder 'WVDModules' inside VM"
+    Expand-Archive "C:\WVDModules.zip" -DestinationPath "C:\WVDModules" -ErrorAction SilentlyContinue
+    Write-Log -Message "Extracted the 'WVDModules.zip' file into 'C:\WVDModules' folder inside VM"
+    Set-Location "C:\WVDModules"
+    Write-Log -Message "Setting up the location of WVDModules folder"
 
 
                 do{
@@ -142,7 +142,7 @@ param(
 
 
                
-        Import-Module ".\PowershellModules\Microsoft.RDInfra.RDPowershell.dll"
+        Import-Module ".\Microsoft.RDInfra.RDPowershell.dll"
         
         #AzureLogin Credentials
         $Securepass=ConvertTo-SecureString -String $TenantAdminPassword -AsPlainText -Force
