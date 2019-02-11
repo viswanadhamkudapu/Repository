@@ -132,8 +132,12 @@ param(
                         
                         if(!$LoadModule){
                         Write-Output "installing azureModule inside vm: $env:COMPUTERNAME"
-                        Install-Module AzureRm -AllowClobber -Force
-                        }
+                        #Install-Module AzureRm -AllowClobber -Force
+						Install-Module AzureRM.Resources -AllowClobber -Force
+						Install-Module AzureRM.Profile -AllowClobber -Force
+						Install-Module AzureRM.Compute -AllowClobber -Force
+						Install-Module AzureRM.Storage -AllowClobber -Force
+						}
                         } until($LoadModule)
 
 
@@ -228,8 +232,7 @@ param(
                 }
                 
             Import-Module AzureRM.Resources
-            Import-Module Azurerm
-			Import-Module Azurerm.Profile
+            Import-Module Azurerm.Profile
 			Import-Module Azurerm.Compute
             $AzSecurepass=ConvertTo-SecureString -String $TenantAdminPassword -AsPlainText -Force
             $AzCredentials=New-Object System.Management.Automation.PSCredential($TenantAdminUPN, $AzSecurepass)
