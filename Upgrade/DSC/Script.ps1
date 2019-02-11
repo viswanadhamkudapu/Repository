@@ -22,7 +22,7 @@ param(
     [string]$TenantName,
 
     [Parameter(mandatory = $true)]
-    [string]$ExistingHostPoolName,
+    [string]$HostPoolName,
 
     [Parameter(mandatory = $true)]
     [int]$Hours,
@@ -73,19 +73,19 @@ function Write-Log
 class PsRdsSessionHost
 {
     [string]$TenantName = [string]::Empty
-    [string]$ExistingHostPoolName = [string]::Empty
+    [string]$HostPoolName = [string]::Empty
     [string]$SessionHostName = [string]::Empty
     [int]$TimeoutInMin=900 
 
     PsRdsSessionHost() {}
 
-    PsRdsSessionHost([string]$TenantName, [string]$ExistingHostPoolName, [string]$SessionHostName) {
+    PsRdsSessionHost([string]$TenantName, [string]$HostPoolName, [string]$SessionHostName) {
         $this.TenantName = $TenantName
-        $this.HostPoolName = $ExistingHostPoolName
+        $this.HostPoolName = $HostPoolName
         $this.SessionHostName = $SessionHostName
     }
 
-    PsRdsSessionHost([string]$TenantName, [string]$ExistingHostPoolName, [string]$SessionHostName, [int]$TimeoutInMin) {
+    PsRdsSessionHost([string]$TenantName, [string]$HostPoolName, [string]$SessionHostName, [int]$TimeoutInMin) {
         
         if ($TimeoutInMin -gt 1800)
         {
@@ -93,7 +93,7 @@ class PsRdsSessionHost
         }
 
         $this.TenantName = $TenantName
-        $this.HostPoolName = $ExistingHostPoolName
+        $this.HostPoolName = $HostPoolName
         $this.SessionHostName = $SessionHostName
         $this.TimeoutInMin = $TimeoutInMin
     }
@@ -106,7 +106,7 @@ class PsRdsSessionHost
         }
 
         $specificToSet=@{$true = "-AllowNewSession `$true"; $false = ""}[$operation -eq "set"]
-        $commandToExecute="$operation-RdsSessionHost -TenantName `$this.TenantName -ExistingHostPoolName `$this.HostPoolName -Name `$this.SessionHostName -ErrorAction SilentlyContinue $specificToSet"
+        $commandToExecute="$operation-RdsSessionHost -TenantName `$this.TenantName -HostPoolName `$this.HostPoolName -Name `$this.SessionHostName -ErrorAction SilentlyContinue $specificToSet"
 
         $sessionHost = (Invoke-Expression $commandToExecute )
 
@@ -121,7 +121,7 @@ class PsRdsSessionHost
             {
                 if ($sessionHost -eq $null)
                 {
-                    Write-Output "PsRdsSessionHost: An error ocurred while adding session host:`nSessionHost:$this.SessionHostname`nExistingHostPoolName:$this.HostPoolNmae`nTenantName:$this.TenantName`nError Message: $($error[0] | Out-String)"
+                    Write-Output "PsRdsSessionHost: An error ocurred while adding session host:`nSessionHost:$this.SessionHostname`nHostPoolName:$this.HostPoolNmae`nTenantName:$this.TenantName`nError Message: $($error[0] | Out-String)"
                     return $null
                 }
             }
@@ -278,7 +278,7 @@ else
 
     # Checking if host pool exists. If not, create a new one with the given HostPoolName
     Write-Log -Message "Checking Hostpool exists inside the Tenant"
-    $HostPool = Get-RdsHostPool -TenantName $TenantName -Name $ExistingHostPoolName -ErrorAction SilentlyContinue
+    $HostPool = Get-RdsHostPool -TenantName $TenantName -Name $HostPoolName -ErrorAction SilentlyContinue
     if ($HostPool)
     {
         Write-log -Message "Hostpool exists inside tenant: $TenantName"
@@ -289,7 +289,7 @@ else
     if ($HostPool.UseReverseConnect -eq $False)
     {
         Write-Log -Message "UseReverseConnect is false, it will be changed to true"
-        Set-RdsHostPool -TenantName $TenantName -Name $ExistingHostPoolName -UseReverseConnect $true
+        Set-RdsHostPool -TenantName $TenantName -Name $HostPoolName -UseReverseConnect $true
     }
     else
     {
@@ -297,10 +297,10 @@ else
     }
     
     # Creating registration token
-    $Registered = Export-RdsRegistrationInfo -TenantName $TenantName -HostPoolName $ExistingHostPoolName -ErrorAction SilentlyContinue
+    $Registered = Export-RdsRegistrationInfo -TenantName $TenantName -HostPoolName $HostPoolName -ErrorAction SilentlyContinue
     if (!$Registered)
     {
-        $Registered = New-RdsRegistrationInfo -TenantName $TenantName -HostPoolName $ExistingHostPoolName -ExpirationHours $Hours
+        $Registered = New-RdsRegistrationInfo -TenantName $TenantName -HostPoolName $HostPoolName -ExpirationHours $Hours
         $obj =  $Registered | Out-String
         Write-Log -Message "Created new Rds RegistrationInfo into variable 'Registered': $obj"
     }
@@ -319,17 +319,17 @@ else
                                        -EnableSxSStackScriptFolder "$DeployAgentLocation\EnableSxSStackScript" `
                                        -AdminCredentials $ADAdminCredentials `
                                        -TenantName $TenantName `
-                                       -PoolName $ExistingHostPoolName `
+                                       -PoolName $HostPoolName `
                                        -RegistrationToken $Registered.Token `
                                        -StartAgent $true `
                                        -rdshIs1809OrLater $rdshIs1809OrLaterBool
     
-    Write-Log -Message "DeployAgent Script was successfully executed and RDAgentBootLoader,RDAgent,StackSxS installed inside VM for existing hostpool: $ExistingHostPoolName`n$DAgentInstall"
+    Write-Log -Message "DeployAgent Script was successfully executed and RDAgentBootLoader,RDAgent,StackSxS installed inside VM for existing hostpool: $HostPoolName`n$DAgentInstall"
 
     # Get Session Host Info
     Write-Log -Message "Getting rdsh host $SessionHostName information"
 
-    [Microsoft.RDInfra.RDManagementData.RdMgmtSessionHost]$rdsh = ([PsRdsSessionHost]::new($TenantName,$ExistingHostPoolName,$SessionHostName)).GetSessionHost()
+    [Microsoft.RDInfra.RDManagementData.RdMgmtSessionHost]$rdsh = ([PsRdsSessionHost]::new($TenantName,$HostPoolName,$SessionHostName)).GetSessionHost()
     Write-Log -Message "RDSH object content: `n$($rdsh | Out-String)"
 
     $rdshName = $rdsh.SessionHostName | Out-String -Stream

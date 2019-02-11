@@ -12,7 +12,7 @@ configuration SessionHost
         [string]$TenantName,
     
         [Parameter(mandatory = $true)]
-        [string]$ExistingHostPoolName,
+        [string]$HostPoolName,
 
         [Parameter(mandatory = $true)]
         [int]$Hours,    
@@ -68,7 +68,7 @@ configuration SessionHost
                     return @{'Result' = ''}
                 }
                 SetScript = {
-                    & "$using:ScriptPath\Script.ps1" -RdBrokerURL $using:RDBrokerURL -DefinedTenantGroupName $using:DefinedTenantGroupName -TenantName $using:TenantName -TenantAdminCredentials $using:TenantAdminCredentials -ADAdminCredentials $using:ADAdminCredentials -ExistingHostPoolName $using:ExistingHostPoolName -Hours $using:Hours -isServicePrincipal $using:isServicePrincipal -aadTenantId $using:AadTenantId
+                    & "$using:ScriptPath\Script.ps1" -RdBrokerURL $using:RDBrokerURL -DefinedTenantGroupName $using:DefinedTenantGroupName -TenantName $using:TenantName -TenantAdminCredentials $using:TenantAdminCredentials -ADAdminCredentials $using:ADAdminCredentials -HostPoolName $using:HostPoolName -Hours $using:Hours -isServicePrincipal $using:isServicePrincipal -aadTenantId $using:AadTenantId
                 }
                 TestScript = {
                     return (Test-path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\RDInfraAgent")
@@ -84,7 +84,7 @@ configuration SessionHost
                     return @{'Result' = ''}
                 }
                 SetScript = {
-                    & "$using:ScriptPath\Script.ps1" -RdBrokerURL $using:RDBrokerURL -DefinedTenantGroupName $using:DefinedTenantGroupName -TenantName $using:TenantName -TenantAdminCredentials $using:TenantAdminCredentials -ADAdminCredentials $using:ADAdminCredentials -ExistingHostPoolName $using:ExistingHostPoolName -Hours $using:Hours -isServicePrincipal $using:isServicePrincipal -aadTenantId $using:AadTenantId
+                    & "$using:ScriptPath\Script.ps1" -RdBrokerURL $using:RDBrokerURL -DefinedTenantGroupName $using:DefinedTenantGroupName -TenantName $using:TenantName -TenantAdminCredentials $using:TenantAdminCredentials -ADAdminCredentials $using:ADAdminCredentials -HostPoolName $using:HostPoolName -Hours $using:Hours -isServicePrincipal $using:isServicePrincipal -aadTenantId $using:AadTenantId
                 }
                 TestScript = {
                     return (Test-path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\RDInfraAgent")
