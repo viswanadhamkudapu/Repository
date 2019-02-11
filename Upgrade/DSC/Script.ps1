@@ -106,7 +106,7 @@ class PsRdsSessionHost
         }
 
         $specificToSet=@{$true = "-AllowNewSession `$true"; $false = ""}[$operation -eq "set"]
-        $commandToExecute="$operation-RdsSessionHost -TenantName `$this.TenantName -HostPoolName `$this.HostPoolName -Name `$this.SessionHostName -ErrorAction SilentlyContinue $specificToSet"
+        $commandToExecute="$operation-RdsSessionHost -TenantName `$this.TenantName -ExistingHostPoolName `$this.HostPoolName -Name `$this.SessionHostName -ErrorAction SilentlyContinue $specificToSet"
 
         $sessionHost = (Invoke-Expression $commandToExecute )
 
@@ -121,7 +121,7 @@ class PsRdsSessionHost
             {
                 if ($sessionHost -eq $null)
                 {
-                    Write-Output "PsRdsSessionHost: An error ocurred while adding session host:`nSessionHost:$this.SessionHostname`nHostPoolName:$this.HostPoolNmae`nTenantName:$this.TenantName`nError Message: $($error[0] | Out-String)"
+                    Write-Output "PsRdsSessionHost: An error ocurred while adding session host:`nSessionHost:$this.SessionHostname`nExistingHostPoolName:$this.HostPoolNmae`nTenantName:$this.TenantName`nError Message: $($error[0] | Out-String)"
                     return $null
                 }
             }
