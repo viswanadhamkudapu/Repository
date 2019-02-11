@@ -13,6 +13,9 @@ configuration SessionHost
     
         [Parameter(mandatory = $true)]
         [string]$ExistingHostPoolName,
+
+        [Parameter(mandatory = $true)]
+        [int]$Hours,    
     
         [Parameter(mandatory = $true)]
         [PSCredential]$TenantAdminCredentials,
