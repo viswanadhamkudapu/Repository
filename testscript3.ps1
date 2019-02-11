@@ -207,7 +207,7 @@ if ($CurrentDateTime -ge $BeginPeakDateTime -and $CurrentDateTime -le $EndPeakDa
 						
                 $totalRunningCores = $totalRunningCores + $roleSize.NumberOfCores
             }
-            #Break # break out of the inner foreach loop once a match is found and checked
+            Break # break out of the inner foreach loop once a match is found and checked
         }
         #}
     }
