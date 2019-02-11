@@ -217,8 +217,7 @@ param(
                 }
     
             $allShsNames=$shsNames | select -Unique
-            Write-Log -Message "Collected old sessionhosts of Hostpool $HostPoolName : `
-            $allShsNames"
+            Write-Log -Message "Collected old sessionhosts of Hostpool $HostPoolName : `n$allShsNames"
                        
 						if($rdshIsServer){
                         Add-WindowsFeature RSAT-AD-PowerShell
