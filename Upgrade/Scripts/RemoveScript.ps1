@@ -372,7 +372,8 @@ param(
                 }
                 
                 #Removing VM from domain controller and DNS Record
-                $result=Invoke-Command -ComputerName $DControllerVM -Credential $AdminCredentials -ScriptBlock{
+                if($rdshIsServer){
+				$result=Invoke-Command -ComputerName $DControllerVM -Credential $AdminCredentials -ScriptBlock{
                 Param($ZoneName,$VMName)
                 Get-ADComputer -Identity $VMName | Remove-ADObject -Recursive -confirm:$false
                 Remove-DnsServerResourceRecord -ZoneName $ZoneName -RRType "A" -Name $VMName -Force -Confirm:$false
@@ -381,6 +382,7 @@ param(
                 Write-Log -Message "Successfully removed $VMName from domaincontroller"
                 Write-Log -Message "successfully removed dns record of $VMName"
                 }
+				}
                 }
                 else{
                 $vmProvisioning=Get-AzureRmVM | Where-Object {$_.Name -eq $VMName} | Stop-AzureRmVM -Force
