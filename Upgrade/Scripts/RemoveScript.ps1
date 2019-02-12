@@ -132,11 +132,8 @@ param(
                         
                         if(!$LoadModule){
                         Write-Output "installing azureModule inside vm: $env:COMPUTERNAME"
-                        #Install-Module AzureRm -AllowClobber -Force
-						Install-Module AzureRM.Resources -AllowClobber -Force
-						Install-Module AzureRM.Profile -AllowClobber -Force
-						Install-Module AzureRM.Compute -AllowClobber -Force
-						Install-Module AzureRM.Storage -AllowClobber -Force
+                        Install-Module AzureRm -AllowClobber -Force
+					    
 						}
                         } until($LoadModule)
 

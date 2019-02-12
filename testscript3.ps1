@@ -28,36 +28,6 @@ $RDBrokerURL = $Input.RDBrokerURL
 $AADTenantId = $Input.AADTenantId
 $AADApplicationId = $Input.AADApplicationId
 $AADServicePrincipalSecret = $Input.AADServicePrincipalSecret
-$SubscriptionID = $Input.SubscriptionIDParam(
-
-[Parameter(Mandatory = $false)]
-[object]$WebHookData
-
-)
-
-# If runbook was called from Webhook, WebhookData will not be null.
-if ($WebHookData){
-
-    # Collect properties of WebhookData
-    $WebhookName     =     $WebHookData.WebhookName
-    $WebhookHeaders  =     $WebHookData.RequestHeader
-    $WebhookBody     =     $WebHookData.RequestBody
-
-    # Collect individual headers. Input converted from JSON.
-    $From = $WebhookHeaders.From
-    $Input = (ConvertFrom-Json -InputObject $WebhookBody)
-    Write-Verbose "WebhookBody: $Input"
-    Write-Output -InputObject ('Runbook started from webhook {0} by {1}.' -f $WebhookName, $From)
-}
-else
-{
-   Write-Error -Message 'Runbook was not started from Webhook' -ErrorAction stop
-}
-
-$RDBrokerURL = $Input.RDBrokerURL
-$AADTenantId = $Input.AADTenantId
-$AADApplicationId = $Input.AADApplicationId
-$AADServicePrincipalSecret = $Input.AADServicePrincipalSecret
 $SubscriptionID = $Input.SubscriptionID
 $TenantGroupName = $Input.TenantGroupName
 $TenantName = $Input.TenantName
@@ -1223,6 +1193,6 @@ else {
 
 #endregion
 
-Get-Content -Path "C:\WVDAutoScale-$hostpoolname\ScriptLog.log"
+Get-Content -Path "C:\WVDAutoScale-$hostpoolname\ScriptLog-$DateFilename.log"
 
 #Need to implement Azure Storage account for storing logs
