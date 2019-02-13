@@ -5,7 +5,7 @@
         "_artifactsLocation": {
             "type": "string",
             "metadata": {
-                "description": "The base URI where artifacts required by this template are located."
+                "description": "The base URI  artifacts required by this template are located."
             },
             "defaultValue": "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/createwvdhp/"
         },
