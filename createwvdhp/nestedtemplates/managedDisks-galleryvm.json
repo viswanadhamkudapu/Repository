@@ -79,6 +79,19 @@
                 "description": "The unique id of the subnet for the nics."
             }
         },
+		"storageAccountNameNew":{
+            "type": "string",
+            "metadata": {
+                "description": "Storage account"
+            }
+         },
+        "newstorageAccountName":{
+            "type": "string",
+            "metadata": {
+                "description": "The storage account name"
+            }
+
+        },
         "rdshImageSourceResourceGroup": {
             "type": "string",
             "defaultValue": "",
