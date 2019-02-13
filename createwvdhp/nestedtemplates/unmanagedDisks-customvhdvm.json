@@ -75,10 +75,10 @@
                 "description": "The unique id of the subnet for the nics."
             }
         },
-		"storageAccountNameNew":{
+		"storageAccountNew":{
             "type": "string",
             "metadata": {
-                "description": "Storage account"
+                "description": "Gallery Unmanaged Disk"
             }
          },
         "newstorageAccountName":{
