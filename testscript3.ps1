@@ -90,7 +90,9 @@ function Write-Log {
 $CurrentPath = "C:\WVDAutoScale-$HostpoolName"
 
 #Load Azure ps module and WVD Module
-#Import-Module -Name AzureRM
+Import-Module -Name AzureRM.profile
+Import-Module -Name AzureRM.Compute
+Import-Module -Name AzureRM.Resources
 Set-Location "$CurrentPath\RDPowershell"
 Import-Module ".\Microsoft.RdInfra.RdPowershell.dll"
 
