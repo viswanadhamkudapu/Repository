@@ -106,8 +106,8 @@
         "galleryOffer": "[if( equals(parameters('rdshGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'Windows-10', 'WindowsServer')]",
         "gallerySku": "[if( equals(parameters('rdshGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'rs5-evd', parameters('rdshGalleryImageSKU'))]",
         "resourcegroupnamenew": "[resourceGroup().name]",
-        "newstorageaccountrgname": "[if(parameters('newstorageAccountName'), variables('resourcegroupnamenew'),parameters('storageAccountResourceGroupName'))]",
-        "storageAccountName": "[if(parameters('newstorageAccountName'),parameters('newstorageAccountName'),split(split(parameters('VmImageVhdUri'),'/')[2], '.' )[0])]",
+        "newstorageaccountrgname": "[if(equals(parameters('newstorageAccountName'),'empty'), parameters('storageAccountResourceGroupName'), variables('resourcegroupnamenew'))]",
+        "storageAccountName": "[if(equals(parameters('newstorageAccountName'),'empty'),split(split(parameters('VmImageVhdUri'),'/')[2], '.' )[0], parameters('newstorageAccountName'))]",
         "storageaccountVhd": "[concat(resourceId(parameters('storageAccountResourceGroupName'),'Microsoft.Storage/storageAccounts/',variables('storageAccountName')))]",
         "storageaccountresourceid": "[concat(resourceId(variables('newstorageaccountrgname'),'Microsoft.Storage/storageAccounts/',variables('storageAccountName')))]",
         "storageaccount": "[if(equals(parameters('VmImageVhdUri'),'empty'),variables('storageaccountresourceid'),variables('storageaccountVhd'))]"
