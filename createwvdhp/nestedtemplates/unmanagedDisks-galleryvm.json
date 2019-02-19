@@ -14,7 +14,7 @@
                 "description": "The storage account containing the custom VHD."
             }
         },
-        "newstorageAccountName01":{
+        "newstorageAccountName":{
             "type": "string",
             "metadata": {
                 "description": "The storage account name"
@@ -106,11 +106,7 @@
         "galleryOffer": "[if( equals(parameters('rdshGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'Windows-10', 'WindowsServer')]",
         "gallerySku": "[if( equals(parameters('rdshGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'rs5-evd', parameters('rdshGalleryImageSKU'))]",
         "resourcegroupnamenew": "[resourceGroup().name]",
-        "storageaccountrgname": "[if(equals(parameters('newstorageAccountName01'),'empty'), variables('resourcegroupnamenew'), parameters('storageAccountResourceGroupName'))]",
-        "storageAccountName": "[if(equals(parameters('newstorageAccountName01'),'empty'),split(split(parameters('VmImageVhdUri'),'/')[2], '.' )[0], parameters('newstorageAccountName01'))]",
-        "storageaccountVhd": "[concat(resourceId(parameters('storageAccountResourceGroupName'),'Microsoft.Storage/storageAccounts/',variables('storageAccountName')))]",
-        "storageaccountresourceid": "[concat(resourceId(variables('storageaccountrgname'),'Microsoft.Storage/storageAccounts/',variables('storageAccountName')))]",
-        "storageaccount": "[if(equals(parameters('VmImageVhdUri'),'empty'),variables('storageaccountresourceid'),variables('storageaccountVhd'))]"
+        "storageaccount": "[concat(resourceId(variables('resourcegroupnamenew'),'Microsoft.Storage/storageAccounts',parameters('newstorageAccountName')))]"
     },
     "resources": [
         {
@@ -171,6 +167,7 @@
                         "createOption": "FromImage",
                         "vhd": {
                             "uri": "[concat(reference(variables('storageaccount'), '2016-01-01').primaryEndpoints.blob, parameters('vhds'), copyindex(), '-osdisk.vhd')]"
+							"uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob, 'vhds/osdisk.vhd')]"
                         },
                         "name": "[concat(parameters('rdshPrefix'), copyindex(),'-osDisk')]"
                     }
