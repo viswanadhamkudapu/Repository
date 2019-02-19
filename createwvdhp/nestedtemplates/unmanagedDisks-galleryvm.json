@@ -167,7 +167,6 @@
                         "createOption": "FromImage",
                         "vhd": {
                             "uri": "[concat(reference(variables('storageaccount'), '2016-01-01').primaryEndpoints.blob, parameters('vhds'), copyindex(), '-osdisk.vhd')]"
-							"uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob, 'vhds/osdisk.vhd')]"
                         },
                         "name": "[concat(parameters('rdshPrefix'), copyindex(),'-osDisk')]"
                     }
