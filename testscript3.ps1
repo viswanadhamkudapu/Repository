@@ -30,6 +30,7 @@ $AADApplicationId = $Input.AADApplicationId
 $AADServicePrincipalSecret = $Input.AADServicePrincipalSecret
 $SubscriptionID = $Input.SubscriptionID
 $ResourceGroupName = $Input.ResourceGroupName
+$Location = $Input.Location
 $TenantGroupName = $Input.TenantGroupName
 $TenantName = $Input.TenantName
 $BeginPeakTime = $Input.BeginPeakTime
@@ -593,7 +594,7 @@ $storageaccount = Get-AzureRmStorageAccount -ResourceGroupName $ResourceGroupNam
 $filepath = "C:\WVDAutoScale-$hostpoolname\ScriptLog-$DateFilename.log"
 if(!$storageaccount)
 {
-    $storageaccount = New-azurermstorageaccount -ResourceGroupName $ResourceGroupName -Name $storageaccountname -SkuName Standard_LRS -Location 'Central US' -Kind BlobStorage -AccessTier Cool 
+    $storageaccount = New-azurermstorageaccount -ResourceGroupName $ResourceGroupName -Name $storageaccountname -SkuName Standard_LRS -Location $Location -Kind BlobStorage -AccessTier Cool 
     $storagecontainer = New-AzureRmStorageContainer -ResourceGroupName $ResourceGroupName -AccountName $storageaccountname -Name $stoagecontainername -PublicAccess Blob
     Set-AzureStorageBlobContent -Container $storagecontainer.Name -File $filepath -Blob "$hostpoolname\ScriptLog-$DateFilename.log" -Context $storageaccount.Context -Force
     
