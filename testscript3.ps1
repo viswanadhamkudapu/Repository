@@ -88,10 +88,7 @@ function Write-Log {
 #$CurrentPath = Split-Path $script:MyInvocation.MyCommand.Path
 $CurrentPath = "C:\WVDAutoScale-$HostpoolName"
 
-#Load Azure ps module and WVD Module
-Import-Module -Name AzureRM.profile
-Import-Module -Name AzureRM.Compute
-Import-Module -Name AzureRM.Resources
+#Load WVD Modules
 Set-Location "$CurrentPath\RDPowershell"
 Import-Module ".\Microsoft.RdInfra.RdPowershell.dll"
 
@@ -589,7 +586,9 @@ else {
 
 
 #Create an storage account to store Auto Scale Script Logs
-
+$ResourceGroupName = $roleInstance.ResourceGroupName
+$StorageAccountName = "autoscalestrgaccount"
+$stoagecontainername = "scriptlogcontainer"
 $storageaccount = Get-AzureRmStorageAccount -ResourceGroupName $ResourceGroupName -Name $StorageAccountName -ErrorAction SilentlyContinue 
 $filepath = "C:\WVDAutoScale-$hostpoolname\ScriptLog-$DateFilename.log"
 if(!$storageaccount)
