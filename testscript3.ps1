@@ -55,7 +55,6 @@ if(!(Test-Path -Path "C:\WVDAutoScale-$HostpoolName")){
     Invoke-WebRequest -Uri $fileURI -OutFile "C:\WVDAutoScale-$HostpoolName.zip"
     New-Item -Path "C:\WVDAutoScale-$HostpoolName" -ItemType Directory -Force -ErrorAction SilentlyContinue
     Expand-Archive "C:\WVDAutoScale-$HostpoolName.zip" -DestinationPath "C:\WVDAutoScale-$HostpoolName" -ErrorAction SilentlyContinue
-    Copy-Item -Path "C:\WVDAutoScale-$HostpoolName\AzureModules\*"  -Destination 'C:\Modules\Global' -Force -Recurse
     }
 
  $DateTime = Get-Date -Format "MM-dd-yy HH:mm"
@@ -587,6 +586,30 @@ else {
 
 #endregion
 
-Get-Content -Path "C:\WVDAutoScale-$hostpoolname\ScriptLog-$DateFilename.log"
 
-#Need to implement Azure Storage account for storing logs
+
+#Create an storage account to store Auto Scale Script Logs
+
+$storageaccount = Get-AzureRmStorageAccount -ResourceGroupName $resourcegroupname -Name $StorageAccountName -ErrorAction SilentlyContinue 
+$filepath = "C:\WVDAutoScale-$hostpoolname\ScriptLog-$DateFilename.log"
+if(!$storageaccount)
+{
+    $storageaccount = New-azurermstorageaccount -ResourceGroupName $resourcegroupname -Name $storageaccountname -SkuName Standard_LRS -Location 'Central US' -Kind BlobStorage -AccessTier Cool 
+    $storagecontainer = New-AzureRmStorageContainer -ResourceGroupName $resourcegroupname -AccountName $storageaccountname -Name $stoagecontainername -PublicAccess Blob
+    $filepath = "D:\sampledoc.txt"
+    Set-AzureStorageBlobContent -Container $storagecontainer.Name -File $filepath -Blob "$hostpoolname\ScriptLog-$DateFilename.log" -Context $storageaccount.Context -Force
+    
+}
+else
+{
+    $storagecontainer = Get-AzureRmStorageContainer -ResourceGroupName $resourcegroupname -AccountName $storageaccountname -Name $stoagecontainername -ErrorAction SilentlyContinue
+    if(!$storagecontainer)
+    {
+        $storagecontainer = New-AzureRmStorageContainer -ResourceGroupName $resourcegroupname -AccountName $storageaccountname -Name $stoagecontainername -PublicAccess Blob
+        Set-AzureStorageBlobContent -Container $storagecontainer.Name -File $filepath -Blob "$hostpoolname\ScriptLog-$DateFilename.log" -Context $storageaccount.Context -Force
+    }
+    else
+    {
+        Set-AzureStorageBlobContent -Container $storagecontainer.Name -File $filepath -Blob "$hostpoolname\ScriptLog-$DateFilename.log" -Context $storageaccount.Context -Force
+    }
+}
