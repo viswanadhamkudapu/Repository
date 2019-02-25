@@ -29,6 +29,7 @@ $AADTenantId = $Input.AADTenantId
 $AADApplicationId = $Input.AADApplicationId
 $AADServicePrincipalSecret = $Input.AADServicePrincipalSecret
 $SubscriptionID = $Input.SubscriptionID
+$ResourceGroupName = $Input.ResourceGroupName
 $TenantGroupName = $Input.TenantGroupName
 $TenantName = $Input.TenantName
 $BeginPeakTime = $Input.BeginPeakTime
@@ -595,7 +596,6 @@ if(!$storageaccount)
 {
     $storageaccount = New-azurermstorageaccount -ResourceGroupName $ResourceGroupName -Name $storageaccountname -SkuName Standard_LRS -Location 'Central US' -Kind BlobStorage -AccessTier Cool 
     $storagecontainer = New-AzureRmStorageContainer -ResourceGroupName $ResourceGroupName -AccountName $storageaccountname -Name $stoagecontainername -PublicAccess Blob
-    $filepath = "D:\sampledoc.txt"
     Set-AzureStorageBlobContent -Container $storagecontainer.Name -File $filepath -Blob "$hostpoolname\ScriptLog-$DateFilename.log" -Context $storageaccount.Context -Force
     
 }
