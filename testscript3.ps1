@@ -590,22 +590,22 @@ else {
 
 #Create an storage account to store Auto Scale Script Logs
 
-$storageaccount = Get-AzureRmStorageAccount -ResourceGroupName $resourcegroupname -Name $StorageAccountName -ErrorAction SilentlyContinue 
+$storageaccount = Get-AzureRmStorageAccount -ResourceGroupName $ResourceGroupName -Name $StorageAccountName -ErrorAction SilentlyContinue 
 $filepath = "C:\WVDAutoScale-$hostpoolname\ScriptLog-$DateFilename.log"
 if(!$storageaccount)
 {
-    $storageaccount = New-azurermstorageaccount -ResourceGroupName $resourcegroupname -Name $storageaccountname -SkuName Standard_LRS -Location 'Central US' -Kind BlobStorage -AccessTier Cool 
-    $storagecontainer = New-AzureRmStorageContainer -ResourceGroupName $resourcegroupname -AccountName $storageaccountname -Name $stoagecontainername -PublicAccess Blob
+    $storageaccount = New-azurermstorageaccount -ResourceGroupName $ResourceGroupName -Name $storageaccountname -SkuName Standard_LRS -Location 'Central US' -Kind BlobStorage -AccessTier Cool 
+    $storagecontainer = New-AzureRmStorageContainer -ResourceGroupName $ResourceGroupName -AccountName $storageaccountname -Name $stoagecontainername -PublicAccess Blob
     $filepath = "D:\sampledoc.txt"
     Set-AzureStorageBlobContent -Container $storagecontainer.Name -File $filepath -Blob "$hostpoolname\ScriptLog-$DateFilename.log" -Context $storageaccount.Context -Force
     
 }
 else
 {
-    $storagecontainer = Get-AzureRmStorageContainer -ResourceGroupName $resourcegroupname -AccountName $storageaccountname -Name $stoagecontainername -ErrorAction SilentlyContinue
+    $storagecontainer = Get-AzureRmStorageContainer -ResourceGroupName $ResourceGroupName -AccountName $storageaccountname -Name $stoagecontainername -ErrorAction SilentlyContinue
     if(!$storagecontainer)
     {
-        $storagecontainer = New-AzureRmStorageContainer -ResourceGroupName $resourcegroupname -AccountName $storageaccountname -Name $stoagecontainername -PublicAccess Blob
+        $storagecontainer = New-AzureRmStorageContainer -ResourceGroupName $ResourceGroupName -AccountName $storageaccountname -Name $stoagecontainername -PublicAccess Blob
         Set-AzureStorageBlobContent -Container $storagecontainer.Name -File $filepath -Blob "$hostpoolname\ScriptLog-$DateFilename.log" -Context $storageaccount.Context -Force
     }
     else
