@@ -587,7 +587,6 @@ else {
 
 
 #Create an storage account to store Auto Scale Script Logs
-$ResourceGroupName = $roleInstance.ResourceGroupName
 $StorageAccountName = "autoscalestrgaccount"
 $stoagecontainername = "scriptlogcontainer"
 $storageaccount = Get-AzureRmStorageAccount -ResourceGroupName $ResourceGroupName -Name $StorageAccountName -ErrorAction SilentlyContinue 
