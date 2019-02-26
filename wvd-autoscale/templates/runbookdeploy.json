@@ -24,9 +24,9 @@
     }
 },
     "variables": {
-        "baseURL": "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/",
-        "BreadthfirstscriptUri": "[concat(variables('baseURL'),'/testscript3.ps1')]",
-		"DepthfirstscriptUri": "[concat(variables('baseURL'),'/testscript2.ps1')]",
+        "baseURL": "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/wvd-autoscale/scripts/",
+        "BreadthfirstscriptUri": "[concat(variables('baseURL'),'/breadthfirstloadbalancing.ps1')]",
+		"DepthfirstscriptUri": "[concat(variables('baseURL'),'/depthfirstloadbalancing.ps1')]",
 		"scriptUri": "[if(parameters('breadthfirst'),variables('BreadthfirstscriptUri'),variables('DepthfirstscriptUri'))]",
         "sku": "Free"
     },
