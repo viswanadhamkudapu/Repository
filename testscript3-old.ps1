@@ -58,6 +58,19 @@ if(!(Test-Path -Path "C:\WVDAutoScale-$HostpoolName")){
     Copy-Item -Path "C:\WVDAutoScale-$HostpoolName\AzureModules\*"  -Destination 'C:\Modules\Global' -Force -Recurse
     }
 
+
+
+Function Write-UsageLog {
+    Param(
+        [string]$hostpoolName,
+        [int]$corecount,
+        [int]$vmcount,
+        [string]$logfilename = $RdmiTenantUsagelog
+    )
+    $time = get-date
+    Add-Content $logfilename -value ("{0}, {1}, {2}, {3}" -f $time, $hostpoolName, $corecount, $vmcount)
+}
+<#
 function Write-Log {
   [CmdletBinding()]
   param(
@@ -81,7 +94,47 @@ function Write-Log {
   }
 }
 
+#>
 
+
+Function Write-Log {
+    Param(
+        [int]$level
+        , [string]$Message
+        , [ValidateSet("Info", "Warning", "Error")][string]$severity = 'Info'
+        , [string]$logname = $rdmiTenantlog
+        , [string]$color = "white"
+    )
+    $time = get-date
+    Add-Content $logname -value ("{0} - [{1}] {2}" -f $time, $severity, $Message)
+    if ($interactive) {
+        switch ($severity) {
+            'Error' {$color = 'Red'}
+            'Warning' {$color = 'Yellow'}
+        }
+        if ($level -le $VerboseLogging) {
+            if ($color -match "Red|Yellow") {
+                Write-Host ("{0} - [{1}] {2}" -f $time, $severity, $Message) -ForegroundColor $color -BackgroundColor Black
+                if ($severity -eq 'Error') { 
+                    
+                    throw $Message 
+                }
+            }
+            else {
+                Write-Host ("{0} - [{1}] {2}" -f $time, $severity, $Message) -ForegroundColor $color
+            }
+        }
+    }
+    else {
+        switch ($severity) {
+            'Info' {Write-Verbose -Message $Message}
+            'Warning' {Write-Warning -Message $Message}
+            'Error' {
+                throw $Message
+            }
+        }
+    }
+} 
 
 
 #$CurrentPath = Split-Path $script:MyInvocation.MyCommand.Path

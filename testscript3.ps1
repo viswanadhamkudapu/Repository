@@ -12,125 +12,132 @@ Use "-AllowClobber" parameter if you have more than one version of PS modules in
 PS C:\>Install-Module AzureRM  -AllowClobber
 WVD PowerShell Modules included inside this folder "AutoScale-WVD" with name PowerShellModules.
 #>
+Param(
 
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-<#
-.SYNOPSIS
-Function for writing the log
-#>
-function Write-Log {
-  param(
-    [int]$level
-    ,[string]$Message
-    ,[ValidateSet("Info","Warning","Error")] [string]$severity = 'Info'
-    ,[string]$logname = $rdmiTenantlog
-    ,[string]$color = "white"
-  )
-  $time = Get-Date
-  Add-Content $logname -Value ("{0} - [{1}] {2}" -f $time,$severity,$Message)
-  if ($interactive) {
-    switch ($severity) {
-      'Error' { $color = 'Red' }
-      'Warning' { $color = 'Yellow' }
+[Parameter(Mandatory = $false)]
+[object]$WebHookData
+
+)
+
+# If runbook was called from Webhook, WebhookData will not be null.
+if ($WebHookData){
+
+    # Collect properties of WebhookData
+    $WebhookName     =     $WebHookData.WebhookName
+    $WebhookHeaders  =     $WebHookData.RequestHeader
+    $WebhookBody     =     $WebHookData.RequestBody
+
+    # Collect individual headers. Input converted from JSON.
+    $From = $WebhookHeaders.From
+    $Input = (ConvertFrom-Json -InputObject $WebhookBody)
+    Write-Verbose "WebhookBody: $Input"
+    Write-Output -InputObject ('Runbook started from webhook {0} by {1}.' -f $WebhookName, $From)
+}
+else
+{
+   Write-Error -Message 'Runbook was not started from Webhook' -ErrorAction stop
+}
+
+$RDBrokerURL = $Input.RDBrokerURL
+$AADTenantId = $Input.AADTenantId
+$AADApplicationId = $Input.AADApplicationId
+$AADServicePrincipalSecret = $Input.AADServicePrincipalSecret
+$SubscriptionID = $Input.SubscriptionID
+$TenantGroupName = $Input.TenantGroupName
+$TenantName = $Input.TenantName
+$BeginPeakTime = $Input.BeginPeakTime
+$fileURI = $Input.fileURI
+$EndPeakTime = $Input.EndPeakTime
+$TimeDifference = $Input.TimeDifference
+$SessionThresholdPerCPU = $Input.SessionThresholdPerCPU
+$MinimumNumberOfRDSH = $Input.MinimumNumberOfRDSH
+$LimitSecondsToForceLogOffUser = $Input.LimitSecondsToForceLogOffUser
+$LogOffMessageTitle = $Input.LogOffMessageTitle
+$LogOffMessageBody = $Input.LogOffMessageBody
+$HostpoolName = $Input.HostpoolName
+$isServicePrincipal = $true
+
+
+Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope Process -Force -Confirm:$false
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force -Confirm:$false
+$PolicyList=Get-ExecutionPolicy -List
+$log = $PolicyList | Out-String
+
+if(!(Test-Path -Path "C:\WVDAutoScale-$HostpoolName")){
+  
+    Invoke-WebRequest -Uri $fileURI -OutFile "C:\WVDAutoScale-$HostpoolName.zip"
+    New-Item -Path "C:\WVDAutoScale-$HostpoolName" -ItemType Directory -Force -ErrorAction SilentlyContinue
+    Expand-Archive "C:\WVDAutoScale-$HostpoolName.zip" -DestinationPath "C:\WVDAutoScale-$HostpoolName" -ErrorAction SilentlyContinue
+    Copy-Item -Path "C:\WVDAutoScale-$HostpoolName\AzureModules\*"  -Destination 'C:\Modules\Global' -Force -Recurse
     }
-    if ($level -le $VerboseLogging) {
-      if ($color -match "Red|Yellow") {
-        Write-Host ("{0} - [{1}] {2}" -f $time,$severity,$Message) -ForegroundColor $color -BackgroundColor Black
-        if ($severity -eq 'Error') {
 
-          throw $Message
+Function Write-UsageLog {
+    Param(
+        [string]$hostpoolName,
+        [int]$corecount,
+        [int]$vmcount,
+        [string]$logfilename = $RdmiTenantUsagelog
+    )
+    $time = get-date
+    Add-Content $logfilename -value ("{0}, {1}, {2}, {3}" -f $time, $hostpoolName, $corecount, $vmcount)
+}
+
+
+
+Function Write-Log {
+    Param(
+        [int]$level
+        , [string]$Message
+        , [ValidateSet("Info", "Warning", "Error")][string]$severity = 'Info'
+        , [string]$logname = $rdmiTenantlog
+        , [string]$color = "white"
+    )
+    $time = get-date
+    Add-Content $logname -value ("{0} - [{1}] {2}" -f $time, $severity, $Message)
+    if ($interactive) {
+        switch ($severity) {
+            'Error' {$color = 'Red'}
+            'Warning' {$color = 'Yellow'}
         }
-      }
-      else {
-        Write-Host ("{0} - [{1}] {2}" -f $time,$severity,$Message) -ForegroundColor $color
-      }
+        if ($level -le $VerboseLogging) {
+            if ($color -match "Red|Yellow") {
+                Write-Host ("{0} - [{1}] {2}" -f $time, $severity, $Message) -ForegroundColor $color -BackgroundColor Black
+                if ($severity -eq 'Error') { 
+                    
+                    throw $Message 
+                }
+            }
+            else {
+                Write-Host ("{0} - [{1}] {2}" -f $time, $severity, $Message) -ForegroundColor $color
+            }
+        }
     }
-  }
-  else {
-    switch ($severity) {
-      'Info' { Write-Verbose -Message $Message }
-      'Warning' { Write-Warning -Message $Message }
-      'Error' {
-        throw $Message
-      }
+    else {
+        switch ($severity) {
+            'Info' {Write-Verbose -Message $Message}
+            'Warning' {Write-Warning -Message $Message}
+            'Error' {
+                throw $Message
+            }
+        }
     }
-  }
-}
+} 
 
-<# 
-.SYNOPSIS
-Function for writing the usage log
-#>
-function Write-UsageLog {
-  param(
-    [string]$hostpoolName,
-    [int]$corecount,
-    [int]$vmcount,
-    [bool]$depthBool = $True,
-    [string]$logfilename = $RdmiTenantUsagelog
-  )
-  $time = Get-Date
-  if($depthBool){
-    
-    Add-Content $logfilename -Value ("{0}, {1}, {2}" -f $time,$hostpoolName,$vmcount)
-    }
-    else
-    {
-    Add-Content $logfilename -Value ("{0}, {1}, {2}, {3}" -f $time,$hostpoolName,$corecount,$vmcount)
-  }
-}
-<#
-.SYNOPSIS
-Function for creating variable from XML
-#>
-function Set-ScriptVariable ($Name,$Value) {
-  Invoke-Expression ("`$Script:" + $Name + " = `"" + $Value + "`"")
-}
-
-$CurrentPath = Split-Path $script:MyInvocation.MyCommand.Path
-
-#XML path
-$XMLPath = "$CurrentPath\Config.xml"
+#$CurrentPath = Split-Path $script:MyInvocation.MyCommand.Path
+$CurrentPath = "C:\WVDAutoScale-$HostpoolName"
 
 #Log path
-$rdmiTenantlog = "$CurrentPath\WVDTenantScale.log"
+$rdmiTenantlog = "C:\WVDAutoScale-$HostpoolName\WVDTenantScale.log"
 
 #usage log path
-$RdmiTenantUsagelog = "$CurrentPath\WVDTenantUsage.log"
+$RdmiTenantUsagelog = "C:\WVDAutoScale-$HostpoolName\WVDTenantUsage.log"
 
-###### Verify XML file ######
-if (Test-Path $XMLPath) {
-  Write-Verbose "Found $XMLPath"
-  Write-Verbose "Validating file..."
-  try {
-    $Variable = [xml](Get-Content $XMLPath)
-  }
-  catch {
-    $Validate = $false
-    Write-Error "$XMLPath is invalid. Check XML syntax - Unable to proceed"
-    Write-Log 3 "$XMLPath is invalid. Check XML syntax - Unable to proceed" "Error"
-    exit 1
-  }
-}
-else {
-  $Validate = $false
-  Write-Error "Missing $XMLPath - Unable to proceed"
-  Write-Log 3 "Missing $XMLPath - Unable to proceed" "Error"
-  exit 1
-}
-##### Load XML Configuration values as variables #########
-Write-Verbose "loading values from Config.xml"
-$Variable = [xml](Get-Content "$XMLPath")
-$Variable.RDMIScale.Azure | ForEach-Object { $_.Variable } | Where-Object { $_.Name -ne $null } | ForEach-Object { Set-ScriptVariable -Name $_.Name -Value $_.Value }
-$Variable.RDMIScale.RdmiScaleSettings | ForEach-Object { $_.Variable } | Where-Object { $_.Name -ne $null } | ForEach-Object { Set-ScriptVariable -Name $_.Name -Value $_.Value }
-$Variable.RDMIScale.Deployment | ForEach-Object { $_.Variable } | Where-Object { $_.Name -ne $null } | ForEach-Object { Set-ScriptVariable -Name $_.Name -Value $_.Value }
 
-##### Load functions/module #####
-. $CurrentPath\Functions-PSStoredCredentials.ps1
-Import-Module $CurrentPath\PowershellModules\Microsoft.RdInfra.RdPowershell.dll
-# Login with delgated admin
-$Credential = Get-StoredCredential -UserName $Username
-# Setting RDS Context
+
+#The the following three lines is to use password/secret based authentication for service principal, to use certificate based authentication, please comment those lines, and uncomment the above line
+$secpasswd = ConvertTo-SecureString $AADServicePrincipalSecret -AsPlainText -Force
+$Credential = New-Object System.Management.Automation.PSCredential ($AADApplicationId, $secpasswd)
+
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $isServicePrincipalBool = ($isServicePrincipal -eq "True")
 # Check if service principal or user accoung is being user 
