@@ -60,17 +60,6 @@ if(!(Test-Path -Path "C:\WVDAutoScale-$HostpoolName")){
 
 
 
-Function Write-UsageLog {
-    Param(
-        [string]$hostpoolName,
-        [int]$corecount,
-        [int]$vmcount,
-        [string]$logfilename = $RdmiTenantUsagelog
-    )
-    $time = get-date
-    Add-Content $logfilename -value ("{0}, {1}, {2}, {3}" -f $time, $hostpoolName, $corecount, $vmcount)
-}
-<#
 function Write-Log {
   [CmdletBinding()]
   param(
@@ -94,7 +83,18 @@ function Write-Log {
   }
 }
 
-#>
+
+Function Write-UsageLog {
+    Param(
+        [string]$hostpoolName,
+        [int]$corecount,
+        [int]$vmcount,
+        [string]$logfilename = $RdmiTenantUsagelog
+    )
+    $time = get-date
+    Add-Content $logfilename -value ("{0}, {1}, {2}, {3}" -f $time, $hostpoolName, $corecount, $vmcount)
+}
+
 
 
 Function Write-Log {

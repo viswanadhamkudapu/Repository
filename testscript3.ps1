@@ -127,12 +127,16 @@ Function Write-Log {
 $CurrentPath = "C:\WVDAutoScale-$HostpoolName"
 
 #Log path
-$rdmiTenantlog = "C:\WVDAutoScale-$HostpoolName\WVDTenantScale.log"
+$rdmiTenantlog = "$CurrentPath\WVDTenantScale.log"
 
 #usage log path
-$RdmiTenantUsagelog = "C:\WVDAutoScale-$HostpoolName\WVDTenantUsage.log"
+$RdmiTenantUsagelog = "$CurrentPath\WVDTenantUsage.log"
 
 
+Set-Location "$CurrentPath\RDPowershell"
+Import-Module .\Microsoft.RdInfra.RdPowershell.dll
+Import-Module AzureRm.profile
+Import-Module AzureRM.Resources
 
 #The the following three lines is to use password/secret based authentication for service principal, to use certificate based authentication, please comment those lines, and uncomment the above line
 $secpasswd = ConvertTo-SecureString $AADServicePrincipalSecret -AsPlainText -Force
@@ -141,36 +145,12 @@ $Credential = New-Object System.Management.Automation.PSCredential ($AADApplicat
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $isServicePrincipalBool = ($isServicePrincipal -eq "True")
 # Check if service principal or user accoung is being user 
-if (!$isServicePrincipalBool) {
-  # if standard account is provided login in WVD with that account 
-  try {
-    $authentication = Add-RdsAccount -DeploymentUrl $RDBroker -Credential $Credential
-  }
-  catch {
-    Write-Log 1 "Failed to authenticate with WVD Tenant with standard account: $($_.exception.message)" "Error"
-    exit 1
-  }
-  Write-Log 3 "Authenticating as standard account for WVD." "Info"
-}
-else {
-  # if service principal account is provided login in WVD with that account 
-
-  try {
-    $authentication = Add-RdsAccount -DeploymentUrl $RDBroker -TenantId $AADTenantId -Credential $Credential -ServicePrincipal
-  }
-  catch {
-    Write-Log 1 "Failed to authenticate with WVD Tenant with service principal: $($_.exception.message)" "Error"
-    exit 1
-  }
-  Write-Log 3 "Authenticating as service principal account for WVD." "Info"
-}
-
 #Authenticating to Azure
 if (!$isServicePrincipalBool) {
   # if standard account is provided login in Azure with that account 
 
   try {
-    $authentication = Add-AzureRmAccount -SubscriptionName $currentAzureSubscriptionName -Credential $Credential
+    $authentication = connect-AzureRmAccount -SubscriptionID $SubscriptionID -Credential $Credential
   }
   catch {
     Write-Log 1 "Failed to authenticate with Azure with standard account: $($_.exception.message)" "Error"
@@ -182,7 +162,7 @@ if (!$isServicePrincipalBool) {
 else {
   # if service principal account is provided login in Azure with that account 
   try {
-    $TenantLogin = Add-AzureRmAccount -ServicePrincipal -Credential $Credential -TenantId $AADTenantId
+    $TenantLogin = connect-AzureRmAccount -ServicePrincipal -Credential $Credential -TenantId $AADTenantId
   }
   catch {
     Write-Log 1 "Failed to authenticate with Azure with service principal: $($_.exception.message)" "Error"
@@ -190,12 +170,40 @@ else {
   }
   Write-Log 3 "Authenticating as service principal account for Azure." "Info"
 }
+
+#Authenticating to WVD
+if (!$isServicePrincipalBool) {
+  # if standard account is provided login in WVD with that account 
+  try {
+    $authentication = Add-RdsAccount -DeploymentUrl $RDBrokerURL -Credential $Credential
+  }
+  catch {
+    Write-Log 1 "Failed to authenticate with WVD Tenant with standard account: $($_.exception.message)" "Error"
+    exit 1
+  }
+  Write-Log 3 "Authenticating as standard account for WVD." "Info"
+}
+else {
+  # if service principal account is provided login in WVD with that account 
+
+  try {
+    $authentication = Add-RdsAccount -DeploymentUrl $RDBrokerURL -TenantId $AADTenantId -Credential $Credential -ServicePrincipal
+  }
+  catch {
+    Write-Log 1 "Failed to authenticate with WVD Tenant with service principal: $($_.exception.message)" "Error"
+    exit 1
+  }
+  Write-Log 3 "Authenticating as service principal account for WVD." "Info"
+}
+
+
 #Set context to the appropriate tenant group
 Write-Log  1 "Running switching to the $tenantGroupName context" "Info"
 Set-RdsContext -TenantGroupName $tenantGroupName
 
 #select the current Azure Subscription specified in the config
-Select-AzureRmSubscription -SubscriptionName $currentAzureSubscriptionName
+Select-AzureRmSubscription -SubscriptionID $SubscriptionID
+#Set-AzureRmSubscription -SubscriptionID $SubscriptionID
 #Construct Begin time and End time for the Peak period
 $CurrentDateTime = Get-Date
 Write-Log 3 "Starting WVD Tenant Hosts Scale Optimization: Current Date Time is: $CurrentDateTime" "Info"
@@ -847,3 +855,8 @@ else {
   } #Scale hostPools
   Write-Log 3 "End WVD Tenant Scale Optimization." "Info"
 }
+
+get-content "$CurrentPath\WVDTenantScale.log"
+
+#usage log path
+get-content "$CurrentPath\WVDTenantUsage.log"

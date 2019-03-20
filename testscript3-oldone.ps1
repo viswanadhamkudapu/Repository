@@ -57,6 +57,7 @@ if(!(Test-Path -Path "C:\WVDAutoScale-$HostpoolName")){
     Invoke-WebRequest -Uri $fileURI -OutFile "C:\WVDAutoScale-$HostpoolName.zip"
     New-Item -Path "C:\WVDAutoScale-$HostpoolName" -ItemType Directory -Force -ErrorAction SilentlyContinue
     Expand-Archive "C:\WVDAutoScale-$HostpoolName.zip" -DestinationPath "C:\WVDAutoScale-$HostpoolName" -ErrorAction SilentlyContinue
+    
     }
 
  $DateTime = Get-Date -Format "MM-dd-yy HH:mm"
