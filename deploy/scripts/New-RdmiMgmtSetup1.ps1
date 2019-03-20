@@ -63,10 +63,15 @@ try
                 Connect-AzureAD -Credential $Cred
                 
                 $ClientApp = Get-AzureADApplication -SearchString $wvdManagmentUxClientAppDisplayName -ErrorAction SilentlyContinue
-                $redirectURLexist=$WebUrl -contains $ClientApp.ReplyUrls
+                $redirectURLexist=$ClientApp.ReplyUrls -contains $redirectURL
                 
-                if(!$clientApp -and $redirectURLexist){
+                if(!$redirectURLexist){
+                if($ClientApp){
                 $clientAdApp = New-AzureADApplication -DisplayName $wvdManagmentUxClientAppDisplayName -ReplyUrls $redirectURL -PublicClient $true -AvailableToOtherTenants $false -Verbose -ErrorAction Stop
+                }
+                else{
+                $clientAdApp = Set-AzureADApplication -DisplayName $wvdManagmentUxClientAppDisplayName -ReplyUrls $redirectURL -ObjectId $ClientApp.ObjectId
+                }
                 $resourceAppId = Get-AzureADServicePrincipal -SearchString $wvdInfraWebAppName | Where-Object {$_.DisplayName -eq $wvdInfraWebAppName}
                 $clientappreq = New-Object -TypeName "Microsoft.Open.AzureAD.Model.RequiredResourceAccess"
                 $clientappreq.ResourceAppId = $resourceAppId.AppId
