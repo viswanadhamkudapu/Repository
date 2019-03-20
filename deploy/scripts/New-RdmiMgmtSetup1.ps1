@@ -51,17 +51,23 @@ try
                 #Static value of RDMIInfra web appname
                 $wvdinfraWebAppId = "5a0aa725-4958-4b0c-80a9-34562e23f3b7"
                 $serviceIdinfo = Get-AzureRmADServicePrincipal -ApplicationId $wvdinfraWebAppId
-                $rdmiInfraWebAppName = $serviceIdinfo.DisplayName
+                $wvdInfraWebAppName = $serviceIdinfo.DisplayName
                 #generate unique ID based on subscription ID
                 $unique_subscription_id = ($subsriptionid).Replace('-', '').substring(0, 19)
                 
 
                 #generate the display name for native app in AAD
-                $rdmiSaaS_clientapp_display_name = "RdmiSaaS" + $ResourceGroupName.ToLowerInvariant() + $unique_subscription_id.ToLowerInvariant()
+                #$rdmiSaaS_clientapp_display_name = "RdmiSaaS" + $ResourceGroupName.ToLowerInvariant() + $unique_subscription_id.ToLowerInvariant()
+                $wvdManagmentUxClientAppDisplayName = "WVDManagementUXNativeApp"
                 #Creating Client application in azure ad
                 Connect-AzureAD -Credential $Cred
-                $clientAdApp = New-AzureADApplication -DisplayName $rdmiSaaS_clientapp_display_name -ReplyUrls $redirectURL -PublicClient $true -AvailableToOtherTenants $false -Verbose -ErrorAction Stop
-                $resourceAppId = Get-AzureADServicePrincipal -SearchString $rdmiInfraWebAppName | Where-Object {$_.DisplayName -eq $rdmiInfraWebAppName}
+                
+                $ClientApp = Get-AzureADApplication -SearchString $wvdManagmentUxClientAppDisplayName -ErrorAction SilentlyContinue
+                $redirectURLexist=$WebUrl -contains $ClientApp.ReplyUrls
+                
+                if(!$clientApp -and $redirectURLexist){
+                $clientAdApp = New-AzureADApplication -DisplayName $wvdManagmentUxClientAppDisplayName -ReplyUrls $redirectURL -PublicClient $true -AvailableToOtherTenants $false -Verbose -ErrorAction Stop
+                $resourceAppId = Get-AzureADServicePrincipal -SearchString $wvdInfraWebAppName | Where-Object {$_.DisplayName -eq $wvdInfraWebAppName}
                 $clientappreq = New-Object -TypeName "Microsoft.Open.AzureAD.Model.RequiredResourceAccess"
                 $clientappreq.ResourceAppId = $resourceAppId.AppId
                
@@ -69,7 +75,7 @@ try
                     $clientappreq.ResourceAccess += New-Object -TypeName "Microsoft.Open.AzureAD.Model.ResourceAccess" -ArgumentList $permission.Id,"Scope"
                 }
                 Set-AzureADApplication -ObjectId $clientAdApp.ObjectId -RequiredResourceAccess $clientappreq -ErrorAction Stop
-
+                }
 
         if($ApiApp)
         {
