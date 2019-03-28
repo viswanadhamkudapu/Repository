@@ -141,7 +141,7 @@ try
 
                 # Get the main.bundle.js file Path 
 
-                $MainbundlePath = Get-ChildItem $WebAppExtractedPath -recurse | where {($_.FullName -match "main.bundle.js" ) -and ($_.FullName -notmatch "main.bundle.js.map")} | % {$_.FullName}
+                $MainbundlePath = Get-ChildItem $WebAppExtractedPath -recurse | where {($_.FullName -match "^main\.(\w+).bundle.js$")
  
                 # Get Url of Api-App 
 
