@@ -122,11 +122,7 @@ else
 
     Write-Log -Message "Imported RDMI PowerShell modules successfully"
 
-    # Getting fqdn of rdsh vm
-    $SessionHostName = (Get-WmiObject win32_computersystem).DNSHostName + "." + (Get-WmiObject win32_computersystem).Domain
-    Write-Log  -Message "Getting fully qualified domain name of RDSH VM: $SessionHostName"
-
-
+    
     Import-Module AzureRM.Resources
     Import-Module Azurerm.Profile
     Import-Module Azurerm.Compute
@@ -387,7 +383,10 @@ else
         }
     }
 
+    #Check the old Instances Removed from hostpool
+    $HostInfo = Get-RdsSessionHost -TenantName $tenantname -HostPoolName $HostPoolName
 
+    if(!$HostInfo){
 
     # Setting UseReverseConnect property to true
     Write-Log -Message "Checking Hostpool UseResversconnect is true or false"
@@ -400,6 +399,10 @@ else
     {
         Write-Log -Message "Hostpool UseReverseConnect already enabled as true"
     }
+
+    # Getting fqdn of rdsh vm
+    $SessionHostName = (Get-WmiObject win32_computersystem).DNSHostName + "." + (Get-WmiObject win32_computersystem).Domain
+    Write-Log  -Message "Getting fully qualified domain name of RDSH VM: $SessionHostName"
 
     $Registered = New-RdsRegistrationInfo -TenantName $TenantName -HostPoolName $HostPoolName -ExpirationHours $Hours -ErrorAction SilentlyContinue
     if (-Not $Registered)
@@ -440,5 +443,6 @@ else
     $poolName = $rdsh.hostpoolname | Out-String -Stream
     
     Write-Log -Message "Successfully added $rdshName VM to $poolName"
+    }
 }
 }
