@@ -229,7 +229,8 @@ Import-Module AzureRM.Automation
 `$login=Login-AzureRmAccount -Credential `$Azurecred -SubscriptionId `$SubscriptionId
 `$AutomationAccount = Get-AzureRmAutomationAccount -ResourceGroupName `$ResourceGroupName -Name `$automationAccountName
 if(`$AutomationAccount){
-Remove-AzureRmAutomationAccount -Name `$automationAccountName -ResourceGroupName `$ResourceGroupName -Force 
+#Remove-AzureRmAutomationAccount -Name `$automationAccountName -ResourceGroupName `$ResourceGroupName -Force 
+Remove-AzureRmResource -ResourceName `$automationAccountName -AsJob -Force
 }else{
 exit
 }
