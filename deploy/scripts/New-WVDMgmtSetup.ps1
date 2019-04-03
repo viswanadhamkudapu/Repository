@@ -231,8 +231,8 @@ Import-Module AzureRM.Resources
 `$AutomationAccount = Get-AzureRmAutomationAccount -ResourceGroupName `$ResourceGroupName -Name `$automationAccountName
 if(`$AutomationAccount){
 #Remove-AzureRmAutomationAccount -Name `$automationAccountName -ResourceGroupName `$ResourceGroupName -Force
-`$resourcedetails = Get-AzureRmResource -Name `$automationAccountName
-Remove-AzureRmResource -ResourceId `$resourcedetails.ResourceId -Force -AsJob
+`$resourcedetails = Get-AzureRmResource -Name `$automationAccountName -ResourceGroupName `$ResourceGroupName
+Remove-AzureRmResource -ResourceId `$resourcedetails.ResourceId -Force
 }else{
 exit
 }
