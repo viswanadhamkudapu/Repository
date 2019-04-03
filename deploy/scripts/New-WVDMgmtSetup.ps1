@@ -46,9 +46,15 @@ try
                 #$requiredAccessName=$ResourceURL.Split("/")[3]
                 $redirectURL="https://"+"$WebUrl"+"/"
                 
-                #Static value of wvdInfra web appname
+                #Static value of wvdInfra web appname/appid
                 $wvdinfraWebAppId = "5a0aa725-4958-4b0c-80a9-34562e23f3b7"
                 $serviceIdinfo = Get-AzureRmADServicePrincipal -ApplicationId $wvdinfraWebAppId
+                
+                if(!$serviceIdinfo){
+                $wvdinfraWebApp = "Windows Virtual Desktop"
+                $serviceIdinfo = Get-AzureRmADServicePrincipal -ApplicationId $wvdinfraWebApp
+                }
+
                 $wvdInfraWebAppName = $serviceIdinfo.DisplayName
                 #generate unique ID based on subscription ID
                 $unique_subscription_id = ($subsriptionid).Replace('-', '').substring(0, 19)
@@ -58,7 +64,7 @@ try
                 $wvdSaaS_clientapp_display_name = "wvdSaaS" + $ResourceGroupName.ToLowerInvariant() + $unique_subscription_id.ToLowerInvariant()
                 #Creating Client application in azure ad
                 Connect-AzureAD -Credential $Cred
-                $clientAdApp = New-AzureADApplication -DisplayName $wvdSaaS_clientapp_display_name -ReplyUrls $redirectURL -PublicClient $true -AvailableToOtherTenants $true -Verbose -ErrorAction Stop
+                $clientAdApp = New-AzureADApplication -DisplayName $wvdSaaS_clientapp_display_name -ReplyUrls $redirectURL -PublicClient $true -AvailableToOtherTenants $false -Verbose -ErrorAction Stop
                 $resourceAppId = Get-AzureADServicePrincipal -SearchString $wvdInfraWebAppName | Where-Object {$_.DisplayName -eq $wvdInfraWebAppName}
                 $clientappreq = New-Object -TypeName "Microsoft.Open.AzureAD.Model.RequiredResourceAccess"
                 $clientappreq.ResourceAppId = $resourceAppId.AppId
@@ -81,7 +87,7 @@ try
             
                 Write-Output "Extracting the Api-App Zip File"
                 Expand-Archive -Path $ApiAppExtractionPath -DestinationPath $ApiAppDirectory -Force 
-                $ApiAppExtractedPath = Get-ChildItem -Path $ApiAppDirectory| Where-Object {$_.FullName -notmatch '\\*.zip($|\\)'} | Resolve-Path -Verbose
+                $ApiAppExtractedPath = Get-ChildItem -Path $ApiAppDirectory | Where-Object {$_.FullName -notmatch '\\*.zip($|\\)'} | Resolve-Path -Verbose
                 
                 # Get publishing profile from Api-App
 
@@ -141,8 +147,9 @@ try
 
                 # Get the main.bundle.js file Path 
 
+                #$MainbundlePath = Get-ChildItem $WebAppExtractedPath -recurse | where {($_.FullName -match "main.bundle.js" ) -and ($_.FullName -notmatch "main.bundle.js.map")} | % {$_.FullName}
                 $MainbundlePath = Get-ChildItem $WebAppExtractedPath -recurse | where {($_.FullName -match "main\.(\w+).bundle.js$")} | % {$_.FullName}
-                #$MainbundlePath = Get-ChildItem $WebAppExtractedPath -recurse | where {($_.FullName -match "main.*.bundle.js")} | % {$_.FullName}
+
  
                 # Get Url of Api-App 
 
@@ -220,7 +227,12 @@ Import-Module AzureRM.Automation
 `$Securepass=ConvertTo-SecureString -String `$Password -AsPlainText -Force
 `$Azurecred=New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList(`$Username, `$Securepass)
 `$login=Login-AzureRmAccount -Credential `$Azurecred -SubscriptionId `$SubscriptionId
+`$AutomactionAccount = Get-AzureRmAutomationAccount -ResourceGroupName `$ResourceGroupName -Name `$automationAccountName
+if(`$AutomationAccount){
 Remove-AzureRmAutomationAccount -Name `$automationAccountName -ResourceGroupName `$ResourceGroupName -Force 
+}else{
+exit
+}
 "@| Out-File -FilePath RemoveAccount:\RemoveAccount.ps1 -Force
 
     $runbookName='removewvdsaasacctbook'
