@@ -257,4 +257,8 @@ exit
 
     #Providing parameter values to powershell script file
     $params=@{"UserName"=$UserName;"Password"=$Password;"ResourcegroupName"=$ResourcegroupName;"SubscriptionId"=$subsriptionid;"automationAccountName"=$automationAccountName}
-    Start-AzureRmAutomationRunbook -Name $runbookName -ResourceGroupName $ResourcegroupName -AutomationAccountName $automationAccountName -Parameters $params
+    #Start-AzureRmAutomationRunbook -Name $runbookName -ResourceGroupName $ResourcegroupName -AutomationAccountName $automationAccountName -Parameters $params
+	
+	$startTime = (Get-Date).AddSeconds(40)
+    New-AzureRmAutomationSchedule -Name "Shedule01" -StartTime $startTime -OneTime -AutomationAccountName $automationAccountName -ResourceGroupName $ResourceGroupName
+    Register-AzureRmAutomationScheduledRunbook -RunbookName $runbookName -ScheduleName "Schedule01" -Parameters $params -ResourceGroupName $ResourceGroupName -AutomationAccountName $automationAccountName
