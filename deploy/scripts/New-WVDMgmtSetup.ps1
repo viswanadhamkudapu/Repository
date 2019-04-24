@@ -260,5 +260,5 @@ exit
     #Start-AzureRmAutomationRunbook -Name $runbookName -ResourceGroupName $ResourcegroupName -AutomationAccountName $automationAccountName -Parameters $params
 	
 	$startTime = (Get-Date).Addminutes(6)
-    New-AzureRmAutomationSchedule -Name "Shedule01" -StartTime $startTime -OneTime -AutomationAccountName $automationAccountName -ResourceGroupName $ResourceGroupName
+    New-AzureRmAutomationSchedule -Name "Schedule01" -StartTime $startTime -OneTime -AutomationAccountName $automationAccountName -ResourceGroupName $ResourceGroupName
     Register-AzureRmAutomationScheduledRunbook -ResourceGroupName $ResourceGroupName -AutomationAccountName $automationAccountName -RunbookName $runbookName -ScheduleName "Schedule01" -Parameters $params
