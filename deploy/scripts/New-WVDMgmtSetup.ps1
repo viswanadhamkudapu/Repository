@@ -259,6 +259,6 @@ exit
     $params=@{"UserName"=$UserName;"Password"=$Password;"ResourcegroupName"=$ResourcegroupName;"SubscriptionId"=$subsriptionid;"automationAccountName"=$automationAccountName}
     #Start-AzureRmAutomationRunbook -Name $runbookName -ResourceGroupName $ResourcegroupName -AutomationAccountName $automationAccountName -Parameters $params
 	
-	$startTime = (Get-Date).AddSeconds(40)
+	$startTime = (Get-Date).Addminutes(6)
     New-AzureRmAutomationSchedule -Name "Shedule01" -StartTime $startTime -OneTime -AutomationAccountName $automationAccountName -ResourceGroupName $ResourceGroupName
-    Register-AzureRmAutomationScheduledRunbook -RunbookName $runbookName -ScheduleName "Schedule01" -Parameters $params -ResourceGroupName $ResourceGroupName -AutomationAccountName $automationAccountName
+    Register-AzureRmAutomationScheduledRunbook -ResourceGroupName $ResourceGroupName -AutomationAccountName $automationAccountName -RunbookName $runbookName -ScheduleName "Schedule01" -Parameters $params
