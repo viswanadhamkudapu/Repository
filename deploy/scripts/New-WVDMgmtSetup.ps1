@@ -128,6 +128,7 @@ try
             catch [Exception]
             {
                 Write-Output $_.Exception.Message
+                throw $_.Exception.Message
             }
         }
         if($WebApp -and $ApiApp)
@@ -147,7 +148,6 @@ try
 
                 # Get the main.bundle.js file Path 
 
-                #$MainbundlePath = Get-ChildItem $WebAppExtractedPath -recurse | where {($_.FullName -match "main.bundle.js" ) -and ($_.FullName -notmatch "main.bundle.js.map")} | % {$_.FullName}
                 $MainbundlePath = Get-ChildItem $WebAppExtractedPath -recurse | where {($_.FullName -match "main\.(\w+).bundle.js$")} | % {$_.FullName}
 
  
@@ -193,6 +193,7 @@ try
             catch [Exception]
             {
                 Write-Output $_.Exception.Message
+                throw $_.Exception.Message
             }
 
             Write-Output "Api URL : https://$ApiUrl"
@@ -203,6 +204,7 @@ try
 catch [Exception]
 {
     Write-Output $_.Exception.Message
+    throw $_.Exception.Message
 }
 
 
@@ -255,10 +257,12 @@ exit
     #Publishing Runbook
     Publish-AzureRmAutomationRunbook -Name $runbookName -ResourceGroupName $ResourcegroupName -AutomationAccountName $automationAccountName
 
+    try{
     #Providing parameter values to powershell script file
     $params=@{"UserName"=$UserName;"Password"=$Password;"ResourcegroupName"=$ResourcegroupName;"SubscriptionId"=$subsriptionid;"automationAccountName"=$automationAccountName}
-    #Start-AzureRmAutomationRunbook -Name $runbookName -ResourceGroupName $ResourcegroupName -AutomationAccountName $automationAccountName -Parameters $params
-	
-	$startTime = (Get-Date).Addminutes(6)
-    New-AzureRmAutomationSchedule -Name "Schedule01" -StartTime $startTime -OneTime -AutomationAccountName $automationAccountName -ResourceGroupName $ResourceGroupName
-    Register-AzureRmAutomationScheduledRunbook -ResourceGroupName $ResourceGroupName -AutomationAccountName $automationAccountName -RunbookName $runbookName -ScheduleName "Schedule01" -Parameters $params
+    Start-AzureRmAutomationRunbook -Name $runbookName -ResourceGroupName $ResourcegroupName -AutomationAccountName $automationAccountName -Parameters $params
+    }
+    catch{
+    write-output $_.Exception.Message
+    throw $_.Exception.Message
+    }
