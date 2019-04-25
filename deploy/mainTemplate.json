@@ -36,7 +36,8 @@
         }
     },
     "variables": {
-        "accountName": "wvdsaas-autoAccount",
+		"varstring": "[uniqueString( resourceGroup().id, deployment().name )]",
+        "accountName": "[concat('wvdsaas-autoAccount','-',variables('varstring'))]",
         "credentialName": "DefaultAzureCredential",
         "runbookName": "msftsaasbook",
         "webAPIAppName":"[concat(parameters('ApplicationName'),'-API')]",
@@ -93,7 +94,7 @@
                 "value": "[concat('\"',variables('fileURI'),'\"')]"
             }
         ],
-        "uniqueBase": "[toLower(uniquestring(parameters('ApplicationName'), resourceGroup().id, deployment().name))]",
+        "uniqueBase": "[toLower(uniquestring(parameters('ApplicationName'), resourceGroup().id, deployment().name),variables('accountName'))]",
         "newGuid": "[guid(variables('uniqueBase'))]"
     },
     "resources": [
@@ -156,7 +157,8 @@
             ]
         },
         {
-            "type": "Microsoft.Automation/automationAccounts",
+            "condition": "[notequal(resourceId(concat('Microsoft.Automation/automationAccounts', variables('accountName'))))],
+			"type": "Microsoft.Automation/automationAccounts",
             "name": "[variables('accountName')]",
             "apiVersion": "2015-01-01-preview",
             "location": "[resourceGroup().location]",
@@ -168,7 +170,8 @@
             },
             "resources": [
                 {
-                    "type": "runbooks",
+                    "condition": "[notequal(resourceId(concat('Microsoft.Automation/automationAccounts/', variables('accountName'), '/runbooks/',variables('runbookName'))))]",
+					"type": "runbooks",
                     "name": "[variables('runbookName')]",
                     "apiVersion": "2015-01-01-preview",
                     "location": "[resourceGroup().location]",
