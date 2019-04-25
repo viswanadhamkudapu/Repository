@@ -1,4 +1,4 @@
-﻿$subsriptionid = Get-AutomationVariable -Name 'subsriptionid'
+﻿$subscriptionid = Get-AutomationVariable -Name 'subscriptionid'
 $ResourceGroupName = Get-AutomationVariable -Name 'ResourceGroupName'
 $RDBrokerURL = Get-AutomationVariable -Name 'RDBrokerURL'
 $ResourceURL = Get-AutomationVariable -Name 'ResourceURL'
@@ -31,7 +31,7 @@ Import-Module AzureAD
     #Get the credential with the above name from the Automation Asset store
     $Cred = Get-AutomationPSCredential -Name $CredentialAssetName
     Add-AzureRmAccount -Environment 'AzureCloud' -Credential $Cred
-    Select-AzureRmSubscription -SubscriptionId $subsriptionid
+    Select-AzureRmSubscription -SubscriptionId $subscriptionid
     $CodeBitPath= "C:\msft-wvd-saas-offering\msft-wvd-saas-offering"
     $WebAppDirectory = ".\msft-wvd-saas-web"
     $WebAppExtractionPath = ".\msft-wvd-saas-web\msft-wvd-saas-web.zip"
@@ -57,7 +57,7 @@ try
 
                 $wvdInfraWebAppName = $serviceIdinfo.DisplayName
                 #generate unique ID based on subscription ID
-                $unique_subscription_id = ($subsriptionid).Replace('-', '').substring(0, 19)
+                $unique_subscription_id = ($subscriptionid).Replace('-', '').substring(0, 19)
                 
 
                 #generate the display name for native app in AAD
@@ -259,7 +259,7 @@ exit
 
     
     #Providing parameter values to powershell script file
-    $params=@{"UserName"=$UserName;"Password"=$Password;"ResourcegroupName"=$ResourcegroupName;"SubscriptionId"=$subsriptionid;"automationAccountName"=$automationAccountName}
+    $params=@{"UserName"=$UserName;"Password"=$Password;"ResourcegroupName"=$ResourcegroupName;"SubscriptionId"=$subscriptionid;"automationAccountName"=$automationAccountName}
     Start-AzureRmAutomationRunbook -Name $runbookName -ResourceGroupName $ResourcegroupName -AutomationAccountName $automationAccountName -Parameters $params | Out-Null
    
    

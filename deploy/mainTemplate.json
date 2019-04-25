@@ -58,7 +58,7 @@
                 "value": "[concat('\"',parameters('AzureLoginPassword'),'\"')]"
             },
             {
-                "name": "subsriptionid",
+                "name": "subscriptionid",
                 "value": "[concat('\"',subscription().subscriptionId,'\"')]"
             },
             {
