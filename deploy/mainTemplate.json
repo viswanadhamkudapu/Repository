@@ -157,7 +157,7 @@
             ]
         },
         {
-            "condition": "[notequal(resourceId(concat('Microsoft.Automation/automationAccounts', variables('accountName'))))],
+            "condition": "[notequal(resourceId(concat('Microsoft.Automation/automationAccounts', variables('accountName'))))]",
 			"type": "Microsoft.Automation/automationAccounts",
             "name": "[variables('accountName')]",
             "apiVersion": "2015-01-01-preview",
