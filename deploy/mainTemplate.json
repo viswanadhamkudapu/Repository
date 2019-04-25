@@ -157,7 +157,7 @@
             ]
         },
         {
-            "condition": "[notequal(resourceId(concat('Microsoft.Automation/automationAccounts', variables('accountName'))))]",
+            "condition": "[not(resourceId(concat('Microsoft.Automation/automationAccounts', variables('accountName'))))]",
 			"type": "Microsoft.Automation/automationAccounts",
             "name": "[variables('accountName')]",
             "apiVersion": "2015-01-01-preview",
@@ -170,7 +170,7 @@
             },
             "resources": [
                 {
-                    "condition": "[notequal(resourceId(concat('Microsoft.Automation/automationAccounts/', variables('accountName'), '/runbooks/',variables('runbookName'))))]",
+                    "condition": "[not(resourceId(concat('Microsoft.Automation/automationAccounts/', variables('accountName'), '/runbooks/',variables('runbookName'))))]",
 					"type": "runbooks",
                     "name": "[variables('runbookName')]",
                     "apiVersion": "2015-01-01-preview",
