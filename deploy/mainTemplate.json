@@ -94,7 +94,7 @@
                 "value": "[concat('\"',variables('fileURI'),'\"')]"
             }
         ],
-        "uniqueBase": "[toLower(uniquestring(parameters('ApplicationName'), resourceGroup().id, deployment().name),variables('accountName'))]",
+        "uniqueBase": "[toLower(uniquestring(parameters('ApplicationName'), resourceGroup().id, deployment().name,variables('accountName')))]",
         "newGuid": "[guid(variables('uniqueBase'))]"
     },
     "resources": [
