@@ -74,6 +74,13 @@ try
                 }
                 Set-AzureADApplication -ObjectId $clientAdApp.ObjectId -RequiredResourceAccess $clientappreq -ErrorAction Stop
 
+                }
+                
+        catch
+        {
+            Write-Output $_.Exception.Message
+            throw $_.Exception.Message
+        }
 
         if($ApiApp)
         {
@@ -125,7 +132,7 @@ try
             }
                 Set-AzureRmWebApp -AppSettings $ApiAppSettings -Name $ApiApp -ResourceGroupName $ResourceGroupName
             }
-            catch [Exception]
+            catch
             {
                 Write-Output $_.Exception.Message
                 throw $_.Exception.Message
@@ -190,7 +197,7 @@ try
                 Invoke-RestMethod -Uri $apiUrl -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} -UserAgent $userAgent -Method POST -InFile $filePath -ContentType "multipart/form-data"
                 Write-Output "Uploading of Extracted files to Web-App is Successful"
             }
-            catch [Exception]
+            catch
             {
                 Write-Output $_.Exception.Message
                 throw $_.Exception.Message
@@ -199,13 +206,6 @@ try
             Write-Output "Api URL : https://$ApiUrl"
             Write-Output "Web URL : https://$WebUrl"
         }
-}
-
-catch [Exception]
-{
-    Write-Output $_.Exception.Message
-    throw $_.Exception.Message
-}
 
 
 
