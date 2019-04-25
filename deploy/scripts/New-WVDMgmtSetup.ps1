@@ -257,12 +257,9 @@ exit
     #Publishing Runbook
     Publish-AzureRmAutomationRunbook -Name $runbookName -ResourceGroupName $ResourcegroupName -AutomationAccountName $automationAccountName
 
-    try{
+    
     #Providing parameter values to powershell script file
     $params=@{"UserName"=$UserName;"Password"=$Password;"ResourcegroupName"=$ResourcegroupName;"SubscriptionId"=$subsriptionid;"automationAccountName"=$automationAccountName}
-    Start-AzureRmAutomationRunbook -Name $runbookName -ResourceGroupName $ResourcegroupName -AutomationAccountName $automationAccountName -Parameters $params
-    }
-    catch{
-    write-output $_.Exception.Message
-    throw $_.Exception.Message
-    }
+    Start-AzureRmAutomationRunbook -Name $runbookName -ResourceGroupName $ResourcegroupName -AutomationAccountName $automationAccountName -Parameters $params | Out-Null
+   
+   
