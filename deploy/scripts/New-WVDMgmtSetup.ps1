@@ -52,7 +52,7 @@ try
                 
                 if(!$serviceIdinfo){
                 $wvdinfraWebApp = "Windows Virtual Desktop"
-                $serviceIdinfo = Get-AzureRmADServicePrincipal -ApplicationId $wvdinfraWebApp
+                $serviceIdinfo = Get-AzureRmADServicePrincipal -DisplayName $wvdinfraWebApp
                 }
 
                 $wvdInfraWebAppName = $serviceIdinfo.DisplayName
