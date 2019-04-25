@@ -13,7 +13,7 @@
             "defaultValue": "https://mrs-prod.ame.gbl/mrs-RDInfra-prod",
             "type": "string",
             "metadata": {
-                "description": "Enterprise application locationâ€¦"
+                "description": "Enterprise application location…"
             }
         },
         "AzureADUserPrincipalName": {
@@ -36,13 +36,13 @@
         }
     },
     "variables": {
-		"varstring": "[uniqueString( resourceGroup().id, deployment().name )]",
+        "varstring": "[uniqueString( resourceGroup().id, deployment().name )]",
         "accountName": "[concat('wvdsaas-autoAccount','-',variables('varstring'))]",
         "credentialName": "DefaultAzureCredential",
-        "runbookName": "msftsaasbook",
-        "webAPIAppName":"[concat(parameters('ApplicationName'),'-API')]",
+        "runbookName": "[concat('msftsaasbook','-',variables('varstring'))]",
+        "webAPIAppName": "[concat(parameters('ApplicationName'),'-API')]",
         "hostingPlanName": "[concat(parameters('ApplicationName'),'-SPlan')]",
-        "serviceplansku":"S1",
+        "serviceplansku": "S1",
         "workerSize": "0",
         "baseURL": "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/deploy/scripts/",
         "scriptUri": "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/deploy/scripts/New-WVDMgmtSetup.ps1",
@@ -157,8 +157,7 @@
             ]
         },
         {
-            "condition": "[not(resourceId(concat('Microsoft.Automation/automationAccounts', variables('accountName'))))]",
-			"type": "Microsoft.Automation/automationAccounts",
+            "type": "Microsoft.Automation/automationAccounts",
             "name": "[variables('accountName')]",
             "apiVersion": "2015-01-01-preview",
             "location": "[resourceGroup().location]",
@@ -170,8 +169,7 @@
             },
             "resources": [
                 {
-                    "condition": "[not(resourceId(concat('Microsoft.Automation/automationAccounts/', variables('accountName'), '/runbooks/',variables('runbookName'))))]",
-					"type": "runbooks",
+                    "type": "runbooks",
                     "name": "[variables('runbookName')]",
                     "apiVersion": "2015-01-01-preview",
                     "location": "[resourceGroup().location]",
