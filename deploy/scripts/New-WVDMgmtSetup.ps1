@@ -37,6 +37,40 @@ Import-Module AzureAD
     $WebAppExtractionPath = ".\msft-wvd-saas-web\msft-wvd-saas-web.zip"
     $ApiAppDirectory = ".\msft-wvd-saas-api"
     $ApiAppExtractionPath = ".\msft-wvd-saas-api\msft-wvd-saas-api.zip"
+	
+	function Get-PublishingProfileCredentials($resourceGroupName, $webAppName){
+ 
+    $resourceType = "Microsoft.Web/sites/config"
+    $resourceName = "$webAppName/publishingcredentials"
+ 
+    $publishingCredentials = Invoke-AzureRmResourceAction -ResourceGroupName $resourceGroupName -ResourceType $resourceType -ResourceName $resourceName -Action list -ApiVersion 2015-08-01 -Force
+ 
+       return $publishingCredentials
+} 
+ 
+
+function Get-KuduApiAuthorisationHeaderValue($resourceGroupName, $webAppName, $slotName = $null){
+    $publishingCredentials = Get-PublishingProfileCredentials $resourceGroupName $webAppName $slotName
+    return ("Basic {0}" -f [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0}:{1}" -f $publishingCredentials.Properties.PublishingUserName, $publishingCredentials.Properties.PublishingPassword))))
+}
+
+
+function RunCommand($dir,$command,$resourceGroupName, $webAppName, $slotName = $null){
+        $kuduApiAuthorisationToken = Get-KuduApiAuthorisationHeaderValue $resourceGroupName $webAppName $slotName
+        $kuduApiUrl="https://$webAppName.scm.azurewebsites.net/api/command"
+        $Body = 
+          @{
+          "command"=$command;
+           "dir"=$dir
+           } 
+        $bodyContent=@($Body) | ConvertTo-Json
+        #Write-output $bodyContent
+         Invoke-RestMethod -Uri $kuduApiUrl `
+                            -Headers @{"Authorization"=$kuduApiAuthorisationToken;"If-Match"="*"} `
+                            -Method POST -ContentType "application/json" -Body $bodyContent
+    }
+
+	
 try
 {
                 # Get Url of Web-App
@@ -131,6 +165,15 @@ try
                                     "RedirectURI" = "https://"+"$WebUrl"+"/";
             }
                 Set-AzureRmWebApp -AppSettings $ApiAppSettings -Name $ApiApp -ResourceGroupName $ResourceGroupName
+				
+				$returnvalue = RunCommand -dir "site\wwwroot\" -command "ls web.config"  -resourceGroupName $resourceGroupName -webAppName $WebApp
+				if($returnvalue.output){write-output "Published files are uploaded successfully"}
+				else{
+				Write-output "published files are not uploaded Error: $returnvalue.error"
+				throw $returnvalue.error
+			}
+				
+				
             }
             catch
             {
@@ -195,7 +238,13 @@ try
                 $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0}:{1}" -f $WebAppUserName, $WebApppassword)))
                 $userAgent = "powershell/1.0"
                 Invoke-RestMethod -Uri $apiUrl -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} -UserAgent $userAgent -Method POST -InFile $filePath -ContentType "multipart/form-data"
-                Write-Output "Uploading of Extracted files to Web-App is Successful"
+                				
+				$returnvalue = RunCommand -dir "site\wwwroot\" -command "ls web.config"  -resourceGroupName $resourceGroupName -webAppName $ApiApp
+				if($returnvalue.output){Write-Output "Uploading of Extracted files to Web-App is Successful"}
+				else{
+				Write-output "Extracted files are not uploaded Error: $returnvalue.error"
+				throw $returnvalue.error
+			}
             }
             catch
             {
@@ -260,6 +309,6 @@ exit
     
     #Providing parameter values to powershell script file
     $params=@{"UserName"=$UserName;"Password"=$Password;"ResourcegroupName"=$ResourcegroupName;"SubscriptionId"=$subscriptionid;"automationAccountName"=$automationAccountName}
-    Start-AzureRmAutomationRunbook -Name $runbookName -ResourceGroupName $ResourcegroupName -AutomationAccountName $automationAccountName -Parameters $params | Out-Null
+    #Start-AzureRmAutomationRunbook -Name $runbookName -ResourceGroupName $ResourcegroupName -AutomationAccountName $automationAccountName -Parameters $params | Out-Null
    
    
