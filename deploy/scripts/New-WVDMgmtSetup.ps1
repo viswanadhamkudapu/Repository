@@ -240,7 +240,7 @@ try
                 Invoke-RestMethod -Uri $apiUrl -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} -UserAgent $userAgent -Method POST -InFile $filePath -ContentType "multipart/form-data"
                 				
 				$returnvalue = RunCommand -dir "site\wwwroot\" -command "ls web.config"  -resourceGroupName $resourceGroupName -webAppName $WebApp
-				if($returnvalue.output){Write-Output "Uploading of Extracted files to Web-App is Successful"}
+				if($returnvalue.output){Write-Output "Published files are uploaded successfully"}
 				else{
 				Write-output "Extracted files are not uploaded Error: $returnvalue.error"
 				throw $returnvalue.error
@@ -309,6 +309,6 @@ exit
     
     #Providing parameter values to powershell script file
     $params=@{"UserName"=$UserName;"Password"=$Password;"ResourcegroupName"=$ResourcegroupName;"SubscriptionId"=$subscriptionid;"automationAccountName"=$automationAccountName}
-    Start-AzureRmAutomationRunbook -Name $runbookName -ResourceGroupName $ResourcegroupName -AutomationAccountName $automationAccountName -Parameters $params | Out-Null
+    #Start-AzureRmAutomationRunbook -Name $runbookName -ResourceGroupName $ResourcegroupName -AutomationAccountName $automationAccountName -Parameters $params | Out-Null
    
    
