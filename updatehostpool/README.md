@@ -1,4 +1,4 @@
-[![Deploy](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3F%2F%2Fraw.githubusercontent.com%2Fviswanadhamkudapu%2FRepository%2Fmaster%2Fupdatehostpool%2FmainTemplate.json)
+[![Deploy](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fviswanadhamkudapu%2FRepository%2Fmaster%2Fupdatehostpool%2FmainTemplate.json)
 
 # ARM Template for WVD Hostpool Deployment
 
