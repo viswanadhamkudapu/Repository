@@ -19,7 +19,7 @@
             "metadata": {
                 "description": "The base URI where artifacts required by this template are located."
             },
-            "defaultValue": "https://raw.githubusercontent.com/Azure/RDS-Templates/ptg-autoscaling-automation/wvd-templates/wvd-scaling-script/wvdscaling-automation/"
+            "defaultValue": "https://raw.githubusercontent.com/viswanadhamkudapu/Repository/master/automation/"
         },
         "_artifactsLocationSasToken": {
             "type": "securestring",
@@ -30,7 +30,7 @@
         }
     },
     "variables": {
-        "scriptUri": "[concat(parameters('_artifactsLocation'),'basicscale.ps1')]",
+        "scriptUri": "[concat(parameters('_artifactsLocation'),'basicScale.ps1')]",
         "sku": "Free"
     },
     "resources": [
