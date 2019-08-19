@@ -69,6 +69,12 @@
             },
             "defaultValue": "[take(toLower(resourceGroup().name),10)]"
         },
+		 "indexValue": {
+            "type": "string",
+            "metadata": {
+                "description": "Index value"
+            }
+        },
         "rdshNumberOfInstances": {
             "type": "int",
             "metadata": {
@@ -253,7 +259,7 @@
         "hostPoolName": "[replace(parameters('hostPoolName'),'\"','')]",
         "hostPoolFriendlyName": "[variables('hostPoolName')]",
         "hostPoolDescription": "Created through ARM template",
-        "registrationExpirationHours": "48",
+        "registrationExpirationHours": "999",
         "vmTemplateName": "[concat( if(variables('rdshManagedDisks'), 'managedDisks', 'unmanagedDisks'), '-', toLower(replace(parameters('rdshImageSource'),' ', '')), 'vm')]",
         "vmTemplateUri": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/',variables('vmTemplateName'),'.json', parameters('_artifactsLocationSasToken'))]",
         "rdshVmNamesOutput": {
@@ -309,6 +315,9 @@
                     "rdshPrefix": {
                         "value": "[variables('rdshPrefix')]"
                     },
+					"rdshPrefix": {
+                        "value": "[Parameters('indexValue')]"
+                    },
                     "rdshNumberOfInstances": {
                         "value": "[parameters('rdshNumberOfInstances')]"
                     },
@@ -351,7 +360,7 @@
         {
             "apiVersion": "2018-10-01",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('rdshPrefix'), copyindex(),'/', 'joindomain')]",
+            "name": "[concat(variables('rdshPrefix'), copyindex(Parameters('indexValue')),'/', 'joindomain')]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "vmCreation-linkedTemplate"
@@ -422,7 +431,7 @@
             "condition": "[greater(parameters('rdshNumberOfInstances'),1)]",
             "apiVersion": "2018-10-01",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('rdshPrefix'), copyindex(1),'/', 'dscextension')]",
+            "name": "[concat(variables('rdshPrefix'), copyindex(Parameters('indexValue')),'/', 'dscextension')]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[concat('Microsoft.Compute/virtualMachines/', variables('rdshPrefix'),'0/extensions/dscextension')]"
