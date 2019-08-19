@@ -27,6 +27,12 @@
             },
             "defaultValue": "[take(toLower(resourceGroup().name),10)]"
         },
+		 "indexValue": {
+            "type": "int",
+            "metadata": {
+                "description": "Index value"
+            }
+        },
         "rdshNumberOfInstances": {
             "type": "int",
             "metadata": {

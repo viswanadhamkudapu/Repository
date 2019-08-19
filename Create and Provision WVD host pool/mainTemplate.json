@@ -69,7 +69,7 @@
             },
             "defaultValue": "[take(toLower(resourceGroup().name),10)]"
         },
-		 "indexValue": {
+		 "indexStart": {
             "type": "string",
             "metadata": {
                 "description": "Index value"
@@ -315,8 +315,8 @@
                     "rdshPrefix": {
                         "value": "[variables('rdshPrefix')]"
                     },
-					"rdshPrefix": {
-                        "value": "[Parameters('indexValue')]"
+					"indexValue": {
+                        "value": "[parameters('indexStart')]"
                     },
                     "rdshNumberOfInstances": {
                         "value": "[parameters('rdshNumberOfInstances')]"
@@ -360,7 +360,7 @@
         {
             "apiVersion": "2018-10-01",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('rdshPrefix'), copyindex(Parameters('indexValue')),'/', 'joindomain')]",
+            "name": "[concat(variables('rdshPrefix'), copyindex(parameters('indexStart')),'/', 'joindomain')]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "vmCreation-linkedTemplate"
@@ -431,7 +431,7 @@
             "condition": "[greater(parameters('rdshNumberOfInstances'),1)]",
             "apiVersion": "2018-10-01",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('rdshPrefix'), copyindex(Parameters('indexValue')),'/', 'dscextension')]",
+            "name": "[concat(variables('rdshPrefix'), copyindex(parameters('indexStart')),'/', 'dscextension')]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[concat('Microsoft.Compute/virtualMachines/', variables('rdshPrefix'),'0/extensions/dscextension')]"
