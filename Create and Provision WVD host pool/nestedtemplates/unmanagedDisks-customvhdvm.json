@@ -28,7 +28,7 @@
             "defaultValue": "[take(toLower(resourceGroup().name),10)]"
         },
 		"indexValue": {
-            "type": "int",
+            "type": "string",
             "metadata": {
                 "description": "Index value"
             }
@@ -129,7 +129,7 @@
         {
             "apiVersion": "2018-11-01",
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[concat(parameters('rdshPrefix'), copyindex(), '-nic')]",
+            "name": "[concat(parameters('rdshPrefix'), copyindex(parameters('indexValue')), '-nic')]",
             "location": "[parameters('location')]",
             "copy": {
                 "name": "rdsh-nic-loop",
@@ -153,14 +153,14 @@
         {
             "apiVersion": "2018-10-01",
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[concat(parameters('rdshPrefix'), copyindex())]",
+            "name": "[concat(parameters('rdshPrefix'), copyindex(parameters('indexValue')))]",
             "location": "[parameters('location')]",
             "copy": {
                 "name": "rdsh-vm-loop",
                 "count": "[parameters('rdshNumberOfInstances')]"
             },
             "dependsOn": [
-                "[concat('Microsoft.Network/networkInterfaces/', parameters('rdshPrefix'), copyindex(), '-nic')]"
+                "[concat('Microsoft.Network/networkInterfaces/', parameters('rdshPrefix'), copyindex(parameters('indexValue')), '-nic')]"
             ],
             "properties": {
                 "hardwareProfile": {
@@ -168,13 +168,13 @@
                 },
                 "availabilitySet": "[if(equals(parameters('enablePersistentDesktop'),bool('False')),variables('availabilitySetId'),json('null'))]",
                 "osProfile": {
-                    "computerName": "[concat(parameters('rdshPrefix'), copyindex())]",
+                    "computerName": "[concat(parameters('rdshPrefix'), copyindex(parameters('indexValue')))]",
                     "adminUsername": "[parameters('existingDomainUsername')]",
                     "adminPassword": "[parameters('existingDomainPassword')]"
                 },
                 "storageProfile": {
                     "osDisk": {
-                        "name": "[concat(parameters('rdshPrefix'), copyindex(),'-osDisk')]",
+                        "name": "[concat(parameters('rdshPrefix'), copyindex(parameters('indexValue')),'-osDisk')]",
                         "osType": "Windows",
                         "caching": "ReadWrite",
                         "createOption": "FromImage",
@@ -182,14 +182,14 @@
                             "uri": "[parameters('VmImageVhdUri')]"
                         },
                         "vhd": {
-                            "uri": "[concat(reference(variables('storageaccount'), '2018-11-01').primaryEndpoints.blob, parameters('vhds'), copyindex(), '-osdisk.vhd')]"
+                            "uri": "[concat(reference(variables('storageaccount'), '2018-11-01').primaryEndpoints.blob, parameters('vhds'), copyindex(parameters('indexValue')), '-osdisk.vhd')]"
                         }
                     }
                 },
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('rdshPrefix'), copyindex(), '-nic'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('rdshPrefix'), copyindex(parameters('indexValue')), '-nic'))]"
                         }
                     ]
                 },

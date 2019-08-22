@@ -32,8 +32,9 @@
                 "description": "This prefix will be used in combination with the VM number to create the VM name. This value includes the dash, so if using “rdsh” as the prefix, VMs would be named “rdsh-0”, “rdsh-1”, etc. You should use a unique prefix to reduce name collisions in Active Directory."
             },
             "defaultValue": "[take(toLower(resourceGroup().name),10)]"
-        },"indexValue": {
-            "type": "int",
+        },
+		"indexValue": {
+            "type": "string",
             "metadata": {
                 "description": "Index value"
             }
@@ -137,7 +138,7 @@
         {
             "apiVersion": "2018-11-01",
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[concat(parameters('rdshPrefix'), copyindex(), '-nic')]",
+            "name": "[concat(parameters('rdshPrefix'), copyindex(parameters('indexValue')), '-nic')]",
             "location": "[parameters('location')]",
             "copy": {
                 "name": "rdsh-nic-loop",
@@ -161,14 +162,14 @@
         {
             "apiVersion": "2018-10-01",
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[concat(parameters('rdshPrefix'), copyindex())]",
+            "name": "[concat(parameters('rdshPrefix'), copyindex(parameters('indexValue')))]",
             "location": "[parameters('location')]",
             "copy": {
                 "name": "rdsh-vm-loop",
                 "count": "[parameters('rdshNumberOfInstances')]"
             },
             "dependsOn": [
-                "[concat('Microsoft.Network/networkInterfaces/', parameters('rdshPrefix'), copyindex(), '-nic')]"
+                "[concat('Microsoft.Network/networkInterfaces/', parameters('rdshPrefix'), copyindex(parameters('indexValue')), '-nic')]"
             ],
             "properties": {
                 "hardwareProfile": {
@@ -176,7 +177,7 @@
                 },
                 "availabilitySet": "[if(equals(parameters('enablePersistentDesktop'),bool('False')),variables('availabilitySetId'),json('null'))]",
                 "osProfile": {
-                    "computerName": "[concat(parameters('rdshPrefix'), copyindex())]",
+                    "computerName": "[concat(parameters('rdshPrefix'), copyindex(parameters('indexValue')))]",
                     "adminUsername": "[parameters('existingDomainUsername')]",
                     "adminPassword": "[parameters('existingDomainPassword')]"
                 },
@@ -190,15 +191,15 @@
                     "osDisk": {
                         "createOption": "FromImage",
                         "vhd": {
-                            "uri": "[concat(reference(variables('storageaccount'), '2018-11-01').primaryEndpoints.blob, parameters('vhds'), copyindex(), '-osdisk.vhd')]"
+                            "uri": "[concat(reference(variables('storageaccount'), '2018-11-01').primaryEndpoints.blob, parameters('vhds'), copyindex(parameters('indexValue')), '-osdisk.vhd')]"
                         },
-                        "name": "[concat(parameters('rdshPrefix'), copyindex(),'-osDisk')]"
+                        "name": "[concat(parameters('rdshPrefix'), copyindex(parameters('indexValue')),'-osDisk')]"
                     }
                 },
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('rdshPrefix'), copyindex(), '-nic'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('rdshPrefix'), copyindex(parameters('indexValue')), '-nic'))]"
                         }
                     ]
                 },
