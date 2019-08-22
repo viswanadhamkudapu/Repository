@@ -34,7 +34,7 @@
             "defaultValue": "[take(toLower(resourceGroup().name),10)]"
         },
 		 "indexValue": {
-            "type": "string",
+            "type": "int",
             "metadata": {
                 "description": "Index value"
             }
@@ -137,7 +137,7 @@
         {
             "apiVersion": "2018-11-01",
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[concat(parameters('rdshPrefix'), copyindex(Parameters('indexValue')), '-nic')]",
+            "name": "[concat(parameters('rdshPrefix'), if(greaterOrEquals(parameters('indexStartValue'),10),copyindex(parameters('indexStartValue')),copyindex(concat('0',parameters('indexStartValue')))), '-nic')]",
             "location": "[parameters('location')]",
             "copy": {
                 "name": "rdsh-nic-loop",
@@ -161,14 +161,14 @@
         {
             "apiVersion": "2018-10-01",
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[concat(parameters('rdshPrefix'), copyindex(Parameters('indexValue')))]",
+            "name": "[concat(parameters('rdshPrefix'), if(greaterOrEquals(parameters('indexStartValue'),10),copyindex(parameters('indexStartValue')),copyindex(concat('0',parameters('indexStartValue')))))]",
             "location": "[parameters('location')]",
             "copy": {
                 "name": "rdsh-vm-loop",
                 "count": "[parameters('rdshNumberOfInstances')]"
             },
             "dependsOn": [
-                "[concat('Microsoft.Network/networkInterfaces/', parameters('rdshPrefix'), copyindex(Parameters('indexValue')), '-nic')]"
+                "[concat('Microsoft.Network/networkInterfaces/', parameters('rdshPrefix'), if(greaterOrEquals(parameters('indexStartValue'),10),copyindex(parameters('indexStartValue')),copyindex(concat('0',parameters('indexStartValue')))), '-nic')]"
             ],
             "properties": {
                 "hardwareProfile": {
@@ -176,7 +176,7 @@
                 },
                 "availabilitySet": "[if(equals(parameters('enablePersistentDesktop'),bool('False')),variables('availabilitySetId'),json('null'))]",
                 "osProfile": {
-                    "computerName": "[concat(parameters('rdshPrefix'), copyindex(Parameters('indexValue')))]",
+                    "computerName": "[concat(parameters('rdshPrefix'), if(greaterOrEquals(parameters('indexStartValue'),10),copyindex(parameters('indexStartValue')),copyindex(concat('0',parameters('indexStartValue')))))]",
                     "adminUsername": "[parameters('existingDomainUsername')]",
                     "adminPassword": "[parameters('existingDomainPassword')]"
                 },
@@ -197,7 +197,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('rdshPrefix'), copyindex(Parameters('indexValue')), '-nic'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('rdshPrefix'), if(greaterOrEquals(parameters('indexStartValue'),10),copyindex(parameters('indexStartValue')),copyindex(concat('0',parameters('indexStartValue')))), '-nic'))]"
                         }
                     ]
                 },
