@@ -289,9 +289,18 @@ Param(
     [Parameter(Mandatory=`$True)]
     [string] `$ResourceGroupName,
     [Parameter(Mandatory=`$True)]
-    [string] `$AutomationAccountName
+    [string] `$AutomationAccountName,
+    [Parameter(Mandatory=`$True)]
+    [string] `$fileURI
  
 )
+
+Invoke-WebRequest -Uri `$fileURI -OutFile "C:\msft-wvd-saas-offering.zip"
+New-Item -Path "C:\msft-wvd-saas-offering" -ItemType directory -Force -ErrorAction SilentlyContinue
+Expand-Archive "C:\msft-wvd-saas-offering.zip" -DestinationPath "C:\msft-wvd-saas-offering" -ErrorAction SilentlyContinue
+`$AzureModulesPath = Get-ChildItem -Path "C:\msft-wvd-saas-offering\msft-wvd-saas-offering"| Where-Object {`$_.FullName -match 'AzureModules.zip'}
+Expand-Archive `$AzureModulesPath.fullname -DestinationPath 'C:\Modules\Global' -ErrorAction SilentlyContinue
+
 Import-Module AzureRM.profile
 Import-Module AzureRM.Automation
 Import-Module AzureRM.Resources
@@ -299,7 +308,7 @@ Import-Module AzureRM.Resources
 `$CredentialAssetName = 'DefaultAzureCredential'
 #Get the credential with the above name from the Automation Asset store
 `$Credentials = Get-AutomationPSCredential -Name `$CredentialAssetName
-Add-AzureRmAccount -Environment 'AzureCloud' -Credential `$Credentials
+Add-AzureRmAccount -Environment "AzureCloud" -Credential `$Credentials
 Select-AzureRmSubscription -SubscriptionId `$SubscriptionId
 `$AutomationAccount = Get-AzureRmAutomationAccount -ResourceGroupName `$ResourceGroupName -Name `$AutomationAccountName
 if(`$AutomationAccount){
@@ -329,5 +338,5 @@ exit
     Publish-AzureRmAutomationRunbook -Name $runbookName -ResourceGroupName $ResourcegroupName -AutomationAccountName $AutomationAccountName
 
     #Providing parameter values to powershell script file
-    $params=@{"ResourcegroupName"=$ResourcegroupName;"SubscriptionId"=$SubscriptionId;"automationAccountName"=$AutomationAccountName}
+    $params=@{"ResourcegroupName"=$ResourcegroupName;"SubscriptionId"=$SubscriptionId;"AutomationAccountName"=$AutomationAccountName;"fileURI"=$fileURI}
     Start-AzureRmAutomationRunbook -Name $runbookName -ResourceGroupName $ResourcegroupName -AutomationAccountName $AutomationAccountName -Parameters $params | Out-Null
