@@ -188,13 +188,8 @@ if ($WebApp -and $ApiApp)
 	try
 	{
 		## PUBLISHING WEB-APP PACKAGE ##
-
-		Set-Location $CodeBitPath
-
 		Write-Output "Extracting the Web-App Zip File"
-
 		# Extract the Web-App ZIP file content.
-
 		Expand-Archive -Path "C:\msft-wvd-saas-web.zip" -DestinationPath $WebAppDirectory -Force
 																																  
 
@@ -274,11 +269,10 @@ Param(
  
 )
 
-Invoke-WebRequest -Uri `$fileURI -OutFile "C:\msft-wvd-saas-offering.zip"
-New-Item -Path "C:\msft-wvd-saas-offering" -ItemType directory -Force -ErrorAction SilentlyContinue
-Expand-Archive "C:\msft-wvd-saas-offering.zip" -DestinationPath "C:\msft-wvd-saas-offering" -ErrorAction SilentlyContinue
-`$AzureModulesPath = Get-ChildItem -Path "C:\msft-wvd-saas-offering\msft-wvd-saas-offering"| Where-Object {`$_.FullName -match 'AzureModules.zip'}
-Expand-Archive `$AzureModulesPath.fullname -DestinationPath 'C:\Modules\Global' -ErrorAction SilentlyContinue
+
+Invoke-WebRequest -Uri `$fileURI/scripts/AzureModules.zip -OutFile "C:\AzureModules.zip"
+
+Expand-Archive "C:\AzureModules.zip" -DestinationPath 'C:\Modules\Global' -ErrorAction SilentlyContinue
 
 Import-Module AzureRM.profile
 Import-Module AzureRM.Automation
