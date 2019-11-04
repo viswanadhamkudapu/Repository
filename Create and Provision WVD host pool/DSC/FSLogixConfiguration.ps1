@@ -22,11 +22,14 @@ New-Item -Path $DestinationPath -ItemType "directory"
 New-Item -Path "C:\UbikitePSL" -ItemType "directory"
 @"
 param(
-[Parameter(mandatory = `$True)]
-[string]`$SignName,
+[Parameter(mandatory = $True)]
+[string]$SignInName
 )
-net use y: $StorageAccountURL $StorageAccountKey /user:Azure\$StorageAccount
-icacls y: /grant `$SignName:(f)
+$DriveInfo = Get-PSDrive -Name b -ErrorAction SilentlyContinue
+if($DriveInfo -eq $null){
+net use b: $StorageAccountURL $StorageAccountKey /user:Azure\$StorageAccount
+}
+cmd /c "icacls y: /grant ${$SignInName}:(f)"
 
 "@| Out-File "C:\UbikitePSL\FSGrantingToUser.ps1"
 
