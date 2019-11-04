@@ -12,7 +12,7 @@ param(
 [string]$StorageAccountURL
 )
 
-Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force -Confirm:$false
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force -Confirm:$false	
 #Static values
 $fslogixDownloadURI="https://download.microsoft.com/download/5/8/4/58482cbd-4072-4e26-9015-aa4bbe56c52e/FSLogix_Apps_2.9.7205.27375.zip"
 $OutFile= "C:\FSLogix.zip"
@@ -33,7 +33,7 @@ icacls y: /grant `$SignName:(f)
 
 Invoke-WebRequest -Uri $fslogixDownloadURI -OutFile $OutFile
 Expand-Archive -Path $OutFile -DestinationPath $DestinationPath
-Invoke-Expression -Command "cmd.exe /c C:\FileServerLogix\x64\Release\FSLogixAppsSetup.exe /quiet"
+Invoke-Expression -Command "cmd.exe /c C:\FSLogixInstallers\x64\Release\FSLogixAppsSetup.exe /quiet"
 $FSRegistry = Get-Item -Path "HKLM:\Software\FSLogix"
 if($FSRegistry){
 New-Item -Path "HKLM:\Software\FSLogix" -Name "Profiles" –Force
