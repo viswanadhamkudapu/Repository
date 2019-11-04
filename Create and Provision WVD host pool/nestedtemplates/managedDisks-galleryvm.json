@@ -33,7 +33,7 @@
             },
             "defaultValue": "[take(toLower(resourceGroup().name),10)]"
         },
-		 "indexValue": {
+        "indexValue": {
             "type": "int",
             "metadata": {
                 "description": "Index value"
