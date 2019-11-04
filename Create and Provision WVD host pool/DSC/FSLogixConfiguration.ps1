@@ -12,6 +12,7 @@ param(
 [string]$StorageAccountURL
 )
 
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force -Confirm:$false
 #Static values
 $fslogixDownloadURI="https://download.microsoft.com/download/5/8/4/58482cbd-4072-4e26-9015-aa4bbe56c52e/FSLogix_Apps_2.9.7205.27375.zip"
 $OutFile= "C:\FSLogix.zip"
