@@ -97,8 +97,8 @@ try
 	$wvdSaaS_clientapp_display_name = "wvdSaaS" + $ResourceGroupName.ToLowerInvariant() + $unique_subscription_id.ToLowerInvariant()
 	
 	#Check if the app registration exist
-	$AppRegInfo = Get-AzureRmADApplication -DisplayName $wvdSaaS_clientapp_display_name -ErrorAction SilentlyContinue
-	if($AppRegInfo -eq $null){
+	$clientAdApp = Get-AzureRmADApplication -DisplayName $wvdSaaS_clientapp_display_name -ErrorAction SilentlyContinue
+	if($clientAdApp -eq $null){
 	#Creating ClientApp Ad application in azure Active Directory
 	Connect-AzureAD -Credential $Credentials
 	$clientAdApp = New-AzureADApplication -DisplayName $wvdSaaS_clientapp_display_name -ReplyUrls $redirectURL -PublicClient $true -AvailableToOtherTenants $false -Verbose -ErrorAction Stop
