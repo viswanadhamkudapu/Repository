@@ -163,7 +163,7 @@ if ($ApiApp)
 		$userAgent = "powershell/1.0"
 		Invoke-RestMethod -Uri $apiUrl -Headers @{ Authorization = ("Basic {0}" -f $base64AuthInfo) } -UserAgent $userAgent -Method POST -InFile $filePath -ContentType "multipart/form-data"
 
-		$ApplicationId = $clientAdApp.AppId
+		#$ApplicationId = $clientAdApp.AppId
 		# Adding App Settings to Api-App
 		Write-Output "Adding App settings to Api-App"
 		$ApiAppSettings = @{ "ApplicationId" = "$ApplicationId";
