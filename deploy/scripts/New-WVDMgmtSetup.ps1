@@ -98,6 +98,7 @@ try
 	
 	#Check if the app registration exist
 	$clientAdApp = Get-AzureRmADApplication -DisplayName $wvdSaaS_clientapp_display_name -ErrorAction SilentlyContinue
+	$ApplicationId = $clientAdApp.ApplicationId.Guid
 	if($clientAdApp -eq $null){
 	#Creating ClientApp Ad application in azure Active Directory
 	Connect-AzureAD -Credential $Credentials
@@ -122,6 +123,7 @@ try
 
 	#Adding WVD Api Required Access and Azure Service Management Api required access Permissions to ClientAPP AD Application.
 	Set-AzureADApplication -ObjectId $clientAdApp.ObjectId -RequiredResourceAccess $AzureAdResouceAcessObject,$AzureServMgmtApiResouceAcessObject -ErrorAction Stop
+	$ApplicationId = $clientAdApp.AppId
 	}
 }
 
