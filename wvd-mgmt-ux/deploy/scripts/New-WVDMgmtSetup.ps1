@@ -95,6 +95,11 @@ try
 
 	#generate the display name for native app in AAD
 	$wvdSaaS_clientapp_display_name = "wvdSaaS" + $ResourceGroupName.ToLowerInvariant() + $unique_subscription_id.ToLowerInvariant()
+	
+	#Check if the app registration exist
+	$clientAdApp = Get-AzureRmADApplication -DisplayName $wvdSaaS_clientapp_display_name -ErrorAction SilentlyContinue
+	$ApplicationId = $clientAdApp.ApplicationId.Guid
+	if($clientAdApp -eq $null){
 	#Creating ClientApp Ad application in azure Active Directory
 	Connect-AzureAD -Credential $Credentials
 	$clientAdApp = New-AzureADApplication -DisplayName $wvdSaaS_clientapp_display_name -ReplyUrls $redirectURL -PublicClient $true -AvailableToOtherTenants $false -Verbose -ErrorAction Stop
@@ -118,6 +123,8 @@ try
 
 	#Adding WVD Api Required Access and Azure Service Management Api required access Permissions to ClientAPP AD Application.
 	Set-AzureADApplication -ObjectId $clientAdApp.ObjectId -RequiredResourceAccess $AzureAdResouceAcessObject,$AzureServMgmtApiResouceAcessObject -ErrorAction Stop
+	$ApplicationId = $clientAdApp.AppId
+	}
 }
 
 catch
@@ -156,7 +163,7 @@ if ($ApiApp)
 		$userAgent = "powershell/1.0"
 		Invoke-RestMethod -Uri $apiUrl -Headers @{ Authorization = ("Basic {0}" -f $base64AuthInfo) } -UserAgent $userAgent -Method POST -InFile $filePath -ContentType "multipart/form-data"
 
-		$ApplicationId = $clientAdApp.AppId
+		#$ApplicationId = $clientAdApp.AppId
 		# Adding App Settings to Api-App
 		Write-Output "Adding App settings to Api-App"
 		$ApiAppSettings = @{ "ApplicationId" = "$ApplicationId";
