@@ -64,7 +64,7 @@
             }
         },
         "fsEachDiskInSize": {
-            "type": "string",
+            "type": "int",
             "defaultValue": "",
             "metadata": {
                 "description": "size of the disk"
