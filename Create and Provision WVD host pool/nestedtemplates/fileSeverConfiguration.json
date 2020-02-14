@@ -1,0 +1,202 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "fileServerGalleryImageSKU": {
+            "type": "string",
+            "allowedValues": [
+                "Windows-10-Enterprise-multi-session",
+                "2016-Datacenter",
+                "2019-Datacenter"
+            ],
+            "metadata": {
+                "description": "Gallery image SKU."
+            }
+        },
+        "fsPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "This prefix will be used in combination with the VM number to create the file server VM name."
+            },
+            "defaultValue": "[take(toLower(resourceGroup().name),10)]"
+        },
+        "fileServerVMDiskType": {
+            "type": "string",
+            "allowedValues": [
+                "Premium_LRS",
+                "StandardSSD_LRS",
+                "Standard_LRS"
+            ],
+            "metadata": {
+                "description": "The VM disk type for the VM: Premium_LRS (Default), Standard_LRS or StandardSSD_LRS."
+            },
+            "defaultValue": "Premium_LRS"
+        },
+        "fsVmSize": {
+            "type": "string",
+            "metadata": {
+                "description": "The size of the session host VMs."
+            },
+            "defaultValue": "Standard_A2"
+        },
+        "existingDomainusername": {
+            "type": "string",
+            "metadata": {
+                "description": "The username for the admin."
+            }
+        },
+        "existingDomainPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The password that corresponds to the existing domain username."
+            }
+        },
+        "vhds": {
+            "type": "string",
+            "metadata": {
+                "description": "The URL to store unmanaged disks."
+            }
+        },
+        "subnet-id": {
+            "type": "string",
+            "metadata": {
+                "description": "The unique id of the subnet for the nics."
+            }
+        },
+        "fsEachDiskInSize": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "size of the disk"
+            }
+        },
+        "fSNumberOfDisks": {
+            "type": "int",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Number of data disks."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Location for all resources to be created in."
+            },
+            "ouPath": {
+                "defaultValue": "",
+                "type": "string",
+                "metadata": {
+                    "description": "(Optional) Specifiy an organizational unit (OU) to place the new virtual machines when joining the domain. If you do not have a specific OU to place the virtual machines, leave it blank. Example OU: 'OU=testOU;DC=domain;DC=Domain;DC=com'"
+                }
+            }
+        }
+    },
+    "variables": {
+        "galleryPublisher": "[if( contains(parameters('fileServerGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'MicrosoftWindowsDesktop', 'MicrosoftwindowsServer')]",
+        "galleryOffer": "[if( equals(parameters('fileServerGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'Windows-10', 'WindowsServer')]",
+        "gallerySku": "[if( equals(parameters('fileServerGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), '19h1-evd', parameters('fileServerGalleryImageSKU'))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-11-01",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat(parameters('fsPrefix'),'-nic')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[parameters('subnet-id')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2018-10-01",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('fsPrefix')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', parameters('fsPrefix'),'-nic')]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('rdshVmSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[concat(parameters('fsPrefix'), if(less(parameters('indexValue'),10),concat('0',copyindex(parameters('indexValue'))),concat(copyindex(parameters('indexValue')))))]",
+                    "adminUsername": "[parameters('existingDomainUsername')]",
+                    "adminPassword": "[parameters('existingDomainPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('galleryPublisher')]",
+                        "offer": "[variables('galleryOffer')]",
+                        "sku": "[variables('gallerySku')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[variables('storageAccountType')]"
+                        }
+                    },
+                    "DataDisk": {
+                        "diskSizeGB": "[parameters('sizeOfEachDataDiskInGB')]",
+                        "lun": "[parameters('fsNumberOfDisks')]",
+                        "createOption": "Empty",
+                        "copy": {
+                            "name": "fs-Disk-loop",
+                            "count": "[parameters('fSNumberOfDisks')]"
+                        }
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('fsPrefix'),'-nic'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": false
+                    }
+                },
+                "licenseType": "Windows_Client"
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2018-10-01",
+            "name": "[concat(parameters('fsPrefix'),'/','joindomain')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines', parameters('fsPrefix'))]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Compute",
+                "type": "JsonADDomainExtension",
+                "typeHandlerVersion": "1.3",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "name": "[parameters('domainToJoin')]",
+                    "ouPath": "[parameters('ouPath')]",
+                    "user": "[parameters('existingDomainUPN')]",
+                    "restart": "true",
+                    "options": "3"
+                },
+                "protectedSettings": {
+                    "password": "[parameters('existingDomainPassword')]"
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
