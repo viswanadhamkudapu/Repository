@@ -88,7 +88,8 @@
     "variables": {
         "galleryPublisher": "[if( contains(parameters('fileServerGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'MicrosoftWindowsDesktop', 'MicrosoftwindowsServer')]",
         "galleryOffer": "[if( equals(parameters('fileServerGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), 'Windows-10', 'WindowsServer')]",
-        "gallerySku": "[if( equals(parameters('fileServerGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), '19h1-evd', parameters('fileServerGalleryImageSKU'))]"
+        "gallerySku": "[if( equals(parameters('fileServerGalleryImageSKU'), 'Windows-10-Enterprise-multi-session'), '19h1-evd', parameters('fileServerGalleryImageSKU'))]",
+		"storageAccountType": "[parameters('fileServerVMDiskType')]",
     },
     "resources": [
         {
