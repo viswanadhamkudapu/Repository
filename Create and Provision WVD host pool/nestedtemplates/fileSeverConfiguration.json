@@ -164,31 +164,6 @@
                 },
                 "licenseType": "Windows_Client"
             }
-        },
-        {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "apiVersion": "2018-10-01",
-            "name": "[concat(parameters('fsPrefix'),'/','joindomain')]",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines', parameters('fsPrefix'))]"
-            ],
-            "properties": {
-                "publisher": "Microsoft.Compute",
-                "type": "JsonADDomainExtension",
-                "typeHandlerVersion": "1.3",
-                "autoUpgradeMinorVersion": true,
-                "settings": {
-                    "name": "[parameters('domainToJoin')]",
-                    "ouPath": "[parameters('ouPath')]",
-                    "user": "[parameters('existingDomainUPN')]",
-                    "restart": "true",
-                    "options": "3"
-                },
-                "protectedSettings": {
-                    "password": "[parameters('existingDomainPassword')]"
-                }
-            }
         }
     ],
     "outputs": {}
