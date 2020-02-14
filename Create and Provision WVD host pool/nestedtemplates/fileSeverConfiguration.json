@@ -65,7 +65,7 @@
         },
         "fsEachDiskInSize": {
             "type": "int",
-            "defaultValue": "",
+            "defaultValue": "1000",
             "metadata": {
                 "description": "size of the disk"
             }
@@ -143,12 +143,8 @@
                     },
                     "DataDisk": {
                         "diskSizeGB": "[parameters('fsEachDiskInSize')]",
-                        "lun": "[parameters('fsNumberOfDisks')]",
-                        "createOption": "Empty",
-                        "copy": {
-                            "name": "fs-Disk-loop",
-                            "count": "[parameters('fSNumberOfDisks')]"
-                        }
+                        "lun": 0,
+                        "createOption": "Empty"
                     }
                 },
                 "networkProfile": {
