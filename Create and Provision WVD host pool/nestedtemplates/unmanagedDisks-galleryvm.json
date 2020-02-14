@@ -33,8 +33,8 @@
             },
             "defaultValue": "[take(toLower(resourceGroup().name),10)]"
         },
-		"indexValue": {
-            "type": "string",
+        "indexValue": {
+            "type": "int",
             "metadata": {
                 "description": "Index value"
             }
@@ -138,7 +138,7 @@
         {
             "apiVersion": "2018-11-01",
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[concat(parameters('rdshPrefix'), copyindex(parameters('indexValue')), '-nic')]",
+            "name": "[concat(parameters('rdshPrefix'), if(less(parameters('indexValue'),10),concat('0',copyindex(parameters('indexValue'))),concat(copyindex(parameters('indexValue')))), '-nic')]",
             "location": "[parameters('location')]",
             "copy": {
                 "name": "rdsh-nic-loop",
@@ -162,14 +162,14 @@
         {
             "apiVersion": "2018-10-01",
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[concat(parameters('rdshPrefix'), copyindex(parameters('indexValue')))]",
+            "name": "[concat(parameters('rdshPrefix'), if(less(parameters('indexValue'),10),concat('0',copyindex(parameters('indexValue'))),concat(copyindex(parameters('indexValue')))))]",
             "location": "[parameters('location')]",
             "copy": {
                 "name": "rdsh-vm-loop",
                 "count": "[parameters('rdshNumberOfInstances')]"
             },
             "dependsOn": [
-                "[concat('Microsoft.Network/networkInterfaces/', parameters('rdshPrefix'), copyindex(parameters('indexValue')), '-nic')]"
+                "[concat('Microsoft.Network/networkInterfaces/', parameters('rdshPrefix'), if(less(parameters('indexValue'),10),concat('0',copyindex(parameters('indexValue'))),concat(copyindex(parameters('indexValue')))), '-nic')]"
             ],
             "properties": {
                 "hardwareProfile": {
@@ -177,7 +177,7 @@
                 },
                 "availabilitySet": "[if(equals(parameters('enablePersistentDesktop'),bool('False')),variables('availabilitySetId'),json('null'))]",
                 "osProfile": {
-                    "computerName": "[concat(parameters('rdshPrefix'), copyindex(parameters('indexValue')))]",
+                    "computerName": "[concat(parameters('rdshPrefix'), if(less(parameters('indexValue'),10),concat('0',copyindex(parameters('indexValue'))),concat(copyindex(parameters('indexValue')))))]",
                     "adminUsername": "[parameters('existingDomainUsername')]",
                     "adminPassword": "[parameters('existingDomainPassword')]"
                 },
@@ -191,15 +191,15 @@
                     "osDisk": {
                         "createOption": "FromImage",
                         "vhd": {
-                            "uri": "[concat(reference(variables('storageaccount'), '2018-11-01').primaryEndpoints.blob, parameters('vhds'), copyindex(parameters('indexValue')), '-osdisk.vhd')]"
+                            "uri": "[concat(reference(variables('storageaccount'), '2018-11-01').primaryEndpoints.blob, parameters('vhds'), if(less(parameters('indexValue'),10),concat('0',copyindex(parameters('indexValue'))),concat(copyindex(parameters('indexValue')))), '-osdisk.vhd')]"
                         },
-                        "name": "[concat(parameters('rdshPrefix'), copyindex(parameters('indexValue')),'-osDisk')]"
+                        "name": "[concat(parameters('rdshPrefix'), if(less(parameters('indexValue'),10),concat('0',copyindex(parameters('indexValue'))),concat(copyindex(parameters('indexValue')))),'-osDisk')]"
                     }
                 },
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('rdshPrefix'), copyindex(parameters('indexValue')), '-nic'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('rdshPrefix'), if(less(parameters('indexValue'),10),concat('0',copyindex(parameters('indexValue'))),concat(copyindex(parameters('indexValue')))), '-nic'))]"
                         }
                     ]
                 },
