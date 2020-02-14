@@ -142,7 +142,7 @@
                         }
                     },
                     "DataDisk": {
-                        "diskSizeGB": "[parameters('sizeOfEachDataDiskInGB')]",
+                        "diskSizeGB": "[parameters('fsEachDiskInSize')]",
                         "lun": "[parameters('fsNumberOfDisks')]",
                         "createOption": "Empty",
                         "copy": {
