@@ -125,7 +125,7 @@
 			},
 			"diskSizeGB": "[parameters('fsEachDiskInSize')]"
 			}
-		 }
+		 },
         {
             "apiVersion": "2018-10-01",
             "type": "Microsoft.Compute/virtualMachines",
