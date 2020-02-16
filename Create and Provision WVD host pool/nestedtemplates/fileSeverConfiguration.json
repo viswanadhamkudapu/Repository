@@ -111,13 +111,29 @@
                 ]
             }
         },
+		{
+			"type": "Microsoft.Compute/disks",
+			"apiVersion": "2018-06-01",
+			"name": "[concat(parameters('fsPrefix'),'-datadisk1')]",
+			"location": "[parameters('location')]",
+			"sku": {
+			"name": "Standard_LRS"
+			},
+			"properties": {
+			"creationData": {
+				"createOption": "Empty"
+			},
+			"diskSizeGB": "[parameters('fsEachDiskInSize')]"
+			}
+		 }
         {
             "apiVersion": "2018-10-01",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[parameters('fsPrefix')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Network/networkInterfaces/', parameters('fsPrefix'),'-nic')]"
+                "[concat('Microsoft.Network/networkInterfaces/', parameters('fsPrefix'),'-nic')]",
+				"[resourceId('Microsoft.Compute/disks/', concat(parameters('fsPrefix'),'-datadisk1'))]"
             ],
             "properties": {
                 "hardwareProfile": {
@@ -141,11 +157,15 @@
                             "storageAccountType": "[variables('storageAccountType')]"
                         }
                     },
-                    "DataDisk": [{
-                        "diskSizeGB": "[parameters('fsEachDiskInSize')]",
-                        "lun": 0,
-                        "createOption": "Empty"
-                    }
+					"dataDisks": [
+						{
+							"lun": 0,
+							"name": "[concat(parameters('fsPrefix'),'-datadisk1')]",
+							"createOption": "attach",
+							"managedDisk": {
+								"id": "[resourceId('Microsoft.Compute/disks/', concat(parameters('fsPrefix'),'-datadisk1'))]"
+							}
+						}
 					]
                 },
                 "networkProfile": {
