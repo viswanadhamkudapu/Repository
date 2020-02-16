@@ -141,11 +141,12 @@
                             "storageAccountType": "[variables('storageAccountType')]"
                         }
                     },
-                    "DataDisk": {
+                    "DataDisk": [{
                         "diskSizeGB": "[parameters('fsEachDiskInSize')]",
                         "lun": 0,
                         "createOption": "Empty"
                     }
+					]
                 },
                 "networkProfile": {
                     "networkInterfaces": [
