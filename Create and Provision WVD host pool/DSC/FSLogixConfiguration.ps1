@@ -5,10 +5,10 @@ FS Logix Configuration
 This script is used configure the fs logix.
 #>
 param(
-[Parameter(mandatory = $True)]
+[Parameter(mandatory = $false)]
 [string]$StorageAccountKey,
 
-[Parameter(mandatory = $True)]
+[Parameter(mandatory = $false)]
 [string]$FileShareURL,
 
 [Parameter(mandatory = $false)]
