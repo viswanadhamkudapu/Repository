@@ -9,7 +9,11 @@ param(
 [string]$StorageAccountKey,
 
 [Parameter(mandatory = $True)]
-[string]$FileShareURL
+[string]$FileShareURL,
+
+[Parameter(mandatory = $false)]
+[string]$sharedLocationPath
+
 )
 
 Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force -Confirm:$false	
@@ -17,8 +21,9 @@ Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force -Co
 $fslogixDownloadURI="https://download.microsoft.com/download/5/8/4/58482cbd-4072-4e26-9015-aa4bbe56c52e/FSLogix_Apps_2.9.7205.27375.zip"
 $OutFile= "C:\FSLogix.zip"
 $DestinationPath="C:\FSLogixInstallers"
-$StorageAccount = $FileShareURL.Split(".").Trim("\\")[0]
 New-Item -Path $DestinationPath -ItemType "directory"
+if($sharedLocationPath -eq $null){
+$StorageAccount = $FileShareURL.Split(".").Trim("\\")[0]
 New-Item -Path "C:\UbikitePSL" -ItemType "directory"
 @"
 param(
@@ -33,7 +38,7 @@ foreach(`$SignInName in `$SignInNames){
 cmd /c "icacls b: /grant `${`$SignInName}:(f)"
 }
 "@| Out-File "C:\UbikitePSL\FSGrantingToUser.ps1"
-
+}
 
 Invoke-WebRequest -Uri $fslogixDownloadURI -OutFile $OutFile
 Expand-Archive -Path $OutFile -DestinationPath $DestinationPath
