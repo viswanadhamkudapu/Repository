@@ -1,11 +1,10 @@
 ﻿param(
-
 [Parameter(Mandatory = $true)]
 [ValidateNotNullOrEmpty()]
 [string] $HostpoolFolderName,
 [Parameter(Mandatory = $true)]
 [ValidateNotNullOrEmpty()]
-[string] $Username
+[string] $Usernames
 )
 
 $RAWDisks = Get-Disk | Where-Object PartitionStyle –Eq 'RAW'
@@ -18,11 +17,11 @@ $DiskPartition = Get-Partition -DiskNumber $Disk.number
 Set-Partition -DriveLetter $DiskPartition.DriveLetter -IsActive $true
 Format-Volume -DriveLetter $DiskPartition.DriveLetter -FileSystem NTFS
 $DiskLetter = $DiskPartition.DriveLetter
-$DiskDrive = $DiskLetter + ":"
-New-Item -Name $HostpoolNameFolderName -Path "$DiskDrive\" -ItemType Directory
-New-SmbShare -Path "$DiskDrive\$HostpoolNameFolderName"`
+$DiskDrive = $DiskLetter + ":\"
+New-Item -Name $HostpoolFolderName -Path $DiskDrive -ItemType Directory
+$Path = $DiskDrive + $HostpoolFolderName
+New-SmbShare -Name $HostpoolFolderName -Path $Path`
   -Description 'Shared Folder for $HostpoolName users' `
-  -FullAccess "ubikiteadadmmin" -ReadAccess Everyone
-
+  -FullAccess $Usernames  -ReadAccess Everyone
 }
 
