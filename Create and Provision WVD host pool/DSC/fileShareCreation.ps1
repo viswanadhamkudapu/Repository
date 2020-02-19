@@ -2,7 +2,7 @@
 
 [Parameter(Mandatory = $true)]
 [ValidateNotNullOrEmpty()]
-[string] $HostpoolNameFolderName,
+[string] $HostpoolFolderName,
 [Parameter(Mandatory = $true)]
 [ValidateNotNullOrEmpty()]
 [string] $Username
