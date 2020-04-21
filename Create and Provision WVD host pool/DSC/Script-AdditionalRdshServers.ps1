@@ -70,7 +70,7 @@ else
     Write-Log -Message "VM not registered with RDInfraAgent, script execution will continue"
 
     # Importing Windows Virtual Desktop PowerShell module
-    Import-Module .\PowershellModules\Microsoft.RDInfra.RDPowershell.dll
+    Import-Module ".\PowershellModules\Microsoft.RDInfra.RDPowershell.dll"
 
     Write-Log -Message "Imported Windows Virtual Desktop PowerShell modules successfully"
 
