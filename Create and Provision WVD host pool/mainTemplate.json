@@ -367,7 +367,7 @@
                         "value": "[parameters('existingDomainPassword')]"
                     },
                     "subnet-id": {
-                        "value": "[variables('subnet-id')]"
+                        "value": "[toLower(variables('subnet-id'))]"
                     },
                     "vhds": {
                         "value": "[concat('vhds','/',parameters('fileServerPrefix'))]"
@@ -485,7 +485,7 @@
                         "value": "[parameters('existingDomainPassword')]"
                     },
                     "subnet-id": {
-                        "value": "[variables('subnet-id')]"
+                        "value": "[toLower(variables('subnet-id'))]"
                     },
                     "vhds": {
                         "value": "[variables('vhds')]"
