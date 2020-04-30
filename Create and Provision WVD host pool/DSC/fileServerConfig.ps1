@@ -23,6 +23,6 @@ $Path = $DiskDrive + $HostpoolFolderName
 $c = new-CimSession -ComputerName $env:COMPUTERNAME
 New-SmbShare -Name $HostpoolFolderName -Path $Path -CimSession $c `
   -Description 'Shared Folder for $HostpoolName users' `
-  -FullAccess $Usernames -ChangeAccess Everyone -ReadAccess Everyone 
+  -FullAccess $Usernames -ChangeAccess Everyone
   }
 
